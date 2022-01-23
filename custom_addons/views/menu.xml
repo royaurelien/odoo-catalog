@@ -7,25 +7,25 @@
     <record model="ir.actions.act_window" id="custom_addons.action_view_addons">
       <field name="name">Custom Addons</field>
       <field name="res_model">custom.addon</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
     </record>
 
     <record model="ir.actions.act_window" id="custom_addons.action_view_organization">
       <field name="name">Git Organization</field>
       <field name="res_model">git.organization</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,kanban,form,graph</field>
     </record>
 
     <record model="ir.actions.act_window" id="custom_addons.action_view_repository">
       <field name="name">Git Repository</field>
       <field name="res_model">git.repository</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
     </record>
 
     <record model="ir.actions.act_window" id="custom_addons.action_view_branch">
       <field name="name">Git Branch</field>
       <field name="res_model">git.branch</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,kanban,form,graph</field>
     </record>
 
     <!-- server action to the one above -->
@@ -46,7 +46,7 @@
 
     <!-- Top menu item -->
 
-    <menuitem name="custom_addons"
+    <menuitem name="Custom Addons"
               id="custom_addons.menu_root"
               parent="base.menu_management"/>
 

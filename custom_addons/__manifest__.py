@@ -21,14 +21,17 @@
 
     # any module necessary for this one to work correctly
     'depends': [
-        'base'
+        'base','mail'
     ],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/menu.xml',
-        'views/views.xml',
+        'views/view_git_organization.xml',
+        'views/view_git_repository.xml',
+        'views/view_git_branch.xml',
+        'views/view_custom_addon.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

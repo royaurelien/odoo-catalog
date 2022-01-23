@@ -11,7 +11,7 @@ import re
 import os
 
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
-TYPE = [('gitlab', 'GitLab')]
+TYPE = [('gitlab', 'Gitlab')]
 
 _logger = logging.getLogger(__name__)
 
@@ -57,7 +57,7 @@ class GitOrganization(models.Model):
 
     def _action_sync_repository(self):
         for record in self.filtered(lambda x: x.service == 'gitlab'):
-            projects = record._get_from_gitlab() # all=True
+            projects = record._get_from_gitlab(all=True) # all=True
             repo_ids = {e['repo_id']:e['id'] for e in record.repository_ids.read(['repo_id'])}
 
             to_update = [(1, repo_ids.get(vals['repo_id']), vals) for vals in projects if vals['repo_id'] in repo_ids.keys()]
@@ -99,7 +99,7 @@ class GitRepository(models.Model):
         _logger.warning(vals)
         return vals
 
-    def _action_sync_branches(self):
+    def _action_sync_branch_gitlab(self):
         for record in self:
             branches = record._get_from_gitlab()
 
@@ -152,8 +152,22 @@ class GitBranch(models.Model):
             'name': manifest.get('name'),
             'technical_name': dir_name,
             'version': manifest.get('version'),
-            # 'branch_ids': [(0, False, )]
+            'author': manifest.get('author'),
+            'description': manifest.get('description'),
+            'summary': manifest.get('summary'),
         }
+
+        category = manifest.get('category')
+        if category:
+            category_id = self.env['ir.module.category'].search([('name', 'ilike', category)], limit=1)
+            if category_id:
+                vals.update({'category_id': category_id.id})
+            # category_id = self.env['custom.addon.tags'].search([('name', '=', category)])
+
+            # if not category_id:
+            #     category_id = self.env['custom.addon.tags'].create({'name': category})
+
+            # vals.update({'tag_ids': [(4, category_id[0].id)]})
 
         _logger.warning(vals)
         return vals
@@ -161,11 +175,40 @@ class GitBranch(models.Model):
     def _action_sync_addons(self):
         for record in self:
             (addons, requirements) = record._get_from_gitlab()
+            record.update({'requirements': requirements})
 
-            # branch_ids = {e['name']:e['id'] for e in record.branch_ids.read(['name'])}
+            addons_by_name = {item['technical_name']:item for item in addons}
+            custom_addons = {item['technical_name']:item['id'] for item in self.env['custom.addon'].search([]).read(['technical_name'])}
 
-            # to_update = [(1, branch_ids.get(vals['name']), vals) for vals in branches if vals['name'] in branch_ids.keys()]
-            # to_create = [(0, False, vals) for vals in branches if vals['name'] not in branch_ids]
 
-            # _logger.warning("[{}] {} Branches found (updated: {}, created: {})".format(record.name, len(branches), len(to_update), len(to_create)))
-            # record.update({'branch_ids': to_update + to_create})
+            # Update
+            names = list(set(addons_by_name.keys()).intersection(set(custom_addons.keys())))
+            for name in names:
+                vals = addons_by_name.get(name)
+                addon_id = custom_addons.get(name)
+
+                custom_addon = self.env['custom.addon'].browse(addon_id)
+                if not custom_addon:
+                    continue
+
+                if not record in custom_addon.branch_ids:
+                    vals.update({'branch_ids': [(4, record.id)]})
+
+                _logger.warning("Update {} on {}".format(custom_addon.name, record.name))
+                custom_addon.update(vals)
+
+
+            # Create
+            names = list(set(addons_by_name.keys()).difference(set(custom_addons.keys())))
+            to_create = [(0, False, vals) for name,vals in addons_by_name.items() if name in names]
+
+            _logger.warning("Create {} on {}".format(names, record.name))
+            record.write({'custom_addon_ids': to_create})
+
+
+            # custom_addons = self.env['custom.addon'].search([('technical_name', 'in', list(addons_by_name.keys()))])
+            # for addon_id in custom_addons:
+            #     vals = addons_by_name.get(addon_id.technical_name)
+            #     if not record in addon_id.branch_ids:
+            #         _logger.warning("Ajout de la branche {} sur l'addon {}".format(record.name, addon_id.name))
+            #         record.write({'custom_addon_ids': [(4, addon_id.id)]})
