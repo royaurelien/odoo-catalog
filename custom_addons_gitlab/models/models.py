@@ -57,7 +57,7 @@ class GitOrganization(models.Model):
 
     def _action_sync_repository(self):
         for record in self.filtered(lambda x: x.service == 'gitlab'):
-            projects = record._get_from_gitlab(all=True) # all=True
+            projects = record._get_from_gitlab(all=True, order_by='last_activity_at') # all=True
             repo_ids = {e['repo_id']:e['id'] for e in record.repository_ids.read(['repo_id'])}
 
             to_update = [(1, repo_ids.get(vals['repo_id']), vals) for vals in projects if vals['repo_id'] in repo_ids.keys()]
@@ -66,7 +66,7 @@ class GitOrganization(models.Model):
             _logger.warning("[{}] {} Repositories found (updated: {}, created: {})".format(record.name, len(projects), len(to_update), len(to_create)))
             record.update({'repository_ids': to_update + to_create})
 
-            record.repository_ids._action_sync_branches()
+            # record.repository_ids._action_sync_branches()
 
 
 

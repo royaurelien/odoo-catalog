@@ -49,20 +49,22 @@ class CustomAddon(models.Model):
     )
 
     branch_count = fields.Integer(compute='_compute_branch', store=True, string="# Branches")
-    repository_count = fields.Integer(compute='_compute_branch', string="# Repository")
+    repository_count = fields.Integer(compute='_compute_branch', store=True, string="# Repository")
+    is_many_used = fields.Boolean(compute='_compute_branch', store=True, string="Many Used")
 
     @api.depends('branch_ids')
     def _compute_branch(self):
         for record in self:
             record.branch_count = len(record.branch_ids)
             record.repository_count = len(record.branch_ids.mapped('repository_id'))
+            record.is_many_used = True if record.repository_count > 1 else False
 
     def action_view_git_branch(self):
         self.ensure_one()
         action = self.env.ref("custom_addons.action_view_branch").read()[0]
         action["context"] = dict(self.env.context)
         action["context"].pop("group_by", None)
-        action["context"]["search_default_repository_id"] = self.id
+        # action["context"]["search_default_repository_id"] = self.id
         action["domain"] = [('id', 'in', self.branch_ids.ids)]
 
         return action
@@ -225,6 +227,29 @@ class GitBranch(models.Model):
     def _compute_custom_addon(self):
         for record in self:
             record.custom_addon_count = len(record.custom_addon_ids)
+
+
+    def action_view_custom_addon(self):
+        self.ensure_one()
+        action = self.env.ref("custom_addons.action_view_addons").read()[0]
+        action["context"] = dict(self.env.context)
+        action["context"].pop("group_by", None)
+        action["domain"] = [('id', 'in', self.custom_addon_ids.ids)]
+
+        return action
+
+    def _action_sync_addons(self):
+        for service in self.mapped('repository_id.service'):
+            records = self.filtered(lambda x: x.repository_id.service == service)
+            method_name = "_action_sync_addons_{}".format(service)
+            method = getattr(records, method_name) if hasattr(records, method_name) else False
+            if method:
+                method()
+        return True
+
+
+    def action_sync_addons(self):
+        return self._action_sync_addons()
 
     # def _track_subtype(self, init_values):
     # # init_values contains the modified fields' values before the changes

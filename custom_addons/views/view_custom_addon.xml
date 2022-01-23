@@ -46,6 +46,9 @@
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
                 <field name="branch_ids" widget="many2many_tags" optional="show"/>
                 <field name="branch_count" string="# Branches" optional="show"/>
+                <field name="repository_count" string="# Repository" optional="show"/>
+                <field name="is_many_used" string="Many used" optional="show"/>
+
                 <!-- <field name="branch_major_count" string="# Major Branches" /> -->
             </tree>
         </field>
@@ -124,17 +127,15 @@
         </field>
     </record>
 
-        <record model="ir.ui.view" id="custom_addon_view_kanban">
+        <!-- <record model="ir.ui.view" id="custom_addon_view_kanban">
             <field name="name">Custom Addons Kanban</field>
             <field name="model">custom.addon</field>
             <field name="arch" type="xml">
                 <kanban create="false" class="o_modules_kanban">
                   <field name="icon"/>
                   <field name="name"/>
-                  <!-- <field name="state"/> -->
+                  <field name="category_id"/>
                   <field name="summary"/>
-                  <!-- <field name="website"/> -->
-                  <!-- <field name="application"/> -->
                   <templates>
                     <t t-name="kanban-box">
                       <div class="oe_module_vignette">
@@ -144,7 +145,7 @@
                             </a>
                             <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <a type="edit" class="dropdown-item">Module Info</a>
-                                <!-- <a t-if="record.website.raw_value" role="menuitem" class="dropdown-item o-hidden-ios" t-att-href="record.website.raw_value" target="_blank">Learn More</a> -->
+
                             </div>
                         </div>
                         <img t-attf-src="#{record.icon.value}" class="oe_module_icon" alt="Icon"/>
@@ -159,18 +160,42 @@
                             <code><field name="technical_name" groups="!base.group_no_one"/></code>
                           </p>
                           <div class="oe_module_action">
-                            <!-- <a t-att-href="record.website.raw_value" target="_blank" attrs="{'invisible':[('website', '=', '')]}" class="btn btn-sm btn-secondary float-right o-hidden-ios" role="button">Learn More</a> -->
-                            <!-- <a type="edit" class="btn btn-secondary btn-sm float-right" role="button" attrs="{'invisible': [('website', '&lt;&gt;', '')]}">Module Info</a> -->
-                            <!-- <button type="object" class="btn btn-primary btn-sm" name="button_immediate_install" states="uninstalled" t-if="! record.to_buy.raw_value">Install</button> -->
-                            <!-- <a href="https://odoo.com/pricing?utm_source=db&amp;utm_medium=module#hosting=on_premise" class="btn btn-info btn-sm" states="uninstalled,uninstallable" t-if="record.to_buy.raw_value" role="button">Upgrade</a> -->
-                            <!-- <div t-if="installed" class="text-muted float-left">Installed</div> -->
-                            <!-- <button states="to remove" type="object" class="btn btn-sm btn-primary" name="button_uninstall_cancel">Cancel Uninstall</button> -->
-                            <!-- <button states="to install" type="object" class="btn btn-sm btn-primary" name="button_install_cancel">Cancel Install</button> -->
                           </div>
                         </div>
                       </div>
                     </t>
                   </templates>
+                </kanban>
+            </field>
+        </record> -->
+
+
+        <record model="ir.ui.view" id="custom_addon_view_kanban">
+            <field name="name">Custom Addons Kanban</field>
+            <field name="model">custom.addon</field>
+            <field name="arch" type="xml">
+                <kanban create="false" class="o_modules_kanban">
+                  <field name="icon"/>
+                  <field name="name"/>
+                  <field name="author"/>
+                  <field name="is_many_used"/>
+                  <field name="branch_ids"/>
+                  <field name="tag_ids"/>
+                  <field name="category_id"/>
+                  <field name="summary"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                                <div class="o_kanban_card_content">
+                                    <field name="is_many_used" display="right" widget="boolean"/>
+                                    <field name="name" bold="True" modifiers="{'required': true}"/>
+                                    <field name="author" display="full"/>
+                                    <field name="branch_ids" display="false"/>
+                                    <field name="tag_ids" display="false"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
                 </kanban>
             </field>
         </record>

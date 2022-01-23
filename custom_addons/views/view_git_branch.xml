@@ -58,29 +58,17 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <!-- <button
-                        name="action_sync_branch"
+                    <button
+                        name="action_sync_addons"
                         type="object"
-                        string="Branches Sync."
+                        string="Addons Sync."
                         class="btn btn-default"
                         icon="fa-chevron-right"
                         groups="base.group_erp_manager"
-                    /> -->
+                    />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <!-- <button
-                            type="object"
-                            class="oe_stat_button"
-                            icon="fa-code-fork"
-                            name="action_view_git_branch"
-                            attrs="{'invisible': [('branch_count', '=', False)]}">
-                            <div class="o_stat_info">
-                                <field name="branch_count" class="o_stat_value"/>
-                                <span class="o_stat_text" attrs="{'invisible': [('branch_count', '&lt;', 2)]}"> Branches</span>
-                                <span class="o_stat_text" attrs="{'invisible': [('branch_count', '&gt;', 1)]}"> Branch</span>
-                            </div>
-                        </button>
 
                         <button
                             type="object"
@@ -92,7 +80,7 @@
                                 <field name="custom_addon_count" class="o_stat_value"/>
                                 <span class="o_stat_text"> Addons</span>
                             </div>
-                        </button> -->
+                        </button>
 
                     </div>
                     <field name="active" invisible="1" />
@@ -116,6 +104,13 @@
                             <!-- <field name="service"/> -->
                             <!-- <field name="repository_id"/> -->
                             <field name="url" widget="url"/>
+                                <div>
+                                    <field name="last_commit_short_id"/>
+                                    <field name="last_commit_message"/>
+                                    <field name="last_commit_author"/>
+
+                                    <field name="last_commit_url" widget="url"/>
+                                </div>
                         </group>
                         <group col="2">
                             <!-- <field name="branch_count" invisible="1"/> -->
@@ -124,23 +119,22 @@
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                         </group>
                     </group>
-                    <!-- <notebook>
-                        <page name="repository" string="Repository">
-                            <group>
-                                <group col="2">
-                                    <field name="path"/>
-                                    <field name="repo_id"/>
-                                    <field name="http_git_url" widget="url"/>
-                                    <field name="ssh_git_url" widget="url"/>
-                                </group>
-                                <group col="2">
-                                    <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}'/>
-                                    <field name="repository_create_date" widget="datetime"/>
-                                    <field name="repository_update_date" widget="datetime"/>
-                                </group>
-                            </group>
+                    <notebook>
+                        <page name="addons" string="Addons">
+                            <field name="custom_addon_ids"
+                                    widget="section_and_note_one2many"
+                                    mode="tree">
+                                <tree editable="false">
+                                    <field name="name"/>
+                                    <field name="technical_name"/>
+                                    <field name="category_id"/>
+                                    <field name="is_many_used"/>
+                                </tree>
+
+
+                            </field>
                         </page>
-                    </notebook> -->
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids" widget="mail_followers"/>
