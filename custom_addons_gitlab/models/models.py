@@ -66,7 +66,6 @@ class GitOrganization(models.Model):
             _logger.warning("[{}] {} Repositories found (updated: {}, created: {})".format(record.name, len(projects), len(to_update), len(to_create)))
             record.update({'repository_ids': to_update + to_create})
 
-            # record.repository_ids._action_sync_branches()
 
 
 
@@ -96,11 +95,12 @@ class GitRepository(models.Model):
                 'last_commit_url': branch.commit.get('web_url'),
             })
 
-        _logger.warning(vals)
+        _logger.debug(vals)
         return vals
 
-    def _action_sync_branch_gitlab(self):
-        for record in self:
+    def _action_sync_branch_gitlab(self, ids=None):
+        records = ids if ids else self
+        for record in records:
             branches = record._get_from_gitlab()
 
             branch_ids = {e['name']:e['id'] for e in record.branch_ids.read(['name'])}
@@ -109,7 +109,7 @@ class GitRepository(models.Model):
             to_create = [(0, False, vals) for vals in branches if vals['name'] not in branch_ids]
 
             _logger.warning("[{}] {} Branches found (updated: {}, created: {})".format(record.name, len(branches), len(to_update), len(to_create)))
-            record.update({'branch_ids': to_update + to_create})
+            record.write({'branch_ids': to_update + to_create})
 
 
 class GitBranch(models.Model):

@@ -3,7 +3,10 @@
 from multiprocessing import synchronize
 from odoo import models, fields, api
 
+import logging
 from random import randint
+
+_logger = logging.getLogger(__name__)
 
 class CustomAddonTags(models.Model):
     _name = "custom.addon.tags"
@@ -154,13 +157,31 @@ class GitRepository(models.Model):
             record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
 
     def _action_sync_branch(self):
-        for service in self.mapped('service'):
-            records = self.filtered(lambda x: x.service == service)
+        _logger.warning(len(self))
+
+        for service in list(set(self.mapped('service'))):
             method_name = "_action_sync_branch_{}".format(service)
-            method = getattr(records, method_name) if hasattr(records, method_name) else False
-            if method:
-                method()
-        return True
+            method = getattr(self, method_name) if hasattr(self, method_name) else False
+
+            if not method:
+                _logger.error('Method not found for {}'.format(method_name))
+                continue
+
+            records = self.filtered(lambda x: x.service == service)
+            _logger.warning('Call {} for {}'.format(method_name, len(records)))
+            method(records)
+
+
+
+        # for service in self.mapped('service'):
+        #     _logger.warning(service)
+        #     records = self.filtered(lambda x: x.service == service)
+        #     method_name = "_action_sync_branch_{}".format(service)
+        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
+        #     if method:
+        #         _logger.warning('Call {} for {}'.format(method_name, len(records)))
+        #         # method(records)
+
 
 
     def action_sync_branch(self):
