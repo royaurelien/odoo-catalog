@@ -123,13 +123,15 @@ class GitBranch(models.Model):
 
         requirements = False
         addons = []
+        python_modules = []
 
         items = project.repository_tree(ref=self.name)
         for item in items:
             if item['name'] == 'requirements.txt':
-                # f = project.files.get(file_path=item['path'], ref=self.name)
-                # requirements = f.decode()
+                f = project.files.get(file_path=item['path'], ref=self.name)
+                python_modules = f.decode().splitlines()
                 requirements = True
+                _logger.warning(python_modules)
 
             elif item['type'] == 'tree':
                 for name in ['__manifest__.py', '__openerp__.py']:
@@ -143,7 +145,7 @@ class GitBranch(models.Model):
                         continue
 
         addons = [self._convert_gitlab_to_odoo(addon[0], addon[1]) for addon in addons]
-        return addons, requirements
+        return addons, requirements, python_modules
 
 
 
@@ -169,13 +171,17 @@ class GitBranch(models.Model):
 
             # vals.update({'tag_ids': [(4, category_id[0].id)]})
 
-        _logger.warning(vals)
+        _logger.debug(vals)
         return vals
 
     def _action_sync_addons(self):
         for record in self:
-            (addons, requirements) = record._get_from_gitlab()
-            record.update({'requirements': requirements})
+            (addons, requirements, python_modules) = record._get_from_gitlab()
+            python_modules = ", ".join([e.decode() for e in python_modules]) if python_modules else ""
+            record.update({
+                'requirements': requirements,
+                'python_modules': python_modules,
+            })
 
             addons_by_name = {item['technical_name']:item for item in addons}
             custom_addons = {item['technical_name']:item['id'] for item in self.env['custom.addon'].search([]).read(['technical_name'])}

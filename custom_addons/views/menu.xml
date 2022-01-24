@@ -13,7 +13,7 @@
     <record model="ir.actions.act_window" id="custom_addons.action_view_organization">
       <field name="name">Git Organization</field>
       <field name="res_model">git.organization</field>
-      <field name="view_mode">tree,kanban,form,graph</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
     </record>
 
     <record model="ir.actions.act_window" id="custom_addons.action_view_repository">
@@ -26,6 +26,18 @@
       <field name="name">Git Branch</field>
       <field name="res_model">git.branch</field>
       <field name="view_mode">tree,kanban,form,graph</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="custom_addons.action_view_tags">
+      <field name="name">Git Tags</field>
+      <field name="res_model">custom.addon.tags</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="custom_addons.action_view_rules">
+      <field name="name">Git Rules</field>
+      <field name="res_model">git.rules</field>
+      <field name="view_mode">tree,form</field>
     </record>
 
     <!-- server action to the one above -->
@@ -54,10 +66,14 @@
 
     <menuitem name="Git" id="custom_addons.menu_git"
               parent="custom_addons.menu_root"/>
-    <!-- <menuitem name="Configuration" id="custom_addons.menu_configuration"
-              parent="custom_addons.menu_root"/> -->
+    <menuitem name="Configuration" id="custom_addons.menu_configuration"
+              parent="custom_addons.menu_root"/>
 
     <!-- actions -->
+
+    <menuitem name="Addons" id="custom_addons.menu_addons"
+              parent="custom_addons.menu_root"
+              action="custom_addons.action_view_addons"/>
 
     <menuitem name="Organizations" id="custom_addons.menu_organization"
               parent="custom_addons.menu_git"
@@ -71,10 +87,13 @@
               parent="custom_addons.menu_git"
               action="custom_addons.action_view_branch"/>
 
-    <menuitem name="Addons" id="custom_addons.menu_addons"
-              parent="custom_addons.menu_root"
-              action="custom_addons.action_view_addons"/>
+    <menuitem name="Tags" id="custom_addons.menu_tags"
+              parent="custom_addons.menu_configuration"
+              action="custom_addons.action_view_tags"/>
 
+    <menuitem name="Rules" id="custom_addons.menu_rules"
+              parent="custom_addons.menu_configuration"
+              action="custom_addons.action_view_rules"/>
 
   </data>
 </odoo>

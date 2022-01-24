@@ -7,34 +7,50 @@
             <search>
                 <field
                     name="name"
-                    string="Name"
-                    filter_domain="[('name', 'ilike', self)]"
+                    string="Name or Repository"
+                    filter_domain="['|', ('name', 'ilike', self), ('repository_id', 'ilike', self)]"
                 />
                 <field name="repository_id" />
+                <field name="organization_id" />
 
-                <!-- <group expand="1" string="Group By">
+                <group expand="1" string="Group By">
                     <filter
                         string="Organization"
                         name="organization"
                         context="{'group_by' : 'organization_id'}"
                     />
                     <filter
+                        string="Repository"
+                        name="repository"
+                        context="{'group_by' : 'repository_id'}"
+                    />
+                    <filter
                         string="Partner"
                         name="partner"
                         context="{'group_by' : 'partner_id'}"
                     />
-                    <separator/>
                     <filter
+                        string="User"
+                        name="user"
+                        context="{'group_by' : 'user_id'}"
+                    />
+                    <separator/>
+                    <!-- <filter
                         string="Repository create date"
                         name="repository_create_date"
                         context="{'group_by': 'repository_create_date'}"/>
                     <filter
                         string="Repository last update"
                         name="repository_update_date"
-                        context="{'group_by': 'repository_update_date'}"/>
+                        context="{'group_by': 'repository_update_date'}"/> -->
                 </group>
-                <filter name="branches" string="Branches" domain="[['branch_count','&lt;',1]]"/>
-                <filter name="synchronized" string="Synchronized" domain="[['is_synchronized','=',True]]"/> -->
+                <!-- <filter name="branches" string="Branches" domain="[['branch_count','&lt;',1]]"/> -->
+                <separator/>
+                <filter name="major" string="Major Version" domain="[['major','=',True]]"/>
+                <filter name="requirements" string="Requirements" domain="[['requirements','=',True]]"/>
+                <separator/>
+                <filter name="synchronized" string="Synchronized" domain="[['is_synchronized','=',True]]"/>
+
             </search>
         </field>
     </record>
@@ -96,7 +112,7 @@
                             <field name="name" />
                         </h1>
                         <h3 class="oe_fade">
-                            <field name="repository_id" class="oe_inline" />
+                            Git Id: <field name="repository_id" class="oe_inline" />
                         </h3>
                     </div>
                     <group>
@@ -105,6 +121,8 @@
                             <!-- <field name="repository_id"/> -->
                             <field name="url" widget="url"/>
                                 <div>
+                                    <field name="requirements"/>
+                                    <field name="python_modules"/>
                                     <field name="last_commit_short_id"/>
                                     <field name="last_commit_message"/>
                                     <field name="last_commit_author"/>
@@ -116,6 +134,7 @@
                             <!-- <field name="branch_count" invisible="1"/> -->
                             <field name="custom_addon_count" invisible="1"/>
                             <field name="partner_id"/>
+                            <field name="user_id"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                         </group>
                     </group>

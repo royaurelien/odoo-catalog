@@ -32,6 +32,7 @@
         'views/view_git_repository.xml',
         'views/view_git_branch.xml',
         'views/view_custom_addon.xml',
+        'views/view_custom_addon_tags.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
