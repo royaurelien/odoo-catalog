@@ -14,7 +14,7 @@ class GitBranch(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Git Branch'
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, tracking=True)
     url = fields.Char()
 
     last_commit_message = fields.Char()
@@ -27,10 +27,13 @@ class GitBranch(models.Model):
     requirements = fields.Boolean(default=False)
     python_modules = fields.Char()
     odoo_version = fields.Char()
+    is_synchronized = fields.Boolean(default=False, tracking=True)
 
-    organization_id = fields.Many2one(related='repository_id.organization_id')
+
     repository_id = fields.Many2one(comodel_name='git.repository')
-    partner_id = fields.Many2one(related='repository_id.partner_id')
+    organization_id = fields.Many2one(related='repository_id.organization_id', store=True)
+    service = fields.Selection(related='repository_id.organization_id.service', store=True)
+    partner_id = fields.Many2one(related='repository_id.partner_id', store=True)
     user_id = fields.Many2one(comodel_name='res.users')
     path = fields.Char(related='repository_id.path', store=True)
 
@@ -42,6 +45,7 @@ class GitBranch(models.Model):
         relation="git_branch_custom_addon_rel",
         column1="branch_id",
         column2="custom_addon_id",
+        tracking=True,
     )
 
     # def name_get(self):

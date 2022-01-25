@@ -55,8 +55,8 @@ class GitOrganization(models.Model):
         return vals
 
 
-    def _action_sync_repository(self):
-        for record in self.filtered(lambda x: x.service == 'gitlab'):
+    def _action_sync_repository_gitlab(self):
+        for record in self.filtered(lambda x: x.service == TYPE[0][0]):
             projects = record._get_from_gitlab(all=True, order_by='last_activity_at') # all=True
             repo_ids = {e['repo_id']:e['id'] for e in record.repository_ids.read(['repo_id'])}
 

@@ -36,10 +36,16 @@ class GitOrganization(models.Model):
         for record in self:
             record.repository_count = len(record.repository_ids)
 
-    def _action_sync_repository(self):
-        pass
-
     def action_sync_repository(self):
-        return self._action_sync_repository()
+        return self._action_sync_repository(self.ids)
 
+    @api.model
+    def _action_sync_repository(self, ids, cron=False):
+        organizations = self.browse(ids)
+        for service in organizations.mapped('service'):
+            records = organizations.filtered(lambda x: x.service == service)
+            method_name = "_action_sync_repository_{}".format(service)
+            method = getattr(records, method_name) if hasattr(records, method_name) else False
+            if method:
+                method()
 

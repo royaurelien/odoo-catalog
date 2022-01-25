@@ -41,20 +41,16 @@
     </record>
 
     <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="apik_addons.action_server">
-      <field name="name">apik_addons server</field>
-      <field name="model_id" ref="model_apik_addons_apik_addons"/>
+
+    <record model="ir.actions.server" id="action_server_sync_repository">
+      <field name="name">Repositories Sync.</field>
+      <field name="model_id" ref="model_git_organization"/>
       <field name="state">code</field>
       <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
+        records.action_sync_repository()
       </field>
     </record>
--->
+
 
     <!-- Top menu item -->
 

@@ -23,6 +23,11 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                         context="{'group_by' : 'organization_id'}"
                     />
                     <filter
+                        string="Service"
+                        name="service"
+                        context="{'group_by' : 'service'}"
+                    />
+                    <filter
                         string="Partner"
                         name="partner"
                         context="{'group_by' : 'partner_id'}"

@@ -9,6 +9,7 @@
           <field name="name"/>
           <field name="service"/>
           <field name="auth_method"/>
+          <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
         </tree>
       </field>
     </record>
@@ -66,7 +67,7 @@
                         <field name="auth_method" string="Method" widget="selection_badge"/>
                         <field name="login"
                           attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
-                        <field name="password" password="true"
+                        <field name="password" password="True"
                           attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
                         <field name="token"
                           attrs="{'required': [('auth_method', '=', 'token')], 'invisible': [('auth_method', '!=', 'token')]}"/>

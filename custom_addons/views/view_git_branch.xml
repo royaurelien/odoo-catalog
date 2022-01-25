@@ -25,6 +25,11 @@
                         context="{'group_by' : 'repository_id'}"
                     />
                     <filter
+                        string="Service"
+                        name="service"
+                        context="{'group_by' : 'service'}"
+                    />
+                    <filter
                         string="Partner"
                         name="partner"
                         context="{'group_by' : 'partner_id'}"
@@ -65,6 +70,7 @@
                 <field name="requirements" optional="show"/>
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
                 <field name="custom_addon_count" string="# Addons" sum="Sum of # Addons" optional="show"/>
+                <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
             </tree>
         </field>
     </record>

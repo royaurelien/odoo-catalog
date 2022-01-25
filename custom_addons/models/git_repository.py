@@ -33,7 +33,7 @@ class GitRepository(models.Model):
                                       index=True,
                                       readonly=True,
                                       ondelete="cascade",)
-    service = fields.Selection(related='organization_id.service')
+    service = fields.Selection(related='organization_id.service', store=True)
     branch_ids = fields.One2many(comodel_name='git.branch', inverse_name='repository_id')
 
     branch_count = fields.Integer(compute='_compute_branch', store=True, string="# Branches")
@@ -76,9 +76,18 @@ class GitRepository(models.Model):
         #         # method(records)
 
 
-
     def action_sync_branch(self):
-        return self._action_sync_branch()
+        return self._action_sync_branch(self.ids)
+
+    @api.model
+    def _action_sync_branch(self, ids, cron=False):
+        repositories = self.browse(ids)
+        for service in repositories.mapped('service'):
+            records = repositories.filtered(lambda x: x.service == service)
+            method_name = "_action_sync_branch_{}".format(service)
+            method = getattr(records, method_name) if hasattr(records, method_name) else False
+            if method:
+                method()
 
 
     def action_view_git_branch(self):
