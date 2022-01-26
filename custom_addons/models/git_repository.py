@@ -49,20 +49,20 @@ class GitRepository(models.Model):
             record.branch_major_count = len(record.branch_ids.filtered(lambda x: x.major))
             record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
 
-    def _action_sync_branch(self):
-        _logger.warning(len(self))
+    # def _action_sync_branch(self):
+    #     _logger.warning(len(self))
 
-        for service in list(set(self.mapped('service'))):
-            method_name = "_action_sync_branch_{}".format(service)
-            method = getattr(self, method_name) if hasattr(self, method_name) else False
+    #     for service in list(set(self.mapped('service'))):
+    #         method_name = "_action_sync_branch_{}".format(service)
+    #         method = getattr(self, method_name) if hasattr(self, method_name) else False
 
-            if not method:
-                _logger.error('Method not found for {}'.format(method_name))
-                continue
+    #         if not method:
+    #             _logger.error('Method not found for {}'.format(method_name))
+    #             continue
 
-            records = self.filtered(lambda x: x.service == service)
-            _logger.warning('Call {} for {}'.format(method_name, len(records)))
-            method(records)
+    #         records = self.filtered(lambda x: x.service == service)
+    #         _logger.warning('Call {} for {}'.format(method_name, len(records)))
+    #         method(records)
 
 
 
