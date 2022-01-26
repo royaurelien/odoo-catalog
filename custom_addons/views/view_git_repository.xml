@@ -141,8 +141,8 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                                 <group col="2">
                                     <field name="path"/>
                                     <field name="repo_id"/>
-                                    <field name="http_git_url" widget="url"/>
-                                    <field name="ssh_git_url" widget="url"/>
+                                    <field name="http_git_url" widget="CopyClipboardChar"/>
+                                    <field name="ssh_git_url" widget="CopyClipboardChar"/>
                                 </group>
                                 <group col="2">
                                     <field name="is_synchronized" widget="boolean_toggle" options='{"active": "Synchronized", "inactive": "Not synchronized"}'/>
