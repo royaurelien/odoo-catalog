@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import abstract_git_model
+from . import git_model
 from . import ir_module_category
 from . import custom_addon
 from . import custom_addon_tags

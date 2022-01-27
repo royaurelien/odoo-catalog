@@ -11,8 +11,13 @@ _logger = logging.getLogger(__name__)
 
 class GitOrganization(models.Model):
     _name = 'git.organization'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
     _description = 'Git Organization'
+
+    ### GIT ###
+    _git_service = "service"
+    _git_field_rel = 'repository_ids'
+    _git_field_name = 'repo_id'
 
     name = fields.Char(required=True)
     active = fields.Boolean(default=True)
@@ -41,11 +46,12 @@ class GitOrganization(models.Model):
 
     @api.model
     def _action_sync_repository(self, ids, cron=False):
-        organizations = self.browse(ids)
-        for service in organizations.mapped('service'):
-            records = organizations.filtered(lambda x: x.service == service)
-            method_name = "_action_sync_repository_{}".format(service)
-            method = getattr(records, method_name) if hasattr(records, method_name) else False
-            if method:
-                method()
+        pass
+        # organizations = self.browse(ids)
+        # for service in organizations.mapped('service'):
+        #     records = organizations.filtered(lambda x: x.service == service)
+        #     method_name = "_action_sync_repository_{}".format(service)
+        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
+        #     if method:
+        #         method()
 

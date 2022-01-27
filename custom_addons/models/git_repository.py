@@ -11,8 +11,13 @@ _logger = logging.getLogger(__name__)
 
 class GitRepository(models.Model):
     _name = 'git.repository'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
     _description = 'Git Repository'
+
+    ### GIT ###
+    _git_service = "service"
+    _git_field_rel = 'branch_ids'
+    _git_field_name = 'name'
 
     name = fields.Char(required=True)
     path = fields.Char(required=True)
@@ -81,13 +86,14 @@ class GitRepository(models.Model):
 
     @api.model
     def _action_sync_branch(self, ids, cron=False):
-        repositories = self.browse(ids)
-        for service in repositories.mapped('service'):
-            records = repositories.filtered(lambda x: x.service == service)
-            method_name = "_action_sync_branch_{}".format(service)
-            method = getattr(records, method_name) if hasattr(records, method_name) else False
-            if method:
-                method()
+        pass
+        # repositories = self.browse(ids)
+        # for service in repositories.mapped('service'):
+        #     records = repositories.filtered(lambda x: x.service == service)
+        #     method_name = "_action_sync_branch_{}".format(service)
+        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
+        #     if method:
+        #         method()
 
 
     def action_view_git_branch(self):

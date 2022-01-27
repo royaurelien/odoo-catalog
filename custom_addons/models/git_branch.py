@@ -11,8 +11,13 @@ _logger = logging.getLogger(__name__)
 
 class GitBranch(models.Model):
     _name = 'git.branch'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
     _description = 'Git Branch'
+
+    ### GIT ###
+    _git_service = "service"
+    _git_field_rel = 'repository_ids'
+    _git_field_name = 'repo_id'
 
     name = fields.Char(required=True, tracking=True)
     url = fields.Char()
@@ -69,13 +74,14 @@ class GitBranch(models.Model):
         return action
 
     def _action_sync_addons(self):
-        for service in self.mapped('repository_id.service'):
-            records = self.filtered(lambda x: x.repository_id.service == service)
-            method_name = "_action_sync_addons_{}".format(service)
-            method = getattr(records, method_name) if hasattr(records, method_name) else False
-            if method:
-                method()
-        return True
+        pass
+        # for service in self.mapped('repository_id.service'):
+        #     records = self.filtered(lambda x: x.repository_id.service == service)
+        #     method_name = "_action_sync_addons_{}".format(service)
+        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
+        #     if method:
+        #         method()
+        # return True
 
 
     def action_sync_addons(self):
