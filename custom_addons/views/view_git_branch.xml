@@ -81,7 +81,7 @@
             <form>
                 <header>
                     <button
-                        name="action_sync_addons"
+                        name="action_sync"
                         type="object"
                         string="Addons Sync."
                         class="btn btn-default"
@@ -118,7 +118,7 @@
                             <field name="name" />
                         </h1>
                         <h3 class="oe_fade">
-                            Git Id: <field name="repository_id" class="oe_inline" />
+                            <field name="repository_id" class="oe_inline" />
                         </h3>
                     </div>
                     <group>
@@ -126,15 +126,13 @@
                             <!-- <field name="service"/> -->
                             <!-- <field name="repository_id"/> -->
                             <field name="url" widget="url"/>
-                                <div>
-                                    <field name="requirements"/>
-                                    <field name="python_modules"/>
-                                    <field name="last_commit_short_id"/>
+                            <field name="requirements"/>
+                            <field name="python_modules"/>
+                                    <!-- <field name="last_commit_short_id"/>
                                     <field name="last_commit_message"/>
                                     <field name="last_commit_author"/>
 
-                                    <field name="last_commit_url" widget="url"/>
-                                </div>
+                                    <field name="last_commit_url" widget="url"/> -->
                         </group>
                         <group col="2">
                             <!-- <field name="branch_count" invisible="1"/> -->

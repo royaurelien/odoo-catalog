@@ -21,7 +21,7 @@
             <form>
                 <header>
                     <button
-                        name="action_sync_repository"
+                        name="action_sync"
                         type="object"
                         string="Repositories Sync."
                         class="btn btn-default"
@@ -33,8 +33,8 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button
-                            type="action"
-                            name="custom_addons.action_view_repository"
+                            type="object"
+                            name="action_view_git_repository"
                             class="oe_stat_button"
                             icon="fa-folder-o">
                             <div class="o_stat_info">
@@ -59,7 +59,8 @@
 
                         <field name="url" widget="url"/>
                         <!-- <field name="service"/> -->
-                        <field name="is_synchronized"/>
+                        <field name="is_synchronized" widget="boolean_toggle"/>
+                        <field name="partner_id" help="If defined, partner will be apply on repository."/>
 
 
                       </group>

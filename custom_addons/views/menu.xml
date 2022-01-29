@@ -42,7 +42,7 @@
 
     <!-- server action to the one above -->
 
-    <record model="ir.actions.server" id="action_server_sync_repository">
+    <record model="ir.actions.server" id="action_server_sync_repositories">
       <field name="name">Repositories Sync.</field>
       <field name="model_id" ref="model_git_organization"/>
       <field name="state">code</field>
@@ -60,43 +60,66 @@
       </field>
     </record>
 
+    <record model="ir.actions.server" id="action_server_sync_addons">
+      <field name="name">Addons Sync.</field>
+      <field name="model_id" ref="model_git_branch"/>
+      <field name="state">code</field>
+      <field name="code">
+        records.action_sync()
+      </field>
+    </record>
+
     <!-- Top menu item -->
 
-    <menuitem name="Custom Addons"
-              id="custom_addons.menu_root"
-              parent="base.menu_management"/>
+    <menuitem
+        id="menu_custom_addons_root"
+        name="Custom Addons"
+        groups="base.group_user"
+        web_icon="fa fa-cubes,#FFFFFF,#BC4242"
+        sequence="75"/>
 
     <!-- menu categories -->
 
-    <menuitem name="Git" id="custom_addons.menu_git"
-              parent="custom_addons.menu_root"/>
-    <menuitem name="Configuration" id="custom_addons.menu_configuration"
-              parent="custom_addons.menu_root"/>
+    <menuitem name="Addons" id="menu_custom_addons"
+              parent="menu_custom_addons_root"
+              sequence="10"
+              action="custom_addons.action_view_addons"/>
+
+    <menuitem name="Configuration" id="menu_custom_addons_config"
+              sequence="90"
+              parent="menu_custom_addons_root"/>
+
+    <menuitem name="Data" id="menu_custom_addons_data"
+              sequence="20"
+              parent="menu_custom_addons_root"/>
 
     <!-- actions -->
 
-    <menuitem name="Addons" id="custom_addons.menu_addons"
-              parent="custom_addons.menu_root"
-              action="custom_addons.action_view_addons"/>
 
-    <menuitem name="Organizations" id="custom_addons.menu_organization"
-              parent="custom_addons.menu_git"
+
+    <menuitem name="Organizations" id="menu_organization"
+              parent="menu_custom_addons_data"
+              sequence="10"
               action="custom_addons.action_view_organization"/>
 
     <menuitem name="Repositories" id="custom_addons.menu_repository"
-              parent="custom_addons.menu_git"
+              parent="menu_custom_addons_data"
+              sequence="20"
               action="custom_addons.action_view_repository"/>
 
     <menuitem name="Branches" id="custom_addons.menu_branch"
-              parent="custom_addons.menu_git"
+              parent="menu_custom_addons_data"
+              sequence="30"
               action="custom_addons.action_view_branch"/>
 
     <menuitem name="Tags" id="custom_addons.menu_tags"
-              parent="custom_addons.menu_configuration"
+              parent="menu_custom_addons_config"
+              sequence="10"
               action="custom_addons.action_view_tags"/>
 
     <menuitem name="Rules" id="custom_addons.menu_rules"
-              parent="custom_addons.menu_configuration"
+              parent="menu_custom_addons_config"
+              sequence="20"
               action="custom_addons.action_view_rules"/>
 
   </data>

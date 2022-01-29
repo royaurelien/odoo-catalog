@@ -5,3 +5,5 @@ access_git_repository,custom_addons.git_repository,model_git_repository,base.gro
 access_git_branch,custom_addons.git_branch,model_git_branch,base.group_user,1,1,1,1
 access_git_rules,access_git_rules,model_git_rules,base.group_user,1,0,0,0
 manager_git_rules,manager_git_rules,model_git_rules,base.group_erp_manager,1,1,1,1
+access_custom_addon_tags,access_custom_addon_tags,model_custom_addon_tags,base.group_user,1,1,1,0
+manager_custom_addon_tags,manager_custom_addon_tags,model_custom_addon_tags,base.group_erp_manager,1,1,1,1

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+
+    <record id="view_git_rules_search" model="ir.ui.view">
+        <field name="model">git.rules</field>
+        <field name="arch" type="xml">
+            <search>
+                <field
+                    name="name"
+                    string="Name"
+                    filter_domain="[('name', 'ilike', self)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_git_rules_tree" model="ir.ui.view">
+        <field name="model">git.rules</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model"/>
+                <field name="action"/>
+                <field name="is_global"/>
+                <field name="organization_ids" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_git_rules_form" model="ir.ui.view">
+        <field name="model">git.rules</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                        <h3 class="oe_fade">
+                            <!-- <field name="technical_name" class="oe_inline" /> -->
+                        </h3>
+                    </div>
+                    <field name="is_global" invisible="1"/>
+                    <field name="sequence" invisible="1"/>
+                    <group>
+                        <group col="2">
+                            <field name="action"/>
+                            <field name="trigger"/>
+                            <field name="condition"/>
+
+                        </group>
+                        <group col="2">
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="model"/>
+                            <field name="organization_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="code" string="Code">
+                            <group col="4">
+                                <field name="code" widget="ace" nolabel="1"/>
+                            </group>
+                        </page>
+                        <page name="configuration" string="Configuration">
+                            <group col="4">
+                                <field name="tag_ids" widget="many2many_tags"/>
+                                <field name="partner_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

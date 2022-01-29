@@ -18,21 +18,18 @@ class GitRepository(models.Model):
     _git_service = "service"
     _git_field_rel = 'branch_ids'
     _git_field_name = 'name'
+    _git_type_rel = "o2m"
 
-    name = fields.Char(required=True)
     path = fields.Char(required=True)
     description = fields.Char()
     repo_id = fields.Integer(string="Repository ID")
     url = fields.Char()
     http_git_url = fields.Char(string="HTTP Url")
     ssh_git_url = fields.Char(string="SSH Url")
-    active = fields.Boolean(default=True)
-    is_synchronized = fields.Boolean(default=True, tracking=True)
 
     repository_create_date = fields.Datetime(readonly=True)
     repository_update_date = fields.Datetime(readonly=True, tracking=True)
 
-    partner_id = fields.Many2one(comodel_name='res.partner')
     user_id = fields.Many2one(comodel_name='res.users')
     organization_id = fields.Many2one(comodel_name='git.organization',
                                       index=True,
@@ -53,47 +50,6 @@ class GitRepository(models.Model):
             record.branch_count = len(record.branch_ids)
             record.branch_major_count = len(record.branch_ids.filtered(lambda x: x.major))
             record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
-
-    # def _action_sync_branch(self):
-    #     _logger.warning(len(self))
-
-    #     for service in list(set(self.mapped('service'))):
-    #         method_name = "_action_sync_branch_{}".format(service)
-    #         method = getattr(self, method_name) if hasattr(self, method_name) else False
-
-    #         if not method:
-    #             _logger.error('Method not found for {}'.format(method_name))
-    #             continue
-
-    #         records = self.filtered(lambda x: x.service == service)
-    #         _logger.warning('Call {} for {}'.format(method_name, len(records)))
-    #         method(records)
-
-
-
-        # for service in self.mapped('service'):
-        #     _logger.warning(service)
-        #     records = self.filtered(lambda x: x.service == service)
-        #     method_name = "_action_sync_branch_{}".format(service)
-        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
-        #     if method:
-        #         _logger.warning('Call {} for {}'.format(method_name, len(records)))
-        #         # method(records)
-
-
-    def action_sync_branch(self):
-        return self._action_sync_branch(self.ids)
-
-    @api.model
-    def _action_sync_branch(self, ids, cron=False):
-        pass
-        # repositories = self.browse(ids)
-        # for service in repositories.mapped('service'):
-        #     records = repositories.filtered(lambda x: x.service == service)
-        #     method_name = "_action_sync_branch_{}".format(service)
-        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
-        #     if method:
-        #         method()
 
 
     def action_view_git_branch(self):

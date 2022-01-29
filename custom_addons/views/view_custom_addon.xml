@@ -22,12 +22,21 @@
                         name="category"
                         context="{'group_by' : 'category_id'}"
                     />
-                    <!-- <filter
+                    <filter
                         string="Partner"
                         name="partner"
                         context="{'group_by' : 'partner_id'}"
-                    />                     -->
+                    />
+                    <filter
+                        string="User"
+                        name="user"
+                        context="{'group_by' : 'user_id'}"
+                    />
                 </group>
+                <separator/>
+                <filter name="is_many_used" string="Many Used" domain="[['is_many_used','=',True]]"/>
+                <separator/>
+                <filter string="Archived" domain="[('active', '=', False)]" name="archived"/>
                 <searchpanel>
                     <field name="category_id" string="Categories" enable_counters="1"/>
                 </searchpanel>
@@ -126,133 +135,6 @@
             </form>
         </field>
     </record>
-
-        <!-- <record model="ir.ui.view" id="custom_addon_view_kanban">
-            <field name="name">Custom Addons Kanban</field>
-            <field name="model">custom.addon</field>
-            <field name="arch" type="xml">
-                <kanban create="false" class="o_modules_kanban">
-                  <field name="icon"/>
-                  <field name="name"/>
-                  <field name="category_id"/>
-                  <field name="summary"/>
-                  <templates>
-                    <t t-name="kanban-box">
-                      <div class="oe_module_vignette">
-                        <div class="o_dropdown_kanban dropdown" tabindex="-1">
-                            <a class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" data-display="static" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
-                                <span class="fa fa-ellipsis-v"/>
-                            </a>
-                            <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <a type="edit" class="dropdown-item">Module Info</a>
-
-                            </div>
-                        </div>
-                        <img t-attf-src="#{record.icon.value}" class="oe_module_icon" alt="Icon"/>
-                        <div class="oe_module_desc" t-att-title="record.name.value">
-                          <h4 class="o_kanban_record_title">
-                            <field name="name"/>&amp;nbsp;
-                          </h4>
-                          <p class="oe_module_name">
-                            <field name="branch_ids" widget="many2many_tags"/>
-                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
-                            <field groups="!base.group_no_one" name="summary"/>
-                            <code><field name="technical_name" groups="!base.group_no_one"/></code>
-                          </p>
-                          <div class="oe_module_action">
-                          </div>
-                        </div>
-                      </div>
-                    </t>
-                  </templates>
-                </kanban>
-            </field>
-        </record> -->
-
-
-        <!-- <record model="ir.ui.view" id="custom_addon_view_kanban">
-            <field name="name">Custom Addons Kanban</field>
-            <field name="model">custom.addon</field>
-            <field name="arch" type="xml">
-                <kanban create="false" class="o_modules_kanban">
-                  <field name="icon"/>
-                  <field name="name"/>
-                  <field name="author"/>
-                  <field name="is_many_used"/>
-                  <field name="branch_ids"/>
-                  <field name="tag_ids"/>
-                  <field name="category_id"/>
-                  <field name="summary"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div t-attf-class="oe_kanban_card oe_kanban_global_click">
-                                <div class="o_kanban_card_content">
-                                    <field name="is_many_used" display="right" widget="boolean"/>
-                                    <field name="name" bold="True" modifiers="{'required': true}"/>
-                                    <field name="author" display="full"/>
-                                    <field name="branch_ids" display="false"/>
-                                    <field name="tag_ids" display="false"/>
-                                </div>
-                            </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record> -->
-
-    <!-- <record id="custom_addon_view_kanban" model="ir.ui.view">
-        <field name="model">custom.addon</field>
-        <field name="arch" type="xml">
-            <kanban>
-                <field name="color"/>
-                <field name="repository_count"/>
-                <field name="branch_count"/>
-                <field name="icon"/>
-                <field name="name"/>
-                <field name="author"/>
-                <field name="is_many_used"/>
-                <field name="branch_ids"/>
-                <field name="tag_ids"/>
-                <field name="category_id"/>
-                <field name="summary"/>
-                <templates>
-                    <t t-name="kanban-box">
-                        <div
-                            t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click"
-                        >
-                            <div class="oe_module_desc">
-                                <h3>
-                                    <field name="name" />
-                                </h3>
-                                <t t-if="record.summary.raw_value">
-                                    <p>
-                                        <field name="summary" />
-                                    </p>
-                                </t>
-                                <p class="oe_module_name">
-                                    <field name="author" />
-                                    <br />
-                                    <t t-if="record.partner_id.raw_value">
-                                        <field name="partner_id" />
-                                    </t>
-                                    <br />
-                                </p>
-                                <span class="badge">
-                                    <i class="fa fa-code-fork" />
-                                    <t t-esc="record.branch_count.value" />
-                                </span>
-                                <t t-if="record.is_many_used.raw_value">
-                                    <span class="badge">
-                                        <i class="fa fa-fw fa-copy" />
-                                    </span>
-                                </t>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record> -->
 
     <record id="custom_addon_view_kanban" model="ir.ui.view">
         <field name="name">Custom Addons Kanban</field>
@@ -355,9 +237,17 @@
                         </t>
                     </templates>
                 </kanban>
-
         </field>
     </record>
+
+    <!-- <record id="view_custom_addon_dashboard" model="ir.ui.view">
+        <field name="model">custom.addon</field>
+        <field name="arch" type="xml">
+            <dashboard>
+                <view type="graph" ref="view_custom_addon_tree"/>
+            </dashboard>
+        </field>
+    </record> -->
 
 
 </odoo>

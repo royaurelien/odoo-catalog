@@ -16,10 +16,10 @@ class GitBranch(models.Model):
 
     ### GIT ###
     _git_service = "service"
-    _git_field_rel = 'repository_ids'
-    _git_field_name = 'repo_id'
+    _git_field_rel = 'custom_addon_ids'
+    _git_field_name = 'technical_name'
+    _git_type_rel = "m2m"
 
-    name = fields.Char(required=True, tracking=True)
     url = fields.Char()
 
     last_commit_message = fields.Char()
@@ -27,18 +27,14 @@ class GitBranch(models.Model):
     last_commit_short_id = fields.Char()
     last_commit_url = fields.Char()
 
-    active = fields.Boolean(default=True)
     major = fields.Boolean(default=False)
     requirements = fields.Boolean(default=False)
     python_modules = fields.Char()
     odoo_version = fields.Char()
-    is_synchronized = fields.Boolean(default=False, tracking=True)
-
 
     repository_id = fields.Many2one(comodel_name='git.repository')
     organization_id = fields.Many2one(related='repository_id.organization_id', store=True)
     service = fields.Selection(related='repository_id.organization_id.service', store=True)
-    partner_id = fields.Many2one(related='repository_id.partner_id', store=True)
     user_id = fields.Many2one(comodel_name='res.users')
     path = fields.Char(related='repository_id.path', store=True)
 
@@ -73,19 +69,12 @@ class GitBranch(models.Model):
 
         return action
 
-    def _action_sync_addons(self):
-        pass
-        # for service in self.mapped('repository_id.service'):
-        #     records = self.filtered(lambda x: x.repository_id.service == service)
-        #     method_name = "_action_sync_addons_{}".format(service)
-        #     method = getattr(records, method_name) if hasattr(records, method_name) else False
-        #     if method:
-        #         method()
-        # return True
 
+    @api.model
+    def _action_sync(self, ids):
+        # super(GitBranch, self)._action_sync(ids, force_update=True)
+        super(GitBranch, self)._action_sync(ids)
 
-    def action_sync_addons(self):
-        return self._action_sync_addons()
 
     # def _track_subtype(self, init_values):
     # # init_values contains the modified fields' values before the changes

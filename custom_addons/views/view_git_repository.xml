@@ -70,7 +70,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
             <form>
                 <header>
                     <button
-                        name="action_sync_branch"
+                        name="action_sync"
                         type="object"
                         string="Branches Sync."
                         class="btn btn-default"

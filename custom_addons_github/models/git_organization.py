@@ -28,7 +28,10 @@ class GitOrganization(models.Model):
         self.ensure_one()
         g = self._get_github()
         org = g.get_organization(self.name)
-        return org.get_repos()
+        repos = org.get_repos()
+        # excludes = self.exclude_names.strip().split(",")
+        return [repo for repo in repos]
+        # return [repo for repo in repos if repo.name not in excludes]
 
     def _convert_github_to_odoo(self, item):
         vals = {
