@@ -19,14 +19,14 @@ class GitRepository(models.Model):
     _inherit = 'git.repository'
 
 
-    def _get_github(self):
-        self.ensure_one()
-        return Github(self.organization_id.token)
+    # def _get_github(self):
+    #     self.ensure_one()
+    #     return Github(self.organization_id.token)
 
     def _get_items_from_github(self):
         self.ensure_one()
-        g = self._get_github()
-        org = g.get_organization(self.organization_id.name)
+        org = self.organization_id._get_github()
+        # org = g.get_organization(self.organization_id.name)
         repo = org.get_repo(self.path)
         branches = repo.get_branches()
 

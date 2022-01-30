@@ -5,7 +5,7 @@ from odoo import models, fields, api
 from odoo.tools import datetime
 
 from datetime import datetime
-from github import Github
+from github import Github, GithubException
 import logging
 import re
 import os
@@ -22,12 +22,17 @@ class GitOrganization(models.Model):
 
     def _get_github(self):
         self.ensure_one()
-        return Github(self.token)
+        g = Github(self.token)
+        try:
+            org = g.get_organization(self.name)
+        except GithubException:
+            org = g.get_user(self.name)
+        finally:
+            return org
 
     def _get_items_from_github(self):
         self.ensure_one()
-        g = self._get_github()
-        org = g.get_organization(self.name)
+        org = self._get_github()
         repos = org.get_repos()
         # excludes = self.exclude_names.strip().split(",")
         return [repo for repo in repos]
