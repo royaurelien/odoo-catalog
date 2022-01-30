@@ -39,12 +39,13 @@ class GitRepository(models.Model):
         }
 
         if item.commit:
+            commit = item.commit.commit
             vals.update({
-                'last_commit_date': item.commit.commit.author.date,
-                'last_commit_message': item.commit.commit.message,
-                'last_commit_author': item.commit.author.email,
-                'last_commit_short_id': item.commit.commit.sha,
-                'last_commit_url': item.commit.html_url,
+                'last_commit_date': commit.author.date,
+                'last_commit_message': commit.message,
+                'last_commit_author': commit.author.email,
+                'last_commit_short_id': commit.sha,
+                'last_commit_url': commit.html_url,
             })
 
         if self.url:

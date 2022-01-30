@@ -52,10 +52,11 @@
                 <!-- <filter name="branches" string="Branches" domain="[['branch_count','&lt;',1]]"/> -->
                 <separator/>
                 <filter name="major" string="Major Version" domain="[['major','=',True]]"/>
+                <filter name="recent_activity" string="Recent Activity" domain="[['is_recent_activity','=',True]]"/>
                 <filter name="requirements" string="Requirements" domain="[['requirements','=',True]]"/>
-                <separator/>
                 <filter name="synchronized" string="Synchronized" domain="[['is_synchronized','=',True]]"/>
-
+                <separator/>
+                <filter name="active" string="Archived" domain="[['active','=',False]]"/>
             </search>
         </field>
     </record>
@@ -70,6 +71,10 @@
                 <field name="requirements" optional="show"/>
                 <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
                 <field name="custom_addon_count" string="# Addons" sum="Sum of # Addons" optional="show"/>
+                <field name="is_recent_activity" optional="hide"/>
+                <field name="last_commit" optional="hide"/>
+                <field name="last_commit_date" widget="datetime" optional="hide"/>
+                <field name="last_sync_date" widget="datetime" optional="hide"/>
                 <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
             </tree>
         </field>
@@ -115,9 +120,6 @@
                     </div>
                     <field name="active" invisible="1" />
                     <field name="custom_addon_count" invisible="1"/>
-                    <field name="last_commit_message" invisible="1"/>
-                    <field name="last_commit_author" invisible="1"/>
-                    <field name="last_commit_url" widget="url" invisible="1"/>
                     <widget
                         name="web_ribbon"
                         title="Archived"
@@ -139,6 +141,10 @@
                             <field name="requirements"/>
                             <field name="python_modules"/>
                             <field name="last_commit"/>
+                            <field name="last_commit_date" widget="datetime" groups="base.group_no_one"/>
+                            <field name="last_commit_message" groups="base.group_no_one"/>
+                            <field name="last_commit_author" groups="base.group_no_one"/>
+                            <field name="last_commit_url" widget="url" groups="base.group_no_one"/>
                         </group>
                         <group col="2">
                             <field name="last_sync_date" widget="datetime"/>

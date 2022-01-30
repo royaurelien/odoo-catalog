@@ -58,6 +58,7 @@
                 <field name="branch_count" string="# Branches" optional="show"/>
                 <field name="repository_count" string="# Repository" optional="show"/>
                 <field name="is_many_used" string="Many used" optional="show"/>
+                <field name="last_sync_date" widget="datetime" optional="hide"/>
 
                 <!-- <field name="branch_major_count" string="# Major Branches" /> -->
             </tree>
