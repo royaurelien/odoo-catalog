@@ -62,7 +62,8 @@ class CustomAddon(models.Model):
         favorite_addons.write({'favorite_user_ids': [(3, self.env.uid)]})
 
     def _get_default_favorite_user_ids(self):
-        return [(6, 0, [self.env.uid])]
+        # return [(6, 0, [self.env.uid])]
+        return []
 
     favorite_user_ids = fields.Many2many(
         'res.users', 'custom_addons_favorite_user_rel',

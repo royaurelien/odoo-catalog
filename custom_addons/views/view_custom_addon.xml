@@ -49,6 +49,7 @@
         <field name="model">custom.addon</field>
         <field name="arch" type="xml">
             <tree decoration-muted="branch_count == 0">
+                <field name="is_favorite" widget="boolean_favorite" nolabel="1" />
                 <field name="name" />
                 <field name="technical_name" />
                 <field name="category_id" optional="false"/>
@@ -104,6 +105,7 @@
                             <field name="name" />
                         </h1>
                         <h3 class="oe_fade">
+                            <span><field name="is_favorite" widget="boolean_favorite" nolabel="1" /> - </span>
                             <field name="technical_name" class="oe_inline" />
                         </h3>
                     </div>
