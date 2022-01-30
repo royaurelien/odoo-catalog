@@ -42,7 +42,31 @@
                                 <span> Repositories</span>
                             </div>
                         </button>
+                        <button
+                            type="object"
+                            name="action_view_git_branch"
+                            class="oe_stat_button"
+                            icon="fa-code-fork">
+                            <div class="o_stat_info">
+                                <field name="branch_count" class="o_stat_value" />
+                                <span> Branches</span>
+                            </div>
+                        </button>
+                        <button
+                            type="object"
+                            name="action_view_custom_addons"
+                            class="oe_stat_button"
+                            icon="fa-cube">
+                            <div class="o_stat_info">
+                                <field name="custom_addons_count" class="o_stat_value" />
+                                <span> Addons</span>
+                            </div>
+                        </button>
                     </div>
+
+                    <field name="repository_count" invisible="1"/>
+                    <field name="custom_addons_count" invisible="1"/>
+                    <field name="branch_count" invisible="1"/>
 
                     <div class="oe_title">
                         <h1>
@@ -55,27 +79,23 @@
                     <div class="oe_clear" />
                     <group>
                       <group col="2">
-                        <field name="repository_count" invisible="1"/>
-
                         <field name="url" widget="url"/>
-                        <!-- <field name="service"/> -->
                         <field name="is_synchronized" widget="boolean_toggle"/>
-                        <field name="partner_id" help="If defined, partner will be apply on repository."/>
-
-
                       </group>
-                      <group string="Authentication" col="2">
-                        <field name="auth_method" string="Method" widget="selection_badge"/>
-                        <field name="login"
-                          attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
-                        <field name="password" password="True"
-                          attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
-                        <field name="token"
-                          attrs="{'required': [('auth_method', '=', 'token')], 'invisible': [('auth_method', '!=', 'token')]}"/>
-
+                      <group col="2">
+                        <field name="last_sync_date" widget="datetime"/>
+                        <field name="partner_id" help="If defined, partner will be apply on repository."/>
                       </group>
                     </group>
                     <notebook>
+                        <page name="authentication" string="Authentication" groups="base.group_erp_manager">
+                            <group cols="4">
+                                <field name="auth_method" string="Method" widget="selection_badge"/>
+                                <field name="login" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
+                                <field name="password" password="True" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
+                                <field name="token" attrs="{'required': [('auth_method', '=', 'token')], 'invisible': [('auth_method', '!=', 'token')]}"/>
+                            </group>
+                        </page>
                         <page name="extra_setting" string="Settings">
                             <group cols="4" string="Ignored Repositories">
                                 <field

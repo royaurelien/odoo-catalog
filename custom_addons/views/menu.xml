@@ -13,7 +13,7 @@
     <record model="ir.actions.act_window" id="custom_addons.action_view_organization">
       <field name="name">Git Organization</field>
       <field name="res_model">git.organization</field>
-      <field name="view_mode">kanban,tree,form,graph</field>
+      <field name="view_mode">tree,form,graph</field>
     </record>
 
     <record model="ir.actions.act_window" id="custom_addons.action_view_repository">
@@ -66,6 +66,15 @@
       <field name="state">code</field>
       <field name="code">
         records.action_sync()
+      </field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_ignore_repositories">
+      <field name="name">Ignore Repositories</field>
+      <field name="model_id" ref="model_git_repository"/>
+      <field name="state">code</field>
+      <field name="code">
+        records.action_ignore()
       </field>
     </record>
 

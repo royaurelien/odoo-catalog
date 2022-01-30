@@ -40,7 +40,7 @@ class GitOrganization(models.Model):
             'name': item.full_name,
             'path': item.name,
             'description': item.description,
-            'url': item.url,
+            'url': item._html_url.value,
             'http_git_url' : item.clone_url,
             'ssh_git_url' : item.git_url,
             # 'repository_create_date': self._gitlab_date_to_datetime(project.created_at),

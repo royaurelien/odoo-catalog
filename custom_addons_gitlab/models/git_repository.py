@@ -36,7 +36,10 @@ class GitRepository(models.Model):
             commit = "{o[title]} - {o[author_email]} ({o[short_id]})".format(o=item.commit)
             _logger.warning(commit)
 
+            _gitlab_date_to_datetime = self.organization_id._gitlab_date_to_datetime
+
             vals.update({
+                'last_commit_date': _gitlab_date_to_datetime(item.commit.get('committed_date')),
                 'last_commit_message': item.commit.get('title'),
                 'last_commit_author': item.commit.get('author_email'),
                 'last_commit_short_id': item.commit.get('short_id'),

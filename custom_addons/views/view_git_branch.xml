@@ -88,6 +88,14 @@
                         icon="fa-chevron-right"
                         groups="base.group_erp_manager"
                     />
+                    <button
+                        name="action_open_url"
+                        type="object"
+                        string="Open"
+                        class="btn btn-default"
+                        icon="fa-github"
+                        attrs="{'invisible': [('url', '=', False)]}"
+                    />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -106,7 +114,10 @@
 
                     </div>
                     <field name="active" invisible="1" />
-
+                    <field name="custom_addon_count" invisible="1"/>
+                    <field name="last_commit_message" invisible="1"/>
+                    <field name="last_commit_author" invisible="1"/>
+                    <field name="last_commit_url" widget="url" invisible="1"/>
                     <widget
                         name="web_ribbon"
                         title="Archived"
@@ -118,25 +129,19 @@
                             <field name="name" />
                         </h1>
                         <h3 class="oe_fade">
-                            <field name="repository_id" class="oe_inline" />
+                            <field name="repository_id" class="oe_inline" /> from <field name="organization_id" class="oe_inline"/>
                         </h3>
                     </div>
                     <group>
                         <group col="2">
-                            <!-- <field name="service"/> -->
-                            <!-- <field name="repository_id"/> -->
-                            <field name="url" widget="url"/>
+                            <field name="service" groups="base.group_no_one"/>
+                            <field name="url" widget="url" groups="base.group_no_one"/>
                             <field name="requirements"/>
                             <field name="python_modules"/>
-                                    <!-- <field name="last_commit_short_id"/>
-                                    <field name="last_commit_message"/>
-                                    <field name="last_commit_author"/>
-
-                                    <field name="last_commit_url" widget="url"/> -->
+                            <field name="last_commit"/>
                         </group>
                         <group col="2">
-                            <!-- <field name="branch_count" invisible="1"/> -->
-                            <field name="custom_addon_count" invisible="1"/>
+                            <field name="last_sync_date" widget="datetime"/>
                             <field name="partner_id"/>
                             <field name="user_id"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
@@ -146,12 +151,16 @@
                         <page name="addons" string="Addons">
                             <field name="custom_addon_ids"
                                     widget="section_and_note_one2many"
-                                    mode="tree">
+                                    mode="tree"
+                                    context="{'branch_id': active_id}">
                                 <tree editable="false">
-                                    <field name="name"/>
+                                    <field name="name" class="oe_highlight"/>
                                     <field name="technical_name"/>
                                     <field name="category_id"/>
                                     <field name="is_many_used"/>
+                                    <field name="url" widget="url"/>
+                                    <button name="action_open_url" type="object" icon="fa-external-link"/>
+
                                 </tree>
 
 

@@ -23,7 +23,6 @@ class GitRepository(models.Model):
     path = fields.Char(required=True)
     description = fields.Char()
     repo_id = fields.Integer(string="Repository ID")
-    url = fields.Char()
     http_git_url = fields.Char(string="HTTP Url")
     ssh_git_url = fields.Char(string="SSH Url")
 
@@ -52,6 +51,10 @@ class GitRepository(models.Model):
             record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
 
 
+    @api.model
+    def _action_sync(self, ids):
+        super(GitRepository, self)._action_sync(ids, force_update=True)
+
     def action_view_git_branch(self):
         self.ensure_one()
         action = self.env.ref("custom_addons.action_view_branch").read()[0]
@@ -70,4 +73,17 @@ class GitRepository(models.Model):
         action["domain"] = [('id', 'in', self.branch_ids.mapped('custom_addon_ids').ids)]
 
         return action
+
+
+    def action_ignore(self):
+        for organization_id in self.mapped('organization_id'):
+
+            records = self.filtered(lambda rec: rec.organization_id == organization_id)
+            excludes = list(set(organization_id._get_excludes() + records.mapped('path')))
+
+            organization_id.update({'exclude_names': ", ".join(excludes)})
+            records.update({'is_synchronized': False})
+
+        return True
+
 

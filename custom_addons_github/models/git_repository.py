@@ -37,6 +37,11 @@ class GitRepository(models.Model):
             'repository_id': self.id,
             'name': item.name,
         }
+
+        if self.url:
+           url = os.path.join(self.url, 'tree', item.name)
+           vals['url'] = url
+
         return vals
 
 

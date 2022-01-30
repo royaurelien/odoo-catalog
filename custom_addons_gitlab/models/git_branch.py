@@ -43,6 +43,16 @@ class GitBranch(models.Model):
                         f = project.files.get(file_path=os.path.join(item['path'], filename), ref=self.name)
                         manifest = eval(f.decode())
                         manifest['technical_name'] = item['path']
+
+                        try:
+                            index_html = 'static/description/index.html'
+                            f = project.files.get(file_path=os.path.join(item['path'], index_html), ref=self.name)
+                            web_description = f.decode()
+                            manifest['web_description'] = web_description
+
+                        except gitlab.GitlabGetError:
+                            pass
+
                         addons.append(manifest)
                         break
                     except gitlab.GitlabGetError:
@@ -65,6 +75,7 @@ class GitBranch(models.Model):
             'version': item.get('version'),
             'author': item.get('author'),
             'description': item.get('description'),
+            'web_description': item.get('web_description'),
             'summary': item.get('summary'),
         }
 

@@ -8,7 +8,8 @@ from random import randint
 
 _logger = logging.getLogger(__name__)
 
-
+COMMIT_MESSAGE = "{o[last_commit_message]}, {o[last_commit_author]} ({o[last_commit_short_id]})"
+COMMIT_VARS = ['last_commit_message', 'last_commit_author', 'last_commit_short_id', 'last_commit_url', 'last_commit_date']
 class GitBranch(models.Model):
     _name = 'git.branch'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
@@ -20,12 +21,18 @@ class GitBranch(models.Model):
     _git_field_name = 'technical_name'
     _git_type_rel = "m2m"
 
-    url = fields.Char()
-
     last_commit_message = fields.Char()
     last_commit_author = fields.Char()
     last_commit_short_id = fields.Char()
     last_commit_url = fields.Char()
+    last_commit_date = fields.Datetime()
+    last_commit = fields.Char(compute='_compute_commit')
+
+    @api.depends('last_commit_message', 'last_commit_author', 'last_commit_date')
+    def _compute_commit(self):
+        for record in self:
+            vals = record.read(COMMIT_VARS)[0]
+            record.last_commit = COMMIT_MESSAGE.format(o=vals)
 
     major = fields.Boolean(default=False)
     requirements = fields.Boolean(default=False)
@@ -55,7 +62,8 @@ class GitBranch(models.Model):
     custom_addon_count = fields.Integer(compute='_compute_custom_addon', store=True)
 
     @api.depends('custom_addon_ids')
-    def _compute_custom_addon(self):
+    def _compute_custom_addon(self, context=None):
+        _logger.error(context)
         for record in self:
             record.custom_addon_count = len(record.custom_addon_ids)
 
@@ -72,8 +80,8 @@ class GitBranch(models.Model):
 
     @api.model
     def _action_sync(self, ids):
-        # super(GitBranch, self)._action_sync(ids, force_update=True)
-        super(GitBranch, self)._action_sync(ids)
+        super(GitBranch, self)._action_sync(ids, force_update=True)
+        # super(GitBranch, self)._action_sync(ids)
 
 
     # def _track_subtype(self, init_values):

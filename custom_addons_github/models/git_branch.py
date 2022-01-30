@@ -50,10 +50,18 @@ class GitBranch(models.Model):
             if file_content.type == "dir":
                 for filename in MANIFEST_NAMES:
                     try:
-                        manifest = repo.get_contents(os.path.join(file_content.path, filename))
+                        manifest = repo.get_contents(os.path.join(file_content.path, filename), ref=ref)
                         manifest = eval(manifest.decoded_content)
                         manifest['technical_name'] = file_content.path
+
+                        try:
+                            web_description = repo.get_contents(os.path.join(file_content.path, 'static/description/index.html'), ref=ref)
+                            manifest['web_description'] = web_description.decoded_content if web_description else False
+                        except:
+                            pass
+
                         addons.append(manifest)
+
                         break
                     except:
                         continue
@@ -89,6 +97,7 @@ class GitBranch(models.Model):
             'version': item.get('version'),
             'author': item.get('author'),
             'description': item.get('description'),
+            'web_description': item.get('web_description'),
             'summary': item.get('summary'),
         }
 

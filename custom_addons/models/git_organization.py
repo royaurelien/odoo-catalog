@@ -20,7 +20,6 @@ class GitOrganization(models.Model):
     _git_field_name = 'repo_id'
     _git_type_rel = "o2m"
 
-    url = fields.Char()
     login = fields.Char()
     password = fields.Char()
     token = fields.Char()
@@ -33,13 +32,25 @@ class GitOrganization(models.Model):
 
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')
     repository_count = fields.Integer(compute='_compute_repository', store=False)
+    branch_count = fields.Integer(compute='_compute_repository', store=False)
+    custom_addons_count = fields.Integer(compute='_compute_repository', store=False)
     force_update = fields.Boolean(default=False)
 
     @api.depends('repository_ids')
     def _compute_repository(self):
         for record in self:
             record.repository_count = len(record.repository_ids)
+            record.branch_count = len(record.repository_ids.branch_ids)
 
+            addons = len(record.repository_ids.mapped('branch_ids.custom_addon_ids'))
+
+            # repository_ids = self.env['custom.addon'].search([]).mapped('branch_ids.repository_id')
+            # addons = len(repository_ids.filtered(lambda rec: rec.id in record.repository_ids.ids))
+            record.custom_addons_count = addons
+
+    @api.model
+    def _action_sync(self, ids):
+        super(GitOrganization, self)._action_sync(ids, force_update=True)
 
     def action_view_git_repository(self):
         self.ensure_one()
@@ -48,5 +59,25 @@ class GitOrganization(models.Model):
         action["context"].pop("group_by", None)
         # action["context"]["search_default_repository_id"] = self.id
         action["domain"] = [('organization_id', '=', self.id)]
+
+        return action
+
+    def action_view_git_branch(self):
+        self.ensure_one()
+        action = self.env.ref("custom_addons.action_view_branch").read()[0]
+        action["context"] = dict(self.env.context)
+        # action["context"].pop("group_by", None)
+        action["domain"] = [('organization_id', '=', self.id)]
+
+        return action
+
+    def action_view_custom_addons(self):
+        self.ensure_one()
+        action = self.env.ref("custom_addons.action_view_addons").read()[0]
+        action["context"] = dict(self.env.context)
+        # action["context"].pop("group_by", None)
+
+        addons = self.repository_ids.mapped('branch_ids.custom_addon_ids')
+        action["domain"] = [('id', 'in', addons.ids)]
 
         return action

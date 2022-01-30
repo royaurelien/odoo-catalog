@@ -3,6 +3,7 @@
 from multiprocessing import synchronize
 from odoo import models, fields, api
 
+from datetime import datetime
 import logging
 from random import randint
 import re
@@ -24,6 +25,7 @@ class AbstractGitModel(models.AbstractModel):
     last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
     service = fields.Selection([])
     name = fields.Char(required=True)
+    url = fields.Char()
     active = fields.Boolean(default=True)
     is_synchronized = fields.Boolean(default=False)
     partner_id = fields.Many2one(comodel_name='res.partner')
@@ -100,6 +102,7 @@ class AbstractGitModel(models.AbstractModel):
         records = self.browse(ids)
         force_update = kwargs.get('force_update', False)
 
+
         for service_name in list(set(records.mapped(self._git_service))):
 
             records_by_service = records.filtered(lambda rec: rec.service == service_name)
@@ -154,7 +157,11 @@ class AbstractGitModel(models.AbstractModel):
                     for rec in record_ids:
                         _logger.warning("Update forced on {} {}".format(model_name, rec.id))
                         vals = to_update.get(rec.id)
+                        vals['last_sync_date'] = datetime.now()
                         rec.update(vals)
+
+
+            records_by_service.write({'last_sync_date': datetime.now()})
 
 
 
@@ -162,3 +169,14 @@ class AbstractGitModel(models.AbstractModel):
 
     def action_sync(self):
         self._action_sync(self.ids)
+
+    def action_open_url(self):
+        _logger.warning(dict(self.env.context))
+        self.ensure_one()
+        action = {
+            "type": "ir.actions.act_url",
+            "url": self.url,
+            "target": "new",
+        }
+
+        return action
