@@ -43,8 +43,9 @@ class GitOrganization(models.Model):
             'url': item._html_url.value,
             'http_git_url' : item.clone_url,
             'ssh_git_url' : item.git_url,
-            # 'repository_create_date': self._gitlab_date_to_datetime(project.created_at),
-            # 'repository_update_date': self._gitlab_date_to_datetime(project.last_activity_at),
+            'default_branch': item.default_branch,
+            'repository_create_date': item.created_at,
+            'repository_update_date': item.updated_at,
         }
         # _logger.warning(vals)
         return vals

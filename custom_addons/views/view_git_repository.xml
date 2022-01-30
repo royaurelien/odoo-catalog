@@ -11,8 +11,8 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
             <search>
                 <field
                     name="name"
-                    string="Name or Description"
-                    filter_domain="['|', ('name', 'ilike', self), ('description', 'ilike', self)]"
+                    string="Name or Path"
+                    filter_domain="['|', ('name', 'ilike', self), ('path', 'ilike', self)]"
                 />
                 <field name="organization_id" />
 
@@ -60,6 +60,8 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                 <field name="branch_count" string="# Branches" sum="Sum of # Branches" optional="show"/>
                 <field name="branch_major_count" string="# Major Branches" sum="Sum of # Major Branches" optional="show"/>
                 <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
+                <field name="repository_create_date" widget="datetime" optional="hide"/>
+                <field name="repository_update_date" widget="datetime" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -143,6 +145,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                             <field name="service"/>
                             <field name="organization_id"/>
                             <field name="url" widget="url" groups="base.group_no_one"/>
+                            <field name="default_branch"/>
                         </group>
                         <group col="2">
                             <field name="last_sync_date" widget="datetime"/>

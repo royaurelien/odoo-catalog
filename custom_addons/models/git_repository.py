@@ -29,6 +29,8 @@ class GitRepository(models.Model):
     repository_create_date = fields.Datetime(readonly=True)
     repository_update_date = fields.Datetime(readonly=True, tracking=True)
 
+    default_branch = fields.Char()
+
     user_id = fields.Many2one(comodel_name='res.users')
     organization_id = fields.Many2one(comodel_name='git.organization',
                                       index=True,

@@ -33,9 +33,6 @@ class GitRepository(models.Model):
         }
 
         if item.commit:
-            commit = "{o[title]} - {o[author_email]} ({o[short_id]})".format(o=item.commit)
-            _logger.warning(commit)
-
             _gitlab_date_to_datetime = self.organization_id._gitlab_date_to_datetime
 
             vals.update({

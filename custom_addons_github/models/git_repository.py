@@ -38,6 +38,15 @@ class GitRepository(models.Model):
             'name': item.name,
         }
 
+        if item.commit:
+            vals.update({
+                'last_commit_date': item.commit.commit.author.date,
+                'last_commit_message': item.commit.commit.message,
+                'last_commit_author': item.commit.author.email,
+                'last_commit_short_id': item.commit.commit.sha,
+                'last_commit_url': item.commit.html_url,
+            })
+
         if self.url:
            url = os.path.join(self.url, 'tree', item.name)
            vals['url'] = url
