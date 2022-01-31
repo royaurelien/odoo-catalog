@@ -48,8 +48,6 @@ class GitOrganization(models.Model):
             # addons = len(repository_ids.filtered(lambda rec: rec.id in record.repository_ids.ids))
             record.custom_addons_count = addons
 
-    def action_sync(self):
-        super(GitOrganization, self).action_sync(force_update=True)
 
     def action_view_git_repository(self):
         self.ensure_one()

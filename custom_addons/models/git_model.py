@@ -163,12 +163,8 @@ class AbstractGitModel(models.AbstractModel):
 
             records_by_service.write({'last_sync_date': datetime.now()})
 
-
-
-
-
     def action_sync(self):
-        self._action_sync(self.ids)
+        self._action_sync(self.ids, force_update=False)
 
     def action_open_url(self):
         _logger.warning(dict(self.env.context))

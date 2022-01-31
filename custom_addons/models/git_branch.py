@@ -93,10 +93,6 @@ class GitBranch(models.Model):
         return action
 
 
-    def action_sync(self):
-        super(GitBranch, self).action_sync(force_update=True)
-        # super(GitBranch, self)._action_sync(ids)
-
     # @api.model
     # def create(self, vals):
     #     res = super(GitBranch, self).create(vals)

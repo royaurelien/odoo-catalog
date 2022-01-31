@@ -53,9 +53,6 @@ class GitRepository(models.Model):
             record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
 
 
-    def action_sync(self):
-        super(GitRepository, self).action_sync(force_update=True)
-
     def action_view_git_branch(self):
         self.ensure_one()
         action = self.env.ref("custom_addons.action_view_branch").read()[0]
