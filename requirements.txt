@@ -1,4 +1,2 @@
-GitPython
-pygount
-pathspec
 python-gitlab>=3.0
+PyGithub
