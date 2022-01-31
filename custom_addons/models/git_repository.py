@@ -53,9 +53,8 @@ class GitRepository(models.Model):
             record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
 
 
-    @api.model
-    def _action_sync(self, ids):
-        super(GitRepository, self)._action_sync(ids, force_update=True)
+    def action_sync(self):
+        super(GitRepository, self).action_sync(force_update=True)
 
     def action_view_git_branch(self):
         self.ensure_one()

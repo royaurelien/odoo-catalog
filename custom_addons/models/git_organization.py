@@ -28,7 +28,7 @@ class GitOrganization(models.Model):
                              ('basic', 'Basic'),
                              ('token', 'Token')],
                             default='public', required=True)
-    exclude_names = fields.Char()
+    exclude_names = fields.Char(copy=False)
 
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')
     repository_count = fields.Integer(compute='_compute_repository', store=False)
@@ -48,9 +48,8 @@ class GitOrganization(models.Model):
             # addons = len(repository_ids.filtered(lambda rec: rec.id in record.repository_ids.ids))
             record.custom_addons_count = addons
 
-    @api.model
-    def _action_sync(self, ids):
-        super(GitOrganization, self)._action_sync(ids, force_update=True)
+    def action_sync(self):
+        super(GitOrganization, self).action_sync(force_update=True)
 
     def action_view_git_repository(self):
         self.ensure_one()
