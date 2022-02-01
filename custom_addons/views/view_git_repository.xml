@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--
-Copyright (C) 2016-Today: Odoo Community Association (OCA)
-@author: Sylvain LE GAL (https://twitter.com/legalsylvain)
-License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
--->
+
 <odoo>
     <record id="view_git_repository_search" model="ir.ui.view">
         <field name="model">git.repository</field>
@@ -42,7 +38,9 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                         name="repository_update_date"
                         context="{'group_by': 'repository_update_date'}"/>
                 </group>
-                <filter name="branches" string="Branches" domain="[['branch_count','&lt;',1]]"/>
+                <filter string="My Favorites" name="my_favorites" domain="[('favorite_user_ids', 'in', uid)]"/>
+                <separator/>
+                <filter name="branches" string="No Branch" domain="[['branch_count','=',0]]"/>
                 <filter name="synchronized" string="Synchronized" domain="[['is_synchronized','=',True]]"/>
             </search>
         </field>
@@ -55,13 +53,14 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
                 <field name="name"/>
                 <field name="description"/>
                 <field name="partner_id" optional="false"/>
-                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
-                <field name="branch_ids" widget="many2many_tags" optional="show"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+                <field name="branch_ids" widget="many2many_tags" optional="hide"/>
                 <field name="branch_count" string="# Branches" sum="Sum of # Branches" optional="show"/>
                 <field name="branch_major_count" string="# Major Branches" sum="Sum of # Major Branches" optional="show"/>
+                <field name="repository_create_date" widget="datetime" optional="show"/>
+                <field name="repository_update_date" widget="datetime" optional="show"/>
+                <field name="last_sync_date" widget="datetime" optional="show"/>
                 <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
-                <field name="repository_create_date" widget="datetime" optional="hide"/>
-                <field name="repository_update_date" widget="datetime" optional="hide"/>
             </tree>
         </field>
     </record>
@@ -181,53 +180,79 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         </field>
     </record>
 
-    <!-- <record id="view_github_repository_kanban" model="ir.ui.view">
-        <field name="model">github.repository</field>
+    <record id="view_git_repository_kanban" model="ir.ui.view">
+        <field name="name">Git Repository</field>
+        <field name="model">git.repository</field>
         <field name="arch" type="xml">
-            <kanban>
-                <field name="name" />
-                <field name="color" />
-                <field name="description" />
-                <field name="organization_id" />
-                <field name="is_ignored" />
-                <field name="website" />
-                <field name="repository_branch_qty" />
+            <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
+            <field name="name"/>
+            <field name="color"/>
+            <field name="description"/>
+            <field name="partner_id"/>
+            <field name="tag_ids"/>
+            <field name="branch_ids"/>
+            <field name="branch_count"/>
+            <field name="branch_major_count"/>
+            <field name="custom_addon_count"/>
+            <field name="is_synchronized"/>
+            <field name="is_favorite"/>
+            <field name="message_needaction_counter"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div
-                            t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click"
-                        >
-                            <div class="oe_module_desc">
-                                <h3>
-                                    <field name="name" />
-                                </h3>
-                                <t t-if="record.description.raw_value">
-                                    <h4>
-                                        <field name="description" />
-                                    </h4>
-                                </t>
-                                <p class="oe_module_name">
-                                    <field name="organization_id" />
-                                    <br />
-                                    <t t-if="record.website.raw_value">
-                                        <field name="website" />
-                                    </t>
-                                    <br />
-                                </p>
-                                <span class="badge">
-                                    <i class="fa fa-fw fa-code-fork" />
-                                    <t t-esc="record.repository_branch_qty.value" />
-                                </span>
-                                <t t-if="record.is_ignored.raw_value">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon">
+                            <div class="o_project_kanban_main">
+                                <!-- <div class="o_kanban_manage_button_section float-right">
                                     <span class="badge">
-                                        <i class="fa fa-fw fa-ban" />
+                                        <i class="fa fa-fw fa-code-fork" />
+                                        <t t-esc="record.branch_count.value" />
                                     </span>
-                                </t>
+                                    <span class="badge">
+                                        <i class="fa fa-fw fa-cube" />
+                                        <t t-esc="record.custom_addon_count.value" />
+                                    </span>
+                                </div> -->
+                                <div class="o_kanban_card_content">
+                                    <div class="o_kanban_primary_left">
+                                        <div class="o_primary">
+                                            <span><t t-esc="record.name.value"/></span>
+                                            <span t-if="record.description.value">
+                                                <strong><t t-esc="record.description.value"/></strong>
+                                            </span>
+                                            <span t-if="record.partner_id.value">
+                                                <t t-esc="record.partner_id.value"/>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span><field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="o_right"><field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" /></span>
+                            </div>
+
+                            <div class="o_project_kanban_boxes">
+                                <a class="o_project_kanban_box" name="action_view_git_branch" type="object">
+                                    <div>
+                                        <span class="o_value"><t t-esc="record.branch_count.value"/></span>
+                                        <span class="o_label"> Branches</span>
+                                    </div>
+                                </a>
+                                <a class="o_project_kanban_box" name="action_view_custom_addon" type="object">
+                                    <div>
+                                        <span class="o_value"><t t-esc="record.custom_addon_count.value"/></span>
+                                        <span class="o_label"> Addons</span>
+                                        <!-- <span class="badge">
+                                            <i class="fa fa-fw fa-cube" />
+                                            <t t-esc="record.custom_addon_count.value" />
+                                        </span> -->
+                                    </div>
+                                </a>
                             </div>
                         </div>
                     </t>
                 </templates>
             </kanban>
         </field>
-    </record> -->
+    </record>
+
 </odoo>

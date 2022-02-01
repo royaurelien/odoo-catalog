@@ -29,7 +29,7 @@ class GitOrganization(models.Model):
                              ('token', 'Token')],
                             default='public', required=True)
     exclude_names = fields.Char(copy=False)
-
+    is_user = fields.Boolean(default=False)
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')
     repository_count = fields.Integer(compute='_compute_repository', store=False)
     branch_count = fields.Integer(compute='_compute_repository', store=False)

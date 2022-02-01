@@ -3,9 +3,10 @@
 from multiprocessing import synchronize
 from odoo import models, fields, api
 from odoo.tools import datetime
+from odoo.exceptions import ValidationError, UserError
 
 from datetime import datetime
-from github import Github, GithubException
+from github import Github, GithubException, RateLimitExceededException, UnknownObjectException
 import logging
 import re
 import os
@@ -21,14 +22,24 @@ class GitOrganization(models.Model):
     service = fields.Selection(selection_add=TYPE)
 
     def _get_github(self):
+
         self.ensure_one()
+        org = None
         g = Github(self.token)
+        limit = g.get_rate_limit()
+        rate_limit = "Remaining {o.remaining}/{o.limit}, Reset at {o.reset}.".format(o=limit.core)
+        _logger.warning(limit.core)
+
         try:
-            org = g.get_organization(self.name)
-        except GithubException:
-            org = g.get_user(self.name)
-        finally:
-            return org
+            org = g.get_user(self.name) if self.is_user else g.get_organization(self.name)
+        except UnknownObjectException as error:
+            _logger.error(error)
+            raise UserError("{}\n{}".format(error.data.get('message'), rate_limit))
+        except RateLimitExceededException as error:
+            _logger.error(error)
+            raise UserError("{}\n{}".format(error.data.get('message'), rate_limit))
+
+        return org
 
     def _get_items_from_github(self):
         self.ensure_one()

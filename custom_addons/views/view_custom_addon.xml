@@ -7,8 +7,23 @@
             <search>
                 <field
                     name="name"
-                    string="Name or Technical name"
+                    string="Name or technical name"
                     filter_domain="['|', ('name', 'ilike', self), ('technical_name', 'ilike', self)]"
+                />
+                <field
+                    name="summary"
+                    string="Summary or description"
+                    filter_domain="['|', ('summary', 'ilike', self), ('description', 'ilike', self)]"
+                />
+                <field
+                    name="branch_ids"
+                    string="Branch"
+                    filter_domain="[('branch_ids', 'ilike', self)]"
+                />
+                <field
+                    name="tag_ids"
+                    string="Tag"
+                    filter_domain="[('tag_ids', 'ilike', self)]"
                 />
                 <field name="category_id" />
                 <group expand="1" string="Group By">
@@ -49,7 +64,7 @@
         <field name="model">custom.addon</field>
         <field name="arch" type="xml">
             <tree decoration-muted="branch_count == 0">
-                <field name="is_favorite" widget="boolean_favorite" nolabel="1" />
+                <field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1"/>
                 <field name="name" />
                 <field name="technical_name" />
                 <field name="category_id" optional="false"/>
@@ -140,12 +155,11 @@
         </field>
     </record>
 
-    <!-- <record id="custom_addon_view_kanban" model="ir.ui.view">
+    <record id="custom_addon_view_kanban" model="ir.ui.view">
         <field name="name">Custom Addons Kanban</field>
         <field name="model">custom.addon</field>
         <field name="arch" type="xml">
-
-        <kanban class="oe_background_grey o_kanban_dashboard">
+            <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
             <field name="icon"/>
             <field name="name"/>
             <field name="author"/>
@@ -160,157 +174,71 @@
             <field name="is_favorite"/>
             <field name="message_needaction_counter"/>
                 <templates>
-                        <t t-name="kanban-box">
-                            <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_global_click">
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon">
+                            <div class="o_project_kanban_main">
+                                <div class="o_kanban_manage_button_section float-right">
+                                    <span class="badge">
+                                        <i class="fa fa-fw fa-folder-o" />
+                                        <t t-esc="record.repository_count.value" />
+                                    </span>
+                                    <span class="badge">
+                                        <i class="fa fa-fw fa-code-fork" />
+                                        <t t-esc="record.branch_count.value" />
+                                    </span>
 
-                                <div class="o_kanban_card_header">
-                                    <div class="o_kanban_manage_button_section float-right">
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-folder-o" />
-                                            <t t-esc="record.repository_count.value" />
-                                        </span>
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-code-fork" />
-                                            <t t-esc="record.branch_count.value" />
-                                        </span>
-
-                                    </div>
-                                    <span class="o_right"><field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" /></span>
-                                    <div class="o_kanban_card_header_title">
+                                </div>
+                                <div class="o_kanban_card_content">
+                                    <div class="o_kanban_primary_left">
                                         <div class="o_primary">
-                                            <field name="name"/>
+                                            <span><t t-esc="record.name.value"/></span>
+                                            <span t-if="record.author.value">
+                                                <strong><t t-esc="record.author.value"/></strong>
+                                            </span>
                                         </div>
-                                        <div class="o_secondary">
-                                            <field name="author"/>
-                                            -
-                                            <field name="category_id"/>
-                                        </div>
-                                    </div>
-                                    <div class="o_kanban_record_subtitle">
                                         <div>
-                                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                            <span><field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/></span>
+                                        </div>
+                                        <div>
                                             <field name="branch_ids" widget="many2many_tags"/>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mb8 mt8 o_kanban_content">
-                                </div>
-                                <div class="o_kanban_record_bottom">
-                                    <div class="oe_kanban_bottom_left">
-                                        <t t-if="record.message_needaction_counter.raw_value">
-                                            <span role="alert" class="oe_kanban_mail_new" title="Unread Messages">
-                                                <i class="fa fa-comments" aria-label="Messages" role="img"/>
-                                                <t t-raw="record.message_needaction_counter.raw_value"/>
-                                            </span>
-                                        </t>
-                                        <div class="o_kanban_inline_block">
-                                            <field name="activity_ids" widget="kanban_activity"/>
+                                <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                    <div class="o_kanban_card_manage_section o_kanban_manage_reports">
+                                        <div role="menuitem">
+                                            <!-- <a name="%(portal.portal_share_action)d" type="action">Share</a> -->
+                                        </div>
+                                        <div role="menuitem">
+                                            <a type="edit">Edit</a>
                                         </div>
                                     </div>
-                                    <div class="oe_kanban_bottom_right">
+                                    <div role="menuitem" aria-haspopup="true" class="o_no_padding_kanban_colorpicker">
+                                        <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
                                     </div>
                                 </div>
+                                <!-- <a class="o_kanban_manage_toggle_button o_left" href="#" groups="project.group_project_manager"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a> -->
+                                <span class="o_right"><field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" /></span>
                             </div>
-                        </t>
-                    </templates>
-                </kanban>
-        </field>
-    </record> -->
 
-        <record id="custom_addon_view_kanban" model="ir.ui.view">
-            <field name="name">Custom Addons Kanban</field>
-            <field name="model">custom.addon</field>
-            <field name="arch" type="xml">
-                <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
-                <field name="icon"/>
-                <field name="name"/>
-                <field name="author"/>
-                <field name="color"/>
-                <field name="is_many_used"/>
-                <field name="branch_ids"/>
-                <field name="branch_count"/>
-                <field name="repository_count"/>
-                <field name="tag_ids"/>
-                <field name="category_id"/>
-                <field name="summary"/>
-                <field name="is_favorite"/>
-                <field name="message_needaction_counter"/>
-                    <templates>
-                        <t t-name="kanban-box">
-                            <div t-attf-class="#{kanban_color(record.color.raw_value)} oe_kanban_global_click o_has_icon">
-                                <div class="o_project_kanban_main">
-                                    <div class="o_kanban_manage_button_section float-right">
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-folder-o" />
-                                            <t t-esc="record.repository_count.value" />
-                                        </span>
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-code-fork" />
-                                            <t t-esc="record.branch_count.value" />
-                                        </span>
-
+                            <div class="o_project_kanban_boxes">
+                                <a class="o_project_kanban_box" name="action_view_git_branch" type="object">
+                                    <div>
+                                        <span class="o_value"><t t-esc="record.branch_count.value"/></span>
+                                        <span class="o_label"> Branches</span>
                                     </div>
-                                    <div class="o_kanban_card_content">
-                                        <div class="o_kanban_primary_left">
-                                            <div class="o_primary">
-                                                <span><t t-esc="record.name.value"/></span>
-                                                <span t-if="record.author.value">
-                                                    <strong><t t-esc="record.author.value"/></strong>
-                                                </span>
-                                            </div>
-                                            <div>
-                                                <span><field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/></span>
-                                            </div>
-                                            <div>
-                                                <field name="branch_ids" widget="many2many_tags"/>
-                                            </div>
-                                        </div>
+                                </a>
+                                <!-- <a t-if="record.analytic_account_id.raw_value" class="o_project_kanban_box o_project_timesheet_box" name="action_view_account_analytic_line" type="object" groups="analytic.group_analytic_accounting">
+                                    <div>
+                                        <span class="o_label">Profitability</span>
                                     </div>
-                                    <div class="o_kanban_card_manage_pane dropdown-menu" role="menu">
-                                        <div class="o_kanban_card_manage_section o_kanban_manage_reports">
-                                            <div role="menuitem">
-                                                <!-- <a name="%(portal.portal_share_action)d" type="action">Share</a> -->
-                                            </div>
-                                            <div role="menuitem">
-                                                <a type="edit">Edit</a>
-                                            </div>
-                                        </div>
-                                        <div role="menuitem" aria-haspopup="true" class="o_no_padding_kanban_colorpicker">
-                                            <ul class="oe_kanban_colorpicker" data-field="color" role="popup"/>
-                                        </div>
-                                    </div>
-                                    <!-- <a class="o_kanban_manage_toggle_button o_left" href="#" groups="project.group_project_manager"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a> -->
-                                    <span class="o_right"><field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" /></span>
-                                </div>
-
-                                <div class="o_project_kanban_boxes">
-                                    <a class="o_project_kanban_box" name="action_view_branch" type="object">
-                                        <div>
-                                            <span class="o_value"><t t-esc="record.branch_count.value"/></span>
-                                            <span class="o_label"> Branches</span>
-                                        </div>
-                                    </a>
-                                    <!-- <a t-if="record.analytic_account_id.raw_value" class="o_project_kanban_box o_project_timesheet_box" name="action_view_account_analytic_line" type="object" groups="analytic.group_analytic_accounting">
-                                        <div>
-                                            <span class="o_label">Profitability</span>
-                                        </div>
-                                    </a> -->
-                                </div>
+                                </a> -->
                             </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record>
-
-    <!-- <record id="view_custom_addon_dashboard" model="ir.ui.view">
-        <field name="model">custom.addon</field>
-        <field name="arch" type="xml">
-            <dashboard>
-                <view type="graph" ref="view_custom_addon_tree"/>
-            </dashboard>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
-    </record> -->
-
+    </record>
 
 </odoo>

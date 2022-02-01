@@ -80,6 +80,7 @@
                     <group>
                       <group col="2">
                         <field name="url" widget="url"/>
+                        <field name="is_user" widget="boolean_toggle"/>
                         <field name="is_synchronized" widget="boolean_toggle"/>
                       </group>
                       <group col="2">

@@ -14,6 +14,10 @@ class GitRepository(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
     _description = 'Git Repository'
 
+    def _get_default_favorite_user_ids(self):
+        # return [(6, 0, [self.env.uid])]
+        return []
+
     ### GIT ###
     _git_service = "service"
     _git_field_rel = 'branch_ids'
@@ -44,6 +48,38 @@ class GitRepository(models.Model):
     custom_addon_count = fields.Integer(compute='_compute_branch', string="# Addons")
 
     tag_ids = fields.Many2many('custom.addon.tags', string='Tags')
+    color = fields.Integer(compute="_compute_color")
+
+    is_favorite = fields.Boolean(compute='_compute_is_favorite', inverse='_inverse_is_favorite')
+    favorite_user_ids = fields.Many2many(
+        'res.users', 'git_repository_favorite_user_rel',
+        default=_get_default_favorite_user_ids,
+        string='Members')
+
+    def _compute_is_favorite(self):
+        for record in self:
+            record.is_favorite = self.env.user in record.favorite_user_ids
+
+    def _inverse_is_favorite(self):
+        favorite_addons = not_fav_addons = self.env['git.repository'].sudo()
+        for record in self:
+            if self.env.user in record.favorite_user_ids:
+                favorite_addons |= record
+            else:
+                not_fav_addons |= record
+
+        not_fav_addons.write({'favorite_user_ids': [(4, self.env.uid)]})
+        favorite_addons.write({'favorite_user_ids': [(3, self.env.uid)]})
+
+
+
+
+
+
+    @api.depends('is_synchronized')
+    def _compute_color(self):
+        for record in self:
+            record.color = 1 if record.is_synchronized else 0
 
     @api.depends('branch_ids')
     def _compute_branch(self):
