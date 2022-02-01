@@ -72,10 +72,6 @@ class GitRepository(models.Model):
         favorite_addons.write({'favorite_user_ids': [(3, self.env.uid)]})
 
 
-
-
-
-
     @api.depends('is_synchronized')
     def _compute_color(self):
         for record in self:
@@ -86,7 +82,7 @@ class GitRepository(models.Model):
         for record in self:
             record.branch_count = len(record.branch_ids)
             record.branch_major_count = len(record.branch_ids.filtered(lambda x: x.major))
-            record.custom_addon_count = sum(record.branch_ids.mapped('custom_addon_count'))
+            record.custom_addon_count = len(record.branch_ids.mapped('custom_addon_ids'))
 
 
     def action_view_git_branch(self):
