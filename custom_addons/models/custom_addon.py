@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class CustomAddon(models.Model):
     _name = 'custom.addon'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'git.mixin']
     _description = 'Custom Addon'
 
     name = fields.Char(required=True)
@@ -25,6 +25,10 @@ class CustomAddon(models.Model):
     # icon_image = fields.Binary(string='Icon', compute='_get_icon_image')
     url = fields.Char()
     version = fields.Char()
+    # version_ids = fields.Many2many('custom.addon.version', string='Versions')
+    version_ids = fields.One2many(comodel_name='custom.addon.version',
+                                  compute='_compute_versions', string='Versions',
+                                  search='_search_versions')
     author = fields.Char()
     partner_id = fields.Many2one(comodel_name='res.partner')
     user_id = fields.Many2one(comodel_name='res.users')
@@ -45,6 +49,18 @@ class CustomAddon(models.Model):
     repository_count = fields.Integer(compute='_compute_branch', store=True, string="# Repository")
     is_many_used = fields.Boolean(compute='_compute_branch', store=True, string="Many Used")
     color = fields.Integer(compute="_compute_branch", string="Color Index")
+
+    @api.depends('branch_ids')
+    def _compute_versions(self):
+        version_env = self.env['custom.addon.version']
+        for record in self:
+            # record.version_ids = record.branch_ids.filtered(lambda x: x.major).mapped('version_id')
+            names = list(set(record.branch_ids.filtered(lambda x: x.major).mapped('name')))
+            record.version_ids = version_env.search([('name', 'in', names)])
+
+
+    def _search_versions(self, operator, value):
+        return [('branch_ids.name', operator, value)]
 
     def _compute_is_favorite(self):
         for record in self:
@@ -84,42 +100,32 @@ class CustomAddon(models.Model):
             record.is_many_used = True if record.repository_count > 1 else False
             record.color = 1 if record.is_many_used else 0
 
-    def action_view_git_branch(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_branch").read()[0]
-        action["context"] = dict(self.env.context)
-        action["context"].pop("group_by", None)
-        # action["context"]["search_default_repository_id"] = self.id
+
+    def _action_view_git_branch(self, action):
         action["domain"] = [('id', 'in', self.branch_ids.ids)]
 
         return action
 
-    def action_view_git_repository(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_repository").read()[0]
-        action["context"] = dict(self.env.context)
-        action["context"].pop("group_by", None)
-        action["domain"] = [('id', 'in', self.branch_ids.mapped('repository_id').ids)]
+    def _action_view_git_repository(self, action):
+        repo_ids = self.branch_ids.mapped('repository_id').ids
+        action["domain"] = [('id', 'in', repo_ids)]
 
         return action
+
 
     def action_open_url(self):
         self.ensure_one()
-
-        _logger.warning(dict(self.env.context))
+        action = super(CustomAddon, self).action_open_url()
+        # _logger.warning(dict(self.env.context))
         res_id = self.env.context.get('branch_id')
-        url = None
-        if res_id:
-            # res_id = self.env.context.get('id')
-            # res_model = self.env.context.get('model')
-            res_model = 'git.branch'
-            res = self.env[res_model].browse(res_id)
-            url = os.path.join(res.url, self.technical_name)
-
-        action = {
-            "type": "ir.actions.act_url",
-            "url": url,
-            "target": "new",
-        }
+        action['url'] = os.path.join(self.env['git.branch'].browse(res_id).url, self.technical_name) if res_id else None
 
         return action
+
+
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     _logger.error(vals_list)
+    #     res_ids = super(CustomAddon, self).create(vals_list)
+
+    #     return res_ids

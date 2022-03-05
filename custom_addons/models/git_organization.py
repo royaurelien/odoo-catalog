@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class GitOrganization(models.Model):
     _name = 'git.organization'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'git.sync', 'git.mixin']
     _description = 'Git Organization'
 
     ### GIT ###
@@ -49,31 +49,17 @@ class GitOrganization(models.Model):
             record.custom_addons_count = addons
 
 
-    def action_view_git_repository(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_repository").read()[0]
-        action["context"] = dict(self.env.context)
-        action["context"].pop("group_by", None)
-        # action["context"]["search_default_repository_id"] = self.id
+    def _action_view_git_repository(self, action):
         action["domain"] = [('organization_id', '=', self.id)]
 
         return action
 
-    def action_view_git_branch(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_branch").read()[0]
-        action["context"] = dict(self.env.context)
-        # action["context"].pop("group_by", None)
+    def _action_view_git_branch(self, action):
         action["domain"] = [('organization_id', '=', self.id)]
 
         return action
 
-    def action_view_custom_addons(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_addons").read()[0]
-        action["context"] = dict(self.env.context)
-        # action["context"].pop("group_by", None)
-
+    def _action_view_custom_addons(self, action):
         addons = self.repository_ids.mapped('branch_ids.custom_addon_ids')
         action["domain"] = [('id', 'in', addons.ids)]
 

@@ -69,8 +69,9 @@
                 <field name="technical_name" />
                 <field name="category_id" optional="false"/>
                 <field name="author" optional="show"/>
-                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
-                <field name="branch_ids" widget="many2many_tags" optional="show"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+                <field name="version_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/>
+                <field name="branch_ids" widget="many2many_tags" optional="hide"/>
                 <field name="branch_count" string="# Branches" optional="show"/>
                 <field name="repository_count" string="# Repository" optional="show"/>
                 <field name="is_many_used" string="Many used" optional="show"/>
@@ -138,6 +139,7 @@
                             <field name="repository_count" invisible="1"/>
                             <field name="category_id"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="version_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                         </group>
                     </group>
                     <notebook>

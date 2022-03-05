@@ -34,6 +34,12 @@
       <field name="view_mode">tree,form</field>
     </record>
 
+    <record model="ir.actions.act_window" id="custom_addons.action_view_version">
+      <field name="name">Versions</field>
+      <field name="res_model">custom.addon.version</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
     <record model="ir.actions.act_window" id="custom_addons.action_view_rules">
       <field name="name">Git Rules</field>
       <field name="res_model">git.rules</field>
@@ -119,6 +125,11 @@
               parent="menu_custom_addons_config"
               sequence="10"
               action="custom_addons.action_view_tags"/>
+
+    <menuitem name="Versions" id="custom_addons.menu_version"
+              parent="menu_custom_addons_config"
+              sequence="10"
+              action="custom_addons.action_view_version"/>
 
     <menuitem name="Rules" id="custom_addons.menu_rules"
               parent="menu_custom_addons_config"

@@ -113,7 +113,7 @@
                             type="object"
                             class="oe_stat_button"
                             icon="fa-cube"
-                            name="action_view_custom_addon"
+                            name="action_view_custom_addons"
                             attrs="{'invisible': [('custom_addon_count', '=', False)]}">
                             <div class="o_stat_info">
                                 <field name="custom_addon_count" class="o_stat_value"/>

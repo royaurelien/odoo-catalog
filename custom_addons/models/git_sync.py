@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from multiprocessing import synchronize
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 from datetime import datetime
 import logging
@@ -11,9 +11,9 @@ import re
 _logger = logging.getLogger(__name__)
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 
-class AbstractGitModel(models.AbstractModel):
-    _name = "abstract.git.model"
-    _description = "Git abstract model"
+class GitSync(models.AbstractModel):
+    _name = "git.sync"
+    _description = "Git Sync"
 
     # _github_type = "repository"
 
@@ -102,6 +102,8 @@ class AbstractGitModel(models.AbstractModel):
         records = self.browse(ids)
         force_update = kwargs.get('force_update', False)
 
+        subtype_id = self.env['mail.message.subtype'].search([('res_model', '=', self._name)],limit=1)
+        _logger.error(subtype_id)
 
         for service_name in list(set(records.mapped(self._git_service))):
 
@@ -130,6 +132,7 @@ class AbstractGitModel(models.AbstractModel):
                 match_field = record._git_field_name
                 rel_field = record._git_field_rel
                 model_name = record[rel_field]._name
+                model_desc = record[rel_field]._description
 
                 # Simple search from current record
                 if record._git_type_rel == 'o2m':
@@ -149,7 +152,20 @@ class AbstractGitModel(models.AbstractModel):
                                                                                      model_name,
                                                                                      len(to_update),
                                                                                      len(to_create)))
+                child_ids = record[rel_field]
                 record.update({rel_field: to_update + to_create})
+                new_childs = record[rel_field] - child_ids
+                _logger.error("Childs created: {}".format(new_childs.mapped('name')))
+
+
+                if subtype_id:
+                    names = ", ".join(new_childs.mapped('name'))
+                    message = {
+                        'body': "New {} from {}: {}".format(_(model_desc), record.name, names),
+                        # 'message_type': 'notification',
+                        'subtype_id': subtype_id.id
+                    }
+                    record.message_post(**message)
 
                 if force_update:
                     to_update = {object_ids.get(vals[match_field]):vals for vals in vals_list if vals[match_field] in object_ids.keys()}
@@ -166,13 +182,3 @@ class AbstractGitModel(models.AbstractModel):
     def action_sync(self):
         self._action_sync(self.ids, force_update=False)
 
-    def action_open_url(self):
-        _logger.warning(dict(self.env.context))
-        self.ensure_one()
-        action = {
-            "type": "ir.actions.act_url",
-            "url": self.url,
-            "target": "new",
-        }
-
-        return action

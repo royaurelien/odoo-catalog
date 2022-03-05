@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class GitRepository(models.Model):
     _name = 'git.repository'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'abstract.git.model']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'git.sync', 'git.mixin']
     _description = 'Git Repository'
 
     def _get_default_favorite_user_ids(self):
@@ -56,9 +56,11 @@ class GitRepository(models.Model):
         default=_get_default_favorite_user_ids,
         string='Members')
 
+
     def _compute_is_favorite(self):
         for record in self:
             record.is_favorite = self.env.user in record.favorite_user_ids
+
 
     def _inverse_is_favorite(self):
         favorite_addons = not_fav_addons = self.env['git.repository'].sudo()
@@ -77,6 +79,7 @@ class GitRepository(models.Model):
         for record in self:
             record.color = 1 if record.is_synchronized else 0
 
+
     @api.depends('branch_ids')
     def _compute_branch(self):
         for record in self:
@@ -85,21 +88,13 @@ class GitRepository(models.Model):
             record.custom_addon_count = len(record.branch_ids.mapped('custom_addon_ids'))
 
 
-    def action_view_git_branch(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_branch").read()[0]
-        action["context"] = dict(self.env.context)
-        action["context"].pop("group_by", None)
+    def _action_view_git_branch(self, action):
         action["context"]["search_default_repository_id"] = self.id
         action["domain"] = [('repository_id', '=', self.id)]
 
         return action
 
-    def action_view_custom_addon(self):
-        self.ensure_one()
-        action = self.env.ref("custom_addons.action_view_addons").read()[0]
-        action["context"] = dict(self.env.context)
-        action["context"].pop("group_by", None)
+    def _action_view_custom_addons(self, action):
         action["domain"] = [('id', 'in', self.branch_ids.mapped('custom_addon_ids').ids)]
 
         return action
@@ -107,10 +102,8 @@ class GitRepository(models.Model):
 
     def action_ignore(self):
         for organization_id in self.mapped('organization_id'):
-
             records = self.filtered(lambda rec: rec.organization_id == organization_id)
             excludes = list(set(organization_id._get_excludes() + records.mapped('path')))
-
             organization_id.update({'exclude_names': ", ".join(excludes)})
             records.update({'is_synchronized': False})
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="0">
+    <record id="mail_message_subtype_custom_addons" model="mail.message.subtype">
+        <field name="name">Custom Addons</field>
+        <field name="res_model">git.branch</field>
+        <field name="default" eval="True" />
+        <field name="internal" eval="True" />
+    </record>
+    <record id="mail_message_subtype_git_branch" model="mail.message.subtype">
+        <field name="name">Git Branch</field>
+        <field name="res_model">git.repository</field>
+        <field name="default" eval="True" />
+        <field name="internal" eval="True" />
+    </record>
+    <record id="mail_message_subtype_git_repository" model="mail.message.subtype">
+        <field name="name">Git Repository</field>
+        <field name="res_model">git.organization</field>
+        <field name="default" eval="True" />
+        <field name="internal" eval="True" />
+    </record>
+</odoo>

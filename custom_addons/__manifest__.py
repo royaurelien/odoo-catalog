@@ -34,6 +34,8 @@
         'views/view_git_rules.xml',
         'views/view_custom_addon.xml',
         'views/view_custom_addon_tags.xml',
+        'views/view_custom_addon_version.xml',
+        'data/mail_message_subtype.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
