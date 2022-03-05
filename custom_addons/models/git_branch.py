@@ -28,6 +28,7 @@ class GitBranch(models.Model):
     _git_field_rel = 'custom_addon_ids'
     _git_field_name = 'technical_name'
     _git_type_rel = "m2m"
+    _git_parent_field = 'repository_id'
 
     last_commit_message = fields.Char()
     last_commit_author = fields.Char()
@@ -85,6 +86,7 @@ class GitBranch(models.Model):
         action["domain"] = [('id', 'in', self.custom_addon_ids.ids)]
 
         return action
+
 
     @api.model_create_multi
     def create(self, vals_list):

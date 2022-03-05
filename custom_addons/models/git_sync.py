@@ -10,6 +10,11 @@ import re
 
 _logger = logging.getLogger(__name__)
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+BODY = """
+<html>
+New <b>{}</b> from {} ({}): <ul><li>{}</li></ul>
+</html>
+"""
 
 class GitSync(models.AbstractModel):
     _name = "git.sync"
@@ -21,6 +26,7 @@ class GitSync(models.AbstractModel):
     _git_field_rel = ""
     _git_field_name = ""
     _git_type_rel = ""
+    _git_parent_field = False
 
     last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
     service = fields.Selection([])
@@ -102,8 +108,12 @@ class GitSync(models.AbstractModel):
         records = self.browse(ids)
         force_update = kwargs.get('force_update', False)
 
-        subtype_id = self.env['mail.message.subtype'].search([('res_model', '=', self._name)],limit=1)
-        _logger.error(subtype_id)
+        # subtype_id = self.env['mail.message.subtype'].search([('res_model', '=', self._name)],limit=1)
+        # subtype_id = self.env['mail.message.subtype'].search([('res_model', '=', 'git.repository')],limit=1)
+
+        subtypes = self.env['mail.message.subtype'].search([]).read(['res_model'])
+        subtypes = {item['res_model']:item['id'] for item in subtypes}
+        _logger.error(subtypes)
 
         for service_name in list(set(records.mapped(self._git_service))):
 
@@ -133,6 +143,7 @@ class GitSync(models.AbstractModel):
                 rel_field = record._git_field_rel
                 model_name = record[rel_field]._name
                 model_desc = record[rel_field]._description
+                parent = record[record._git_parent_field] if record._git_parent_field else False
 
                 # Simple search from current record
                 if record._git_type_rel == 'o2m':
@@ -146,26 +157,50 @@ class GitSync(models.AbstractModel):
 
                 to_create = [(0, False, vals) for vals in vals_list if vals[match_field] not in object_ids]
 
-                _logger.warning("{} '{}' >> {} {} found (updated: {}, created: {})".format(self._name,
+                sync_message = "{} '{}' >> {} {} found (updated: {}, created: {})".format(self._name,
                                                                                      record.name,
                                                                                      len(vals_list),
                                                                                      model_name,
                                                                                      len(to_update),
-                                                                                     len(to_create)))
+                                                                                     len(to_create))
+
+
+                _logger.warning(sync_message)
+                record.message_post(body=sync_message, message_type='notification')
+
                 child_ids = record[rel_field]
                 record.update({rel_field: to_update + to_create})
                 new_childs = record[rel_field] - child_ids
                 _logger.error("Childs created: {}".format(new_childs.mapped('name')))
 
+                # [record]                  [childs]            [parent field]
+                # git.organization  -->     git.repository
+                # git.repository    -->     git.branch          organization_id
+                # git.branch        -->     custom.addon        repository_id
 
+
+                parent_name = parent.name if parent else ''
+
+                subtype_id = True
                 if subtype_id:
                     names = ", ".join(new_childs.mapped('name'))
+                    # names = "".join(["<li>{}</li>".format(name) for name in new_childs.mapped('name')])
                     message = {
-                        'body': "New {} from {}: {}".format(_(model_desc), record.name, names),
-                        # 'message_type': 'notification',
-                        'subtype_id': subtype_id.id
+                        'subject': 'GIT',
+                        'body': BODY.format(_(model_desc), record.name, parent_name, names),
+                        'message_type': 'notification',
+                        # 'subtype_id': subtype_id.id
                     }
-                    record.message_post(**message)
+                    if self._name == 'git.branch' and parent:
+                        subtype_id = subtypes.get(parent._name)
+                        if subtype_id:
+                            message['subtype_id'] = subtype_id
+                        parent.message_post(**message)
+                    else:
+                        subtype_id = subtypes.get(record._name)
+                        if subtype_id:
+                            message['subtype_id'] = subtype_id
+                        record.message_post(**message)
 
                 if force_update:
                     to_update = {object_ids.get(vals[match_field]):vals for vals in vals_list if vals[match_field] in object_ids.keys()}

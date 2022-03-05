@@ -23,6 +23,7 @@ class GitRepository(models.Model):
     _git_field_rel = 'branch_ids'
     _git_field_name = 'name'
     _git_type_rel = "o2m"
+    _git_parent_field = 'organization_id'
 
     path = fields.Char(required=True)
     description = fields.Char()
