@@ -167,6 +167,7 @@
             <field name="author"/>
             <field name="color"/>
             <field name="is_many_used"/>
+            <field name="version_ids"/>
             <field name="branch_ids"/>
             <field name="branch_count"/>
             <field name="repository_count"/>
@@ -202,7 +203,7 @@
                                             <span><field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/></span>
                                         </div>
                                         <div>
-                                            <field name="branch_ids" widget="many2many_tags"/>
+                                            <field name="version_ids" widget="many2many_tags"/>
                                         </div>
                                     </div>
                                 </div>
