@@ -8,7 +8,11 @@
         <tree>
           <field name="name"/>
           <field name="service"/>
-          <field name="auth_method"/>
+          <field name="repository_count" optional="show"/>
+          <field name="branch_count" optional="show"/>
+          <field name="custom_addons_count" optional="show"/>
+          <field name="last_sync_date" widget="datetime" optional="show"/>
+          <field name="auth_method" optional="hide"/>
           <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
         </tree>
       </field>
@@ -27,7 +31,7 @@
                         class="btn btn-default"
                         icon="fa-chevron-right"
                         attrs="{'invisible': [('is_synchronized', '!=', True)]}"
-                        groups="base.group_erp_manager"
+                        groups="custom_addons.group_manager"
                     />
                 </header>
                 <sheet>
@@ -80,24 +84,23 @@
                     <group>
                       <group col="2">
                         <field name="url" widget="url"/>
+                        <field name="auth_method" string="Method" widget="selection_badge"/>
+                        <field name="auth_id" string="Auth"
+                            groups="custom_addons.group_manager"
+                            options="{'no_create_edit': True, 'no_open': True}"
+                            attrs="{'required': [('auth_method', '=', 'private')], 'invisible': [('auth_method', '!=', 'private')]}"/>
                         <field name="is_user" widget="boolean_toggle"/>
                         <field name="is_synchronized" widget="boolean_toggle"/>
                       </group>
                       <group col="2">
                         <field name="last_sync_date" widget="datetime"/>
                         <field name="partner_id" help="If defined, partner will be apply on repository."/>
+                        <field name="force_partner" widget="boolean_toggle"/>
                       </group>
                     </group>
                     <notebook>
-                        <page name="authentication" string="Authentication" groups="base.group_erp_manager">
-                            <group cols="4">
-                                <field name="auth_method" string="Method" widget="selection_badge"/>
-                                <field name="login" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
-                                <field name="password" password="True" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
-                                <field name="token" attrs="{'required': [('auth_method', '=', 'token')], 'invisible': [('auth_method', '!=', 'token')]}"/>
-                            </group>
-                        </page>
                         <page name="extra_setting" string="Settings">
+
                             <group cols="4" string="Ignored Repositories">
                                 <field
                                     name="exclude_names"

@@ -76,7 +76,7 @@
                         string="Branches Sync."
                         class="btn btn-default"
                         icon="fa-chevron-right"
-                        groups="base.group_erp_manager"
+                        groups="custom_addons.group_manager"
                     />
                     <button
                         name="action_open_url"
@@ -91,7 +91,7 @@
                         type="object"
                         string="Ignore"
                         class="btn btn-default"
-                        groups="base.group_erp_manager"
+                        groups="custom_addons.group_manager"
                     />
                 </header>
                 <sheet>

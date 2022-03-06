@@ -31,6 +31,8 @@ class GitRepository(models.Model):
     http_git_url = fields.Char(string="HTTP Url")
     ssh_git_url = fields.Char(string="SSH Url")
 
+    force_partner = fields.Boolean(related='organization_id.force_partner')
+
     repository_create_date = fields.Datetime(readonly=True)
     repository_update_date = fields.Datetime(readonly=True, tracking=True)
 

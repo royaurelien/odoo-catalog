@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="group_auth_manager" model="res.groups">
+            <field name="name">Custom Auth</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_erp_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -83,7 +83,7 @@
     <menuitem
         id="menu_custom_addons_root"
         name="Custom Addons"
-        groups="base.group_user"
+        groups="custom_addons.group_user"
         web_icon="fa fa-cubes,#FFFFFF,#BC4242"
         sequence="75"/>
 
@@ -95,6 +95,7 @@
               action="custom_addons.action_view_addons"/>
 
     <menuitem name="Configuration" id="menu_custom_addons_config"
+              groups="custom_addons.group_manager"
               sequence="90"
               parent="menu_custom_addons_root"/>
 

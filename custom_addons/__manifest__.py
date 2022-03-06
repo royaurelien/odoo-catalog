@@ -21,11 +21,14 @@
 
     # any module necessary for this one to work correctly
     'depends': [
-        'base','mail'
+        'base',
+        'mail',
+        'custom_auth',
     ],
 
     # always loaded
     'data': [
+        'security/res_groups.xml',
         'security/ir.model.access.csv',
         'views/menu.xml',
         'views/view_git_organization.xml',

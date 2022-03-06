@@ -20,14 +20,16 @@ class GitOrganization(models.Model):
     _git_field_name = 'repo_id'
     _git_type_rel = "o2m"
 
-    login = fields.Char()
-    password = fields.Char()
-    token = fields.Char()
-    service = fields.Selection([])
+    auth_id = fields.Many2one(comodel_name='custom.auth')
     auth_method = fields.Selection([('public', 'Public'),
-                             ('basic', 'Basic'),
-                             ('token', 'Token')],
+                             ('private', 'Private')],
                             default='public', required=True)
+
+    # login = fields.Char()
+    # password = fields.Char()
+    # token = fields.Char()
+    service = fields.Selection([])
+
     exclude_names = fields.Char(copy=False)
     is_user = fields.Boolean(default=False)
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')

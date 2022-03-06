@@ -25,7 +25,7 @@ class GitOrganization(models.Model):
 
         self.ensure_one()
         org = None
-        g = Github(self.token)
+        g = Github(self.auth_id.token)
         limit = g.get_rate_limit()
         rate_limit = "Remaining {o.remaining}/{o.limit}, Reset at {o.reset}.".format(o=limit.core)
         _logger.warning(limit.core)

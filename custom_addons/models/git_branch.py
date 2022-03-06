@@ -38,6 +38,8 @@ class GitBranch(models.Model):
     last_commit = fields.Char(compute='_compute_commit', store=True)
     is_recent_activity = fields.Boolean(compute='_compute_commit', string="Recent Activity", store=True)
 
+    force_partner = fields.Boolean(related='repository_id.force_partner')
+
     @api.depends('last_commit_message', 'last_commit_author', 'last_commit_date', 'last_sync_date')
     def _compute_commit(self):
         now = datetime.now()

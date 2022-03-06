@@ -91,7 +91,7 @@
                         string="Addons Sync."
                         class="btn btn-default"
                         icon="fa-chevron-right"
-                        groups="base.group_erp_manager"
+                        groups="custom_addons.group_manager"
                     />
                     <button
                         name="action_open_url"

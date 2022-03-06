@@ -36,9 +36,16 @@ class GitSync(models.AbstractModel):
     is_synchronized = fields.Boolean(default=False)
     partner_id = fields.Many2one(comodel_name='res.partner')
     rule_ids = fields.Many2many(comodel_name='git.rules')
+    force_partner = fields.Boolean(default=False)
 
     exclude_names = fields.Char()
 
+
+    def _update_list_of_vals(self, vals_list, vals):
+        def apply(x):
+            x.update(vals)
+            return x
+        return list(map(apply, vals_list))
 
     def _get_service(self, name):
         pass
@@ -145,6 +152,9 @@ class GitSync(models.AbstractModel):
                 model_desc = record[rel_field]._description
                 parent = record[record._git_parent_field] if record._git_parent_field else False
 
+                if record.partner_id and record.force_partner:
+                    vals_list = self._update_list_of_vals(vals_list, {'partner_id': record.partner_id.id})
+
                 # Simple search from current record
                 if record._git_type_rel == 'o2m':
                     object_ids = {e[match_field]:e['id'] for e in record[rel_field].read([match_field])}
@@ -157,7 +167,7 @@ class GitSync(models.AbstractModel):
 
                 to_create = [(0, False, vals) for vals in vals_list if vals[match_field] not in object_ids]
 
-                sync_message = "{} '{}' >> {} {} found (updated: {}, created: {})".format(self._name,
+                sync_message = "Synchronize {} '{}': {} {} found (updated: {}, created: {})".format(self._name,
                                                                                      record.name,
                                                                                      len(vals_list),
                                                                                      model_name,
@@ -182,7 +192,7 @@ class GitSync(models.AbstractModel):
                 parent_name = parent.name if parent else ''
 
                 subtype_id = True
-                if subtype_id:
+                if subtype_id and new_childs:
                     names = ", ".join(new_childs.mapped('name'))
                     # names = "".join(["<li>{}</li>".format(name) for name in new_childs.mapped('name')])
                     message = {
