@@ -28,7 +28,8 @@ class GitSync(models.AbstractModel):
     _git_type_rel = ""
     _git_parent_field = False
 
-    last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
+    last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True,
+                                     default=lambda self: fields.Datetime.now())
     service = fields.Selection([])
     name = fields.Char(required=True)
     url = fields.Char()
@@ -110,17 +111,54 @@ class GitSync(models.AbstractModel):
 
         return vals_list
 
+
+
+    def _filter_on_delay(self, delay):
+        now = fields.Datetime.now()
+        items = self.filtered(lambda x: not x.last_sync_date)
+
+        for record in (self - items):
+            delta = now - record.last_sync_date
+            if delta.days >= 0 and delta.seconds >= delay:
+                items |= record
+
+        return items
+
+    # @api.model
+    def action_toggle_sync(self):
+        for record in self:
+            record.write({'is_synchronized': not record.is_synchronized})
+
     @api.model
-    def _action_sync(self, ids, **kwargs):
-        records = self.browse(ids)
+    def _action_sync(self, ids=[], **kwargs):
+
+        cron_mode = kwargs.get('cron', False)
+        job_count = kwargs.get('job_count', False)
         force_update = kwargs.get('force_update', False)
 
-        # subtype_id = self.env['mail.message.subtype'].search([('res_model', '=', self._name)],limit=1)
-        # subtype_id = self.env['mail.message.subtype'].search([('res_model', '=', 'git.repository')],limit=1)
+        records = self.browse(ids)
+
+        if cron_mode:
+            param = self.env["ir.config_parameter"].sudo().get_param
+            sync_delay = int(param('custom_addons.sync_delay'))
+
+
+            records = self.search([('is_synchronized', '=', True)])
+            prev_count = len(records)
+            records = records._filter_on_delay(sync_delay)
+            _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+
+            if job_count and len(records) > job_count:
+                records = records[:job_count]
+
+            _logger.warning("Filter max items: {}/{}".format(len(records), prev_count))
+
+
+        _logger.warning("Start action sync on {}: {} items".format(self._description, len(records)))
 
         subtypes = self.env['mail.message.subtype'].search([]).read(['res_model'])
         subtypes = {item['res_model']:item['id'] for item in subtypes}
-        _logger.error(subtypes)
+
 
         for service_name in list(set(records.mapped(self._git_service))):
 
@@ -130,10 +168,11 @@ class GitSync(models.AbstractModel):
             for record in records_by_service:
                 excludes = record._get_excludes()
 
-                _logger.debug("Excludes: {}".format(excludes))
+                _logger.warning("Excludes: {}".format(excludes))
 
                 # Get items from specific methods
                 items = record._get_items_for_odoo()
+                _logger.warning(items)
                 try:
                     items = [item for item in items if item.name not in excludes]
                 except AttributeError:
@@ -142,8 +181,12 @@ class GitSync(models.AbstractModel):
                 # Prepare values, aka convert Git(hub/lab) values to Odoo values
                 vals_list = [record._convert_to_odoo(item) for item in items]
 
+                _logger.debug(vals_list)
+
                 # Apply rules and filter
                 vals_list = record._apply_rules(vals_list)
+
+                _logger.debug(vals_list)
 
                 # Prepare for create or update
                 match_field = record._git_field_name
