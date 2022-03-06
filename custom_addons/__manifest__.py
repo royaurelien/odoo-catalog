@@ -40,6 +40,7 @@
         'views/custom_addon_version.xml',
         'data/mail_message_subtype.xml',
         'data/cron.xml',
+        'data/git_rules.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

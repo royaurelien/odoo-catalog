@@ -28,8 +28,7 @@ class GitSync(models.AbstractModel):
     _git_type_rel = ""
     _git_parent_field = False
 
-    last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True,
-                                     default=lambda self: fields.Datetime.now())
+    last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
     service = fields.Selection([])
     name = fields.Char(required=True)
     url = fields.Char()
@@ -86,6 +85,10 @@ class GitSync(models.AbstractModel):
             return vals_list
 
         to_skip, to_delete = [], []
+        context = {
+            'env': self.env,
+            'regex': REGEX_MAJOR_VERSION,
+        }
 
         for current_rule in rules.get('delete', []):
             for index, vals in enumerate(vals_list):
@@ -98,15 +101,16 @@ class GitSync(models.AbstractModel):
         vals_list = [vals for index, vals in enumerate(vals_list) if index not in to_skip]
 
         for vals in vals_list:
+            context['vals'] = vals
             for current_rule in rules.get('update', []):
-                if eval(current_rule.condition):
-                    vals.update(eval(current_rule.code))
+                if eval(current_rule.condition, context):
+                    vals.update(eval(current_rule.code, context))
             for current_rule in rules.get('add_tag', []):
-                if eval(current_rule.condition):
+                if eval(current_rule.condition, context):
                     vals.update({'tag_ids': [(4, tag.id) for tag in current_rule.tag_ids]})
             for current_rule in rules.get('add_partner', []):
-                _logger.debug("Condition : {} = {}".format(current_rule.condition, eval(current_rule.condition)))
-                if eval(current_rule.condition):
+                # _logger.debug("Condition : {} = {}".format(current_rule.condition, eval(current_rule.condition, context)))
+                if eval(current_rule.condition, context):
                     vals.update({'partner_id': current_rule.partner_id.id})
 
         return vals_list
@@ -150,8 +154,7 @@ class GitSync(models.AbstractModel):
 
             if job_count and len(records) > job_count:
                 records = records[:job_count]
-
-            _logger.warning("Filter max items: {}/{}".format(len(records), prev_count))
+                _logger.warning("Filter max items: {}/{}".format(len(records), prev_count))
 
 
         _logger.warning("Start action sync on {}: {} items".format(self._description, len(records)))

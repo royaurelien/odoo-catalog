@@ -1,0 +1,87 @@
+<odoo>
+    <data>
+
+        <record model="custom.addon.tags" id="tags_testing">
+            <field name="name">Testing</field>
+        </record>
+
+        <record model="custom.addon.tags" id="tags_dev">
+            <field name="name">Dev</field>
+        </record>
+
+        <record model="custom.addon.tags" id="tags_migrate">
+            <field name="name">Migration</field>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_major">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Major version</field>
+            <field name="action">update</field>
+            <field name="condition">bool(REGEX_MAJOR_VERSION.match(vals['name']))</field>
+            <field name="model">git.repository</field>
+            <field name="code">{'major': True, 'is_synchronized': True}</field>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_testing">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Testing</field>
+            <field name="action">add_tag</field>
+            <field name="condition">"test" in vals["name"]</field>
+            <field name="model">git.repository</field>
+            <field name="tag_ids" eval="[(4, ref('custom_addons.tags_testing'))]"/>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_dev">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Dev</field>
+            <field name="action">add_tag</field>
+            <field name="condition">"dev" in vals["name"]</field>
+            <field name="model">git.repository</field>
+            <field name="tag_ids" eval="[(4, ref('custom_addons.tags_dev'))]"/>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_runbot">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Runbot</field>
+            <field name="action">delete</field>
+            <field name="condition">"runbot" in vals["name"] or "ocabot" in vals["name"]</field>
+            <field name="model">git.repository</field>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_older">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Skip older</field>
+            <field name="action">delete</field>
+            <field name="condition"><![CDATA[ bool(REGEX_MAJOR_VERSION.match(vals['name'])) and (float(vals['name']) <= 13.0) ]]></field>
+            <field name="model">git.repository</field>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_merge">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Merge</field>
+            <field name="action">delete</field>
+            <field name="condition">"merge" in vals["name"]</field>
+            <field name="model">git.repository</field>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_from_company">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: From company</field>
+            <field name="action">add_partner</field>
+            <field name="condition">vals["name"].startswith(env.company.name.lower())</field>
+            <field name="model">git.repository</field>
+            <field name="partner_id" ref="base.main_partner"/>
+        </record>
+
+        <record model="git.rules" id="git_rules_addons_from_company">
+            <field name="active" eval="True"/>
+            <field name="name">Addons: From company</field>
+            <field name="action">add_partner</field>
+            <field name="condition">vals["name"].startswith(env.company.name.lower())</field>
+            <field name="model">git.branch</field>
+            <field name="partner_id" ref="base.main_partner"/>
+        </record>
+
+    </data>
+
+</odoo>
