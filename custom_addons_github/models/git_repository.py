@@ -27,8 +27,12 @@ class GitRepository(models.Model):
         self.ensure_one()
         org = self.organization_id._get_github()
         # org = g.get_organization(self.organization_id.name)
+
         repo = org.get_repo(self.path)
+        _logger.warning(repo)
+
         branches = repo.get_branches()
+        _logger.warning(branches)
 
         return branches
 
