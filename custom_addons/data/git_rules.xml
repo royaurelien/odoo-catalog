@@ -15,18 +15,18 @@
 
         <record model="git.rules" id="git_rules_branch_major">
             <field name="active" eval="True"/>
-            <field name="name">Branch: Major version</field>
+            <field name="name">Branch: Sync. major version</field>
             <field name="action">update</field>
-            <field name="condition">bool(REGEX_MAJOR_VERSION.match(vals['name']))</field>
+            <field name="condition">bool(major)</field>
             <field name="model">git.repository</field>
-            <field name="code">{'major': True, 'is_synchronized': True}</field>
+            <field name="code">{'is_synchronized': True}</field>
         </record>
 
         <record model="git.rules" id="git_rules_branch_testing">
             <field name="active" eval="True"/>
             <field name="name">Branch: Testing</field>
             <field name="action">add_tag</field>
-            <field name="condition">"test" in vals["name"]</field>
+            <field name="condition">"test" in name</field>
             <field name="model">git.repository</field>
             <field name="tag_ids" eval="[(4, ref('custom_addons.tags_testing'))]"/>
         </record>
@@ -35,7 +35,7 @@
             <field name="active" eval="True"/>
             <field name="name">Branch: Dev</field>
             <field name="action">add_tag</field>
-            <field name="condition">"dev" in vals["name"]</field>
+            <field name="condition">"dev" in name</field>
             <field name="model">git.repository</field>
             <field name="tag_ids" eval="[(4, ref('custom_addons.tags_dev'))]"/>
         </record>
@@ -44,7 +44,7 @@
             <field name="active" eval="True"/>
             <field name="name">Branch: Runbot</field>
             <field name="action">delete</field>
-            <field name="condition">"runbot" in vals["name"] or "ocabot" in vals["name"]</field>
+            <field name="condition">"runbot" in name or "ocabot" in name</field>
             <field name="model">git.repository</field>
         </record>
 
@@ -52,7 +52,7 @@
             <field name="active" eval="True"/>
             <field name="name">Branch: Skip older</field>
             <field name="action">delete</field>
-            <field name="condition"><![CDATA[ bool(REGEX_MAJOR_VERSION.match(vals['name'])) and (float(vals['name']) <= 13.0) ]]></field>
+            <field name="condition"><![CDATA[ bool(major) and (float(name) <= 13.0) ]]></field>
             <field name="model">git.repository</field>
         </record>
 
@@ -60,16 +60,16 @@
             <field name="active" eval="True"/>
             <field name="name">Branch: Merge</field>
             <field name="action">delete</field>
-            <field name="condition">"merge" in vals["name"]</field>
+            <field name="condition">"merge" in name</field>
             <field name="model">git.repository</field>
         </record>
 
         <record model="git.rules" id="git_rules_branch_from_company">
             <field name="active" eval="True"/>
-            <field name="name">Branch: From company</field>
+            <field name="name">Repository: From company</field>
             <field name="action">add_partner</field>
-            <field name="condition">vals["name"].startswith(env.company.name.lower())</field>
-            <field name="model">git.repository</field>
+            <field name="condition">name.startswith(env.company.name.lower())</field>
+            <field name="model">git.organization</field>
             <field name="partner_id" ref="base.main_partner"/>
         </record>
 
@@ -77,7 +77,7 @@
             <field name="active" eval="True"/>
             <field name="name">Addons: From company</field>
             <field name="action">add_partner</field>
-            <field name="condition">vals["name"].startswith(env.company.name.lower())</field>
+            <field name="condition">name.startswith(env.company.name.lower())</field>
             <field name="model">git.branch</field>
             <field name="partner_id" ref="base.main_partner"/>
         </record>
