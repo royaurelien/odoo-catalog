@@ -31,9 +31,7 @@ class GitRules(models.Model):
                                ('git.repository', 'Branch'),
                                ('git.branch', 'Custom Addons')], required=True)
     action = fields.Selection([('update', 'Update'),
-                               ('delete', 'Delete'),
-                               ('add_tag', 'Add a tag'),
-                               ('add_partner', 'Add a partner')], required=True)
+                               ('ignore', 'Ignore')], required=True)
     condition = fields.Char()
     code = fields.Char()
     organization_ids = fields.Many2many(comodel_name='git.organization')

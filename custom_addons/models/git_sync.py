@@ -48,7 +48,7 @@ class GitSync(models.AbstractModel):
             return x
         return list(map(apply, vals_list))
 
-    def _check_major_version(self, regex=REGEX_MAJOR_VERSION, vals_list):
+    def _check_major_version(self, vals_list, regex=REGEX_MAJOR_VERSION):
         def apply(x):
             x['major'] = bool(regex.match(x.get('name', False)))
             return x
@@ -98,28 +98,30 @@ class GitSync(models.AbstractModel):
         }
 
     def _apply_rule(self, rule, vals_list, context={}):
-        def ignore(vals):
-            _logger.error(vals)
-            try:
-                if not eval(rule.condition, context, vals):
-                    return vals
-                else:
-                    _logger.warning('Ignore {}'.format(vals.get('name')))
-            except ValueError as error:
-                _logger.error(error)
-
         def apply(vals):
-            _logger.error(vals)
+            _logger.error("Rule {o.name} : {o.condition}".format(o=rule))
             try:
-                if eval(rule.condition, context, vals):
-                    vals.update(eval(rule.code))
+                condition = eval(rule.condition, context, vals)
+                _logger.warning("{}\t{o[name]} {o[major]}".format(condition, o=vals))
+
+                if rule.action == 'ignore':
+                    if not condition:
+                        return vals
+                else:
+                    if condition:
+                        if rule.code:
+                            vals.update(eval(rule.code))
+                        if rule.tag_ids:
+                            vals.update({'tag_ids': [(4, tag.id) for tag in rule.tag_ids]})
+                            _logger.error(vals)
+                        if rule.partner_id:
+                            vals.update({'partner_id': rule.partner_id.id})
                     return vals
             except ValueError as error:
                 _logger.error(error)
 
-        method = ignore if rule.action == 'delete' else apply
-
-        return list(map(method, vals_list))
+        # return list(map(apply, vals_list))
+        return list(filter(bool, map(apply, vals_list)))
 
     def _apply_rules(self, vals_list):
         self.ensure_one()
@@ -132,34 +134,12 @@ class GitSync(models.AbstractModel):
         # to_skip, to_delete = [], []
         context = self._get_eval_context()
 
-        for current_rule in rules.get('delete', []):
-            vals_list = self._apply_rule(current_rule, vals_list, context)
+        for action in ['ignore', 'update']:
+            for current_rule in rules.get(action, []):
+                vals_list = self._apply_rule(current_rule, vals_list, context)
 
-        # for current_rule in rules.get('delete', []):
-        #     for index, vals in enumerate(vals_list):
-        #         if eval(current_rule.condition, context, vals):
-        #             _logger.debug("Skip {}".format(vals))
-        #             to_skip += [index]
-        #             to_delete += [vals]
-
-        # # exclude items
-        # vals_list = [vals for index, vals in enumerate(vals_list) if index not in to_skip]
-
-        # for vals in vals_list:
-        #     # context['vals'] = vals
-        #     for current_rule in rules.get('update', []):
-        #         if eval(current_rule.condition, context, vals):
-        #             vals.update(eval(current_rule.code))
-        #     for current_rule in rules.get('add_tag', []):
-        #         if eval(current_rule.condition, context, vals):
-        #             vals.update({'tag_ids': [(4, tag.id) for tag in current_rule.tag_ids]})
-        #     for current_rule in rules.get('add_partner', []):
-        #         # _logger.debug("Condition : {} = {}".format(current_rule.condition, eval(current_rule.condition, context)))
-        #         if eval(current_rule.condition, context, vals):
-        #             vals.update({'partner_id': current_rule.partner_id.id})
-
+            # _logger.warning("ignore: {}/{}".format(len(to_ignore), len(vals_list)))
         return vals_list
-
 
 
     def _filter_on_delay(self, delay):
@@ -236,7 +216,7 @@ class GitSync(models.AbstractModel):
                 _logger.error('PROCESS {o.id}\t{o.name}'.format(o=record))
                 record._action_process(**values)
 
-            # records_by_service.write({'last_sync_date': datetime.now()})
+            records_by_service.write({'last_sync_date': datetime.now()})
 
 
     def _action_process(self, force_update=False, **kwargs):
@@ -267,7 +247,11 @@ class GitSync(models.AbstractModel):
 
         _logger.warning(vals_list)
 
-        return True
+        if not vals_list:
+            _logger.error("No more values")
+            return True
+
+        # return True
 
         # Prepare for create or update
         match_field = self._git_field_name
