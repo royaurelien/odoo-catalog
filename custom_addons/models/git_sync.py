@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from multiprocessing import synchronize
+
 from odoo import models, fields, api, _
 from odoo.tools import safe_eval
 
@@ -102,7 +103,7 @@ class GitSync(models.AbstractModel):
             _logger.error("Rule {o.name} : {o.condition}".format(o=rule))
             try:
                 condition = eval(rule.condition, context, vals)
-                _logger.warning("{}\t{o[name]} {o[major]}".format(condition, o=vals))
+                _logger.warning("{}\t{o[name]}".format(condition, o=vals))
 
                 if rule.action == 'ignore':
                     if not condition:
@@ -160,9 +161,8 @@ class GitSync(models.AbstractModel):
 
     @api.model
     def _get_sync_delay(self):
-        # delay = self.env["ir.config_parameter"].sudo().get_param('custom_addons.sync_delay')
-        # return int(delay) if delay else 0
-        return 1000
+        delay = self.env["ir.config_parameter"].sudo().get_param('custom_addons.sync_delay')
+        return int(delay) if delay else 0
 
     def _get_major_version_regex(self):
         regex = self.env["ir.config_parameter"].sudo().get_param('custom_addons.odoo_major_version')
@@ -172,31 +172,33 @@ class GitSync(models.AbstractModel):
     def _action_sync(self, ids=[], **kwargs):
 
         cron_mode = kwargs.get('cron', False)
-        job_count = kwargs.get('job_count', False)
+        job_count = kwargs.get('job_count', 10)
         force_update = kwargs.get('force_update', False)
         sync_delay = kwargs.get('delay', self._get_sync_delay())
-        auto_search = kwargs.get('auto_search', False)
+        # auto_search = kwargs.get('auto_search', False)
 
         records = self.browse(ids)
 
         if cron_mode:
-            if not records and auto_search:
-                records = self.search([('is_synchronized', '=', True)])
 
-            prev_count = len(records)
-            records = records._filter_on_delay(sync_delay)
-            _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+            domain = [('is_synchronized', '=', True)]
+            groupby = ['organization_id']
 
-            # if job_count and len(records) > job_count:
-            #     records = records[:job_count]
-            #     _logger.warning("Filter max items: {}/{}".format(len(records), prev_count))
+            res_dict = self.read_group(domain, ['id'], groupby)
+            records_by_service = [self.search(item['__domain']) for item in res_dict]
 
-            if job_count:
+            for records in records_by_service:
+                prev_count = len(records)
+                records = records._filter_on_delay(sync_delay)
+                _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+
                 chunked_ids = [records.ids[i:i+job_count] for i in range(0, len(records.ids), job_count)]
                 for current_ids in chunked_ids:
                     _logger.error(current_ids)
-                    self._action_sync(current_ids, cron=True, delay=sync_delay)
-                return True
+
+                    # self._action_sync(current_ids, cron=True, delay=sync_delay)
+                    self.env['git.queue'].add('action_sync', self._name, current_ids)
+            return True
 
 
         _logger.warning("Start action sync on {}: {} items".format(self._description, len(records)))
@@ -205,6 +207,7 @@ class GitSync(models.AbstractModel):
         values = kwargs.copy()
         values['regex'] = self._get_major_version_regex()
         values['subtypes'] = {item['res_model']:item['id'] for item in subtypes}
+        result = []
 
         for service_name in list(set(records.mapped(self._git_service))):
             _logger.error(service_name)
@@ -214,9 +217,11 @@ class GitSync(models.AbstractModel):
 
             for record in records_by_service:
                 _logger.error('PROCESS {o.id}\t{o.name}'.format(o=record))
-                record._action_process(**values)
+                res = record._action_process(**values)
+                result.append(res)
 
             records_by_service.write({'last_sync_date': datetime.now()})
+        return all(result) if result else False
 
 
     def _action_process(self, force_update=False, **kwargs):
@@ -239,7 +244,7 @@ class GitSync(models.AbstractModel):
 
         _logger.debug(vals_list)
 
-        if self._name != 'git.organization':
+        if self._name == 'git.repository':
             vals_list = self._check_major_version(vals_list, regex)
 
         # Apply rules and filter
@@ -262,6 +267,9 @@ class GitSync(models.AbstractModel):
 
         if self.partner_id and self.force_partner:
             vals_list = self._update_list_of_vals(vals_list, {'partner_id': self.partner_id.id})
+
+        if not force_update:
+            vals_list = self._update_list_of_vals(vals_list, {'last_sync_date': datetime.now()})
 
         # Simple search from current record
         if self._git_type_rel == 'o2m':
@@ -328,6 +336,8 @@ class GitSync(models.AbstractModel):
                 vals = to_update.get(rec.id)
                 vals['last_sync_date'] = datetime.now()
                 rec.update(vals)
+
+        return True
 
 
     def action_sync(self):
