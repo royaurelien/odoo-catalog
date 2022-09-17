@@ -21,7 +21,8 @@ class GitRepository(models.Model):
     def _get_items_from_gitlab(self):
         gl = self.organization_id._get_gitlab()
         project = gl.projects.get(self.repo_id)
-        branches = project.branches.list()
+        # `get_all=True` or `iterator=True`
+        branches = project.branches.list(get_all=True)
 
         return [branch for branch in branches]
 

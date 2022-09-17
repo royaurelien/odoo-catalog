@@ -29,7 +29,7 @@ class GitBranch(models.Model):
         addons = []
         python_modules = []
 
-        items = project.repository_tree(ref=self.name)
+        items = project.repository_tree(ref=self.name, get_all=True)
         for item in items:
             if item['name'] == 'requirements.txt':
                 f = project.files.get(file_path=item['path'], ref=self.name)
