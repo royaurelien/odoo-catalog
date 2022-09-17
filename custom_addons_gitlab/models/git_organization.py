@@ -53,7 +53,7 @@ class GitOrganization(models.Model):
             'repository_update_date': self._gitlab_date_to_datetime(item.last_activity_at),
         }
 
-        _logger.debug(vals)
+        # _logger.debug(vals)
         return vals
 
 

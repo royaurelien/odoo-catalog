@@ -69,7 +69,7 @@ class GitBranch(models.Model):
             elif file_content.name == "requirements.txt":
                 try:
                     f = repo.get_contents(os.path.join(file_content.path, "requirements.txt"))
-                    _logger.warning(f)
+                    # _logger.warning(f)
                     python_modules = f.decode().splitlines()
                     python_modules = ", ".join([e.decode() for e in python_modules]) if python_modules else ""
                     requirements = True

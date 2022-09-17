@@ -37,8 +37,8 @@ class CustomAddonVersion(models.Model):
         names = set(names)
         records = self.search([('name', 'in', list(names))])
         to_create = names - set(records.mapped('name'))
-        _logger.warning(to_create)
+        # _logger.warning(to_create)
         new_records = self.create([{'name':name} for name in to_create])
-        _logger.warning(new_records)
+        # _logger.warning(new_records)
 
         return records + new_records

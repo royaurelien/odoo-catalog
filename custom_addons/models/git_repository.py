@@ -46,9 +46,9 @@ class GitRepository(models.Model):
     service = fields.Selection(related='organization_id.service', store=True)
     branch_ids = fields.One2many(comodel_name='git.branch', inverse_name='repository_id')
 
-    branch_count = fields.Integer(compute='_compute_branch', store=True, string="# Branches")
-    branch_major_count = fields.Integer(compute='_compute_branch', store=True, string="# Major Branches")
-    custom_addon_count = fields.Integer(compute='_compute_branch', string="# Addons")
+    branch_count = fields.Integer(compute='_compute_branch', store=True, compute_sudo=True, string="# Branches")
+    branch_major_count = fields.Integer(compute='_compute_branch', compute_sudo=True, store=True, string="# Major Branches")
+    custom_addon_count = fields.Integer(compute='_compute_branch', compute_sudo=True, string="# Addons")
 
     tag_ids = fields.Many2many('custom.addon.tags', string='Tags')
     color = fields.Integer(compute="_compute_color")

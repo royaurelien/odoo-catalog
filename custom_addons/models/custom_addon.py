@@ -45,10 +45,10 @@ class CustomAddon(models.Model):
         column2="branch_id",
     )
 
-    branch_count = fields.Integer(compute='_compute_branch', store=True, string="# Branches")
-    repository_count = fields.Integer(compute='_compute_branch', store=True, string="# Repository")
-    is_many_used = fields.Boolean(compute='_compute_branch', store=True, string="Many Used")
-    color = fields.Integer(compute="_compute_branch", string="Color Index")
+    branch_count = fields.Integer(compute='_compute_branch', store=True, compute_sudo=True, string="# Branches")
+    repository_count = fields.Integer(compute='_compute_branch', store=True, compute_sudo=True, string="# Repository")
+    is_many_used = fields.Boolean(compute='_compute_branch', store=True, compute_sudo=True, string="Many Used")
+    color = fields.Integer(compute="_compute_branch", compute_sudo=True, string="Color Index")
 
     @api.depends('branch_ids')
     def _compute_versions(self):

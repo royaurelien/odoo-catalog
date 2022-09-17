@@ -8,4 +8,5 @@ manager_git_rules,manager_git_rules,model_git_rules,custom_addons.group_manager,
 access_custom_addon_tags,access_custom_addon_tags,model_custom_addon_tags,custom_addons.group_user,1,1,1,0
 manager_custom_addon_tags,manager_custom_addon_tags,model_custom_addon_tags,custom_addons.group_manager,1,1,1,1
 access_custom_addon_version,access_custom_addon_version,model_custom_addon_version,custom_addons.group_user,1,0,0,0
+manager_custom_addon_version,manager_custom_addon_version,model_custom_addon_version,custom_addons.group_manager,1,1,1,1
 access_ir_module_category,custom_addons.ir_module_category,model_ir_module_category,custom_addons.group_user,1,0,0,0

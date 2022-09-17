@@ -61,7 +61,7 @@ class GitSync(models.AbstractModel):
     def __get_method(self, name, value, default_value, *args, **kwargs):
         method = name.format(value)
         found = hasattr(self, method)
-        _logger.debug("Search {} in {}: {}".format(method, self._name, found))
+        # _logger.debug("Search {} in {}: {}".format(method, self._name, found))
         return getattr(self, method)(*args) if hasattr(self, method) else default_value
 
     def _convert_to_odoo(self, item):
@@ -100,10 +100,10 @@ class GitSync(models.AbstractModel):
 
     def _apply_rule(self, rule, vals_list, context={}):
         def apply(vals):
-            _logger.error("Rule {o.name} : {o.condition}".format(o=rule))
+            # _logger.error("Rule {o.name} : {o.condition}".format(o=rule))
             try:
                 condition = eval(rule.condition, context, vals)
-                _logger.warning("{}\t{o[name]}".format(condition, o=vals))
+                # _logger.warning("{}\t{o[name]}".format(condition, o=vals))
 
                 if rule.action == 'ignore':
                     if not condition:
@@ -114,7 +114,7 @@ class GitSync(models.AbstractModel):
                             vals.update(eval(rule.code))
                         if rule.tag_ids:
                             vals.update({'tag_ids': [(4, tag.id) for tag in rule.tag_ids]})
-                            _logger.error(vals)
+                            # _logger.error(vals)
                         if rule.partner_id:
                             vals.update({'partner_id': rule.partner_id.id})
                     return vals
@@ -128,7 +128,7 @@ class GitSync(models.AbstractModel):
         self.ensure_one()
 
         rules = self._get_rules()
-        _logger.warning(rules)
+        # _logger.warning(rules)
         if not rules:
             return vals_list
 
@@ -190,18 +190,18 @@ class GitSync(models.AbstractModel):
             for records in records_by_service:
                 prev_count = len(records)
                 records = records._filter_on_delay(sync_delay)
-                _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+                # _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
 
                 chunked_ids = [records.ids[i:i+job_count] for i in range(0, len(records.ids), job_count)]
                 for current_ids in chunked_ids:
-                    _logger.error(current_ids)
+                    # _logger.error(current_ids)
 
                     # self._action_sync(current_ids, cron=True, delay=sync_delay)
                     self.env['git.queue'].add('action_sync', self._name, current_ids)
             return True
 
 
-        _logger.warning("Start action sync on {}: {} items".format(self._description, len(records)))
+        # _logger.warning("Start action sync on {}: {} items".format(self._description, len(records)))
 
         subtypes = self.env['mail.message.subtype'].search([]).read(['res_model'])
         values = kwargs.copy()
@@ -210,13 +210,13 @@ class GitSync(models.AbstractModel):
         result = []
 
         for service_name in list(set(records.mapped(self._git_service))):
-            _logger.error(service_name)
+            # _logger.error(service_name)
 
             records_by_service = records.filtered(lambda rec: rec.service == service_name)
-            _logger.warning("Run action sync for {} service on {} items.".format(service_name, len(records_by_service)))
+            # _logger.warning("Run action sync for {} service on {} items.".format(service_name, len(records_by_service)))
 
             for record in records_by_service:
-                _logger.error('PROCESS {o.id}\t{o.name}'.format(o=record))
+                # _logger.error('PROCESS {o.id}\t{o.name}'.format(o=record))
                 res = record._action_process(**values)
                 result.append(res)
 
@@ -229,11 +229,11 @@ class GitSync(models.AbstractModel):
         subtypes = kwargs.get('subtypes', {})
         regex = kwargs.get('regex')
 
-        _logger.warning("Excludes: {}".format(excludes))
+        # _logger.warning("Excludes: {}".format(excludes))
 
         # Get items from specific methods
         items = self._get_items_for_odoo()
-        _logger.warning(items)
+        # _logger.warning(items)
         try:
             items = [item for item in items if item.name not in excludes]
         except AttributeError:
@@ -242,7 +242,7 @@ class GitSync(models.AbstractModel):
         # Prepare values, aka convert Git(hub/lab) values to Odoo values
         vals_list = [self._convert_to_odoo(item) for item in items]
 
-        _logger.debug(vals_list)
+        # _logger.debug(vals_list)
 
         if self._name == 'git.repository':
             vals_list = self._check_major_version(vals_list, regex)
@@ -250,10 +250,10 @@ class GitSync(models.AbstractModel):
         # Apply rules and filter
         vals_list = self._apply_rules(vals_list)
 
-        _logger.warning(vals_list)
+        # _logger.warning(vals_list)
 
         if not vals_list:
-            _logger.error("No more values")
+            # _logger.error("No more values")
             return True
 
         # return True
@@ -291,13 +291,13 @@ class GitSync(models.AbstractModel):
                                                                                 len(to_create))
 
 
-        _logger.warning(sync_message)
+        # _logger.warning(sync_message)
         self.message_post(body=sync_message, message_type='notification')
 
         child_ids = self[rel_field]
         self.update({rel_field: to_update + to_create})
         new_childs = self[rel_field] - child_ids
-        _logger.error("Childs created: {}".format(new_childs.mapped('name')))
+        # _logger.error("Childs created: {}".format(new_childs.mapped('name')))
 
         # [record]                  [childs]            [parent field]
         # git.organization  -->     git.repository
@@ -332,7 +332,7 @@ class GitSync(models.AbstractModel):
             to_update = {object_ids.get(vals[match_field]):vals for vals in vals_list if vals[match_field] in object_ids.keys()}
             record_ids = self.env[model_name].browse(to_update.keys())
             for rec in record_ids:
-                _logger.warning("Update forced on {} {}".format(model_name, rec.id))
+                # _logger.warning("Update forced on {} {}".format(model_name, rec.id))
                 vals = to_update.get(rec.id)
                 vals['last_sync_date'] = datetime.now()
                 rec.update(vals)

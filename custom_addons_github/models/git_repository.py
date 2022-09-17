@@ -29,10 +29,10 @@ class GitRepository(models.Model):
         # org = g.get_organization(self.organization_id.name)
 
         repo = org.get_repo(self.path)
-        _logger.warning(repo)
+        # _logger.warning(repo)
 
         branches = repo.get_branches()
-        _logger.warning(branches)
+        # _logger.warning(branches)
 
         return branches
 

@@ -105,6 +105,7 @@
     <record model="ir.actions.server" id="action_server_ignore_repositories">
       <field name="name">Ignore Repositories</field>
       <field name="model_id" ref="model_git_repository"/>
+      <field name="binding_model_id" ref="model_git_repository"/>
       <field name="state">code</field>
       <field name="code">
         records.action_ignore()

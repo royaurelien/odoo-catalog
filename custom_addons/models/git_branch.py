@@ -79,7 +79,7 @@ class GitBranch(models.Model):
 
     @api.depends('custom_addon_ids')
     def _compute_custom_addon(self, context=None):
-        _logger.error(context)
+        # _logger.error(context)
         for record in self:
             record.custom_addon_count = len(record.custom_addon_ids)
 

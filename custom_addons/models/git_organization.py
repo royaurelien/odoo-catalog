@@ -33,9 +33,9 @@ class GitOrganization(models.Model):
     exclude_names = fields.Char(copy=False)
     is_user = fields.Boolean(default=False)
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')
-    repository_count = fields.Integer(compute='_compute_repository', store=False)
-    branch_count = fields.Integer(compute='_compute_repository', store=False)
-    custom_addons_count = fields.Integer(compute='_compute_repository', store=False)
+    repository_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
+    branch_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
+    custom_addons_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     force_update = fields.Boolean(default=False)
 
     @api.depends('repository_ids')

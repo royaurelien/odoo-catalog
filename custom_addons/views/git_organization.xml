@@ -4,6 +4,7 @@
 
     <record model="ir.ui.view" id="view_git_organization_tree">
       <field name="model">git.organization</field>
+      <field name="name">git.organization.tree</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
@@ -21,8 +22,9 @@
 
     <record id="view_git_organization_form" model="ir.ui.view">
         <field name="model">git.organization</field>
+        <field name="name">git.organization.form</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Git Organization">
                 <header>
                     <button
                         name="action_sync"
@@ -31,10 +33,14 @@
                         class="btn btn-default"
                         icon="fa-chevron-right"
                         attrs="{'invisible': [('is_synchronized', '!=', True)]}"
-                        groups="custom_addons.group_manager"
-                    />
+                        groups="custom_addons.group_manager"/>
                 </header>
                 <sheet>
+                    <!-- Invisible fields -->
+                    <field name="repository_count" invisible="1"/>
+                    <field name="custom_addons_count" invisible="1"/>
+                    <field name="branch_count" invisible="1"/>
+
                     <div class="oe_button_box" name="button_box">
                         <button
                             type="object"
@@ -68,9 +74,7 @@
                         </button>
                     </div>
 
-                    <field name="repository_count" invisible="1"/>
-                    <field name="custom_addons_count" invisible="1"/>
-                    <field name="branch_count" invisible="1"/>
+
 
                     <div class="oe_title">
                         <h1>
@@ -80,7 +84,8 @@
                             <field name="service" class="oe_inline" />
                         </h3>
                     </div>
-                    <div class="oe_clear" />
+                    <!-- <div class="oe_clear" /> -->
+
                     <group>
                       <group col="2">
                         <field name="url" widget="url"/>
@@ -111,10 +116,11 @@
                         </page>
                     </notebook>
                 </sheet>
+                <div class="o_attachment_preview"/>
                 <div class="oe_chatter">
-                    <field name="message_follower_ids" widget="mail_followers"/>
-                    <field name="activity_ids" widget="mail_activity"/>
-                    <field name="message_ids" widget="mail_thread"/>
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
                 </div>
             </form>
         </field>
