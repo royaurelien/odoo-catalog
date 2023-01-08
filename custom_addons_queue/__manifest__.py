@@ -1,24 +1,12 @@
 # -*- coding: utf-8 -*-
 {
     'name': "Custom Addons Job Queue",
-
-    'summary': """
-        Asynchronously Jobs""",
-
-    'description': """
-        Long description of module's purpose
-    """,
-
+    'summary': """Job Queue for the modules catalog""",
+    'description': """Job Queue for the modules catalog""",
     'author': "Aurelien ROY",
     'website': "https://odoo.com",
-
-    # Categories can be used to filter modules in modules listing
-    # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
-    # for the full list
-    'category': 'Uncategorized',
-    'version': '0.1',
-
-    # any module necessary for this one to work correctly
+    'category': 'Technical',
+    'version': '14.0.0.1.0',
     'depends': [
         'base',
         'custom_addons',
@@ -26,13 +14,10 @@
         'queue_job_batch',
         'web_notify',
     ],
-
-    # always loaded
     'data': [
         'security/security.xml',
         'views/actions.xml',
     ],
-    # only loaded in demonstration mode
     'demo': [
         # 'demo/demo.xml',
     ],
