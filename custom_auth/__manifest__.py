@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "Custom Auth",
+    'name': "Custom Authentication Management",
     'summary': """Custom authentication management""",
     'description': """Custom authentication management""",
     'author': "Aurelien ROY",
@@ -16,4 +16,9 @@
         'views/custom_auth.xml',
     ],
     'demo': [],
+    'installable': True,
+    'auto_install':False,
+    'application': False,
+    'license': 'LGPL-3',
+
 }

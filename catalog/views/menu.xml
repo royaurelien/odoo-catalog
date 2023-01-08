@@ -1,0 +1,176 @@
+<odoo>
+  <data>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="catalog.action_view_addons">
+      <field name="name">Custom Addons</field>
+      <field name="res_model">custom.addon</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_organization">
+      <field name="name">Git Organization</field>
+      <field name="res_model">git.organization</field>
+      <field name="view_mode">tree,form,graph</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_repository">
+      <field name="name">Git Repository</field>
+      <field name="res_model">git.repository</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_branch">
+      <field name="name">Git Branch</field>
+      <field name="res_model">git.branch</field>
+      <field name="view_mode">tree,kanban,form,graph</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_tags">
+      <field name="name">Git Tags</field>
+      <field name="res_model">custom.addon.tags</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_version">
+      <field name="name">Versions</field>
+      <field name="res_model">custom.addon.version</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_rules">
+      <field name="name">Git Rules</field>
+      <field name="res_model">git.rules</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- server action to the one above -->
+
+    <record model="ir.actions.server" id="action_server_sync_repositories">
+      <field name="name">Repositories Sync.</field>
+      <field name="model_id" ref="model_git_organization"/>
+      <field name="binding_model_id" ref="model_git_organization"/>
+      <field name="state">action</field>
+      <field name="state">code</field>
+      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_sync_branches">
+      <field name="name">Branches Sync.</field>
+      <field name="model_id" ref="model_git_repository"/>
+      <field name="binding_model_id" ref="model_git_repository"/>
+      <field name="state">action</field>
+      <field name="state">code</field>
+      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_sync_addons">
+      <field name="name">Addons Sync.</field>
+      <field name="model_id" ref="model_git_branch"/>
+      <field name="binding_model_id" ref="model_git_branch"/>
+      <field name="state">action</field>
+      <field name="state">code</field>
+      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_toggle_sync_repositories">
+      <field name="name">Toggle sync.</field>
+      <field name="model_id" ref="model_git_organization"/>
+      <field name="binding_model_id" ref="model_git_organization"/>
+      <field name="state">action</field>
+      <field name="state">code</field>
+      <field name="code">records.action_toggle_sync()</field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_toggle_sync_branches">
+      <field name="name">Toggle sync.</field>
+      <field name="model_id" ref="model_git_repository"/>
+      <field name="binding_model_id" ref="model_git_repository"/>
+      <field name="state">action</field>
+      <field name="state">code</field>
+      <field name="code">records.action_toggle_sync()</field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_toggle_sync_addons">
+      <field name="name">Toggle sync.</field>
+      <field name="model_id" ref="model_git_branch"/>
+      <field name="binding_model_id" ref="model_git_branch"/>
+      <field name="state">action</field>
+      <field name="state">code</field>
+      <field name="code">records.action_toggle_sync()</field>
+    </record>
+
+    <record model="ir.actions.server" id="action_server_ignore_repositories">
+      <field name="name">Ignore Repositories</field>
+      <field name="model_id" ref="model_git_repository"/>
+      <field name="binding_model_id" ref="model_git_repository"/>
+      <field name="state">code</field>
+      <field name="code">
+        records.action_ignore()
+      </field>
+    </record>
+
+
+    <!-- Top menu item -->
+
+    <menuitem
+        id="menu_custom_addons_root"
+        name="Catalog"
+        groups="catalog.group_user"
+        web_icon="fa fa-cubes,#FFFFFF,#BC4242"
+        sequence="75"/>
+
+    <!-- menu categories -->
+
+    <menuitem name="Addons" id="menu_custom_addons"
+              parent="menu_custom_addons_root"
+              sequence="10"
+              action="catalog.action_view_addons"/>
+
+    <menuitem name="Configuration" id="menu_custom_addons_config"
+              groups="catalog.group_manager"
+              sequence="90"
+              parent="menu_custom_addons_root"/>
+
+    <menuitem name="Data" id="menu_custom_addons_data"
+              sequence="20"
+              parent="menu_custom_addons_root"/>
+
+    <!-- actions -->
+
+
+
+    <menuitem name="Organizations" id="menu_organization"
+              parent="menu_custom_addons_data"
+              sequence="10"
+              action="catalog.action_view_organization"/>
+
+    <menuitem name="Repositories" id="catalog.menu_repository"
+              parent="menu_custom_addons_data"
+              sequence="20"
+              action="catalog.action_view_repository"/>
+
+    <menuitem name="Branches" id="catalog.menu_branch"
+              parent="menu_custom_addons_data"
+              sequence="30"
+              action="catalog.action_view_branch"/>
+
+    <menuitem name="Tags" id="catalog.menu_tags"
+              parent="menu_custom_addons_config"
+              sequence="10"
+              action="catalog.action_view_tags"/>
+
+    <menuitem name="Versions" id="catalog.menu_version"
+              parent="menu_custom_addons_config"
+              sequence="10"
+              action="catalog.action_view_version"/>
+
+    <menuitem name="Rules" id="catalog.menu_rules"
+              parent="menu_custom_addons_config"
+              sequence="20"
+              action="catalog.action_view_rules"/>
+
+  </data>
+</odoo>

@@ -1,0 +1,134 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="view_git_organization_tree">
+      <field name="model">git.organization</field>
+      <field name="name">git.organization.tree</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="service"/>
+          <field name="repository_count" optional="show"/>
+          <field name="branch_count" optional="show"/>
+          <field name="custom_addons_count" optional="show"/>
+          <field name="last_sync_date" widget="datetime" optional="show"/>
+          <field name="auth_method" optional="hide"/>
+          <field name="is_synchronized" widget="toggle_button" options='{"active": "Synchronized", "inactive": "Not synchronized"}' nolabel="1" optional="show"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <record id="view_git_organization_form" model="ir.ui.view">
+        <field name="model">git.organization</field>
+        <field name="name">git.organization.form</field>
+        <field name="arch" type="xml">
+            <form string="Git Organization">
+                <header>
+                    <button
+                        name="action_sync"
+                        type="object"
+                        string="Repositories Sync."
+                        class="btn btn-default"
+                        icon="fa-chevron-right"
+                        attrs="{'invisible': [('is_synchronized', '!=', True)]}"
+                        groups="catalog.group_manager"/>
+                </header>
+                <sheet>
+                    <!-- Invisible fields -->
+                    <field name="repository_count" invisible="1"/>
+                    <field name="custom_addons_count" invisible="1"/>
+                    <field name="branch_count" invisible="1"/>
+
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            type="object"
+                            name="action_view_git_repository"
+                            class="oe_stat_button"
+                            icon="fa-folder-o">
+                            <div class="o_stat_info">
+                                <field name="repository_count" class="o_stat_value" />
+                                <span> Repositories</span>
+                            </div>
+                        </button>
+                        <button
+                            type="object"
+                            name="action_view_git_branch"
+                            class="oe_stat_button"
+                            icon="fa-code-fork">
+                            <div class="o_stat_info">
+                                <field name="branch_count" class="o_stat_value" />
+                                <span> Branches</span>
+                            </div>
+                        </button>
+                        <button
+                            type="object"
+                            name="action_view_custom_addons"
+                            class="oe_stat_button"
+                            icon="fa-cube">
+                            <div class="o_stat_info">
+                                <field name="custom_addons_count" class="o_stat_value" />
+                                <span> Addons</span>
+                            </div>
+                        </button>
+                    </div>
+
+
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                        <h3 class="oe_fade">
+                            <field name="service" class="oe_inline" />
+                        </h3>
+                    </div>
+                    <!-- <div class="oe_clear" /> -->
+
+                    <group>
+                      <group col="2">
+                        <field name="url" widget="url"/>
+                        <field name="auth_method" string="Method" widget="selection_badge"/>
+                        <field name="auth_id" string="Auth"
+                            groups="catalog.group_manager"
+                            options="{'no_create_edit': True, 'no_open': True}"
+                            attrs="{'required': [('auth_method', '=', 'private')], 'invisible': [('auth_method', '!=', 'private')]}"/>
+                        <field name="is_user" widget="boolean_toggle"/>
+                        <field name="is_synchronized" widget="boolean_toggle"/>
+                      </group>
+                      <group col="2">
+                        <field name="last_sync_date" widget="datetime"/>
+                        <field name="partner_id" help="If defined, partner will be apply on repository."/>
+                        <field name="force_partner" widget="boolean_toggle"/>
+                      </group>
+                    </group>
+                    <notebook>
+                        <page name="extra_setting" string="Settings">
+                            <group cols="4" string="Ignored Repositories">
+                                <field
+                                    name="exclude_names"
+                                    colspan="4"
+                                    nolabel="1"
+                                />
+                            </group>
+                        </page>
+                        <page name="note" string="Notes">
+                            <field name="note" widget="html" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="o_attachment_preview"/>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+
+
+  </data>
+</odoo>

@@ -1,0 +1,19 @@
+<odoo>
+  <data>
+
+    <!-- server action to the one above -->
+
+    <record model="ir.actions.server" id="catalog.action_server_sync_repositories">
+      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
+    </record>
+
+    <record model="ir.actions.server" id="catalog.action_server_sync_branches">
+      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
+    </record>
+
+    <record model="ir.actions.server" id="catalog.action_server_sync_addons">
+      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
+    </record>
+
+  </data>
+</odoo>

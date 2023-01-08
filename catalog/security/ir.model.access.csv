@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custom_addon,access_custom_addon,model_custom_addon,catalog.group_user,1,1,1,0
+manager_custom_addon,manager_custom_addon,model_custom_addon,catalog.group_manager,1,1,1,1
+access_git_organization,access_git_organization,model_git_organization,catalog.group_user,1,1,1,0
+manager_git_organization,manager_git_organization,model_git_organization,catalog.group_manager,1,1,1,1
+access_git_repository,access_git_repository,model_git_repository,catalog.group_user,1,1,1,0
+manager_git_repository,manager_git_repository,model_git_repository,catalog.group_manager,1,1,1,1
+access_git_branch,access_git_branch,model_git_branch,catalog.group_user,1,1,1,0
+manager_git_branch,manager_git_branch,model_git_branch,catalog.group_manager,1,1,1,1
+access_git_rules,access_git_rules,model_git_rules,catalog.group_user,1,0,0,0
+manager_git_rules,manager_git_rules,model_git_rules,catalog.group_manager,1,1,1,1
+access_custom_addon_tags,access_custom_addon_tags,model_custom_addon_tags,catalog.group_user,1,1,1,0
+manager_custom_addon_tags,manager_custom_addon_tags,model_custom_addon_tags,catalog.group_manager,1,1,1,1
+access_custom_addon_version,access_custom_addon_version,model_custom_addon_version,catalog.group_user,1,0,0,0
+manager_custom_addon_version,manager_custom_addon_version,model_custom_addon_version,catalog.group_manager,1,1,1,1
+access_ir_module_category,catalog.ir_module_category,model_ir_module_category,catalog.group_user,1,0,0,0
