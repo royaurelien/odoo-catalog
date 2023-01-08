@@ -28,7 +28,7 @@
 
     # always loaded
     'data': [
-        'security/res_groups.xml',
+        'security/security.xml',
         'security/ir.model.access.csv',
         'views/menu.xml',
         'views/git_organization.xml',
@@ -39,7 +39,9 @@
         'views/custom_addon_tags.xml',
         'views/custom_addon_version.xml',
         'data/mail_message_subtype.xml',
-        'data/cron.xml',
+        'data/ir_config.xml',
+        'data/ir_cron.xml',
+        'data/custom_addon_tags.xml',
         'data/git_rules.xml',
     ],
     # only loaded in demonstration mode

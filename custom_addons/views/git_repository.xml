@@ -50,6 +50,7 @@
         <field name="model">git.repository</field>
         <field name="arch" type="xml">
             <tree decoration-muted="branch_count == 0">
+                <field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" optional="show"/>
                 <field name="name"/>
                 <field name="description"/>
                 <field name="partner_id" optional="false"/>

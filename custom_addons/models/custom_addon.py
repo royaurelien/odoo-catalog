@@ -15,6 +15,10 @@ class CustomAddon(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin', 'git.mixin']
     _description = 'Custom Addon'
 
+    def _get_default_favorite_user_ids(self):
+        # return [(6, 0, [self.env.uid])]
+        return []
+
     name = fields.Char(required=True)
     description = fields.Text()
     web_description = fields.Html()
@@ -50,6 +54,13 @@ class CustomAddon(models.Model):
     is_many_used = fields.Boolean(compute='_compute_branch', store=True, compute_sudo=True, string="Many Used")
     color = fields.Integer(compute="_compute_branch", compute_sudo=True, string="Color Index")
 
+    favorite_user_ids = fields.Many2many(
+        'res.users', 'custom_addons_favorite_user_rel',
+        default=_get_default_favorite_user_ids,
+        string='Members')
+    is_favorite = fields.Boolean(compute='_compute_is_favorite', inverse='_inverse_is_favorite', string='Show Project on dashboard')
+
+
     @api.depends('branch_ids')
     def _compute_versions(self):
         version_env = self.env['custom.addon.version']
@@ -62,9 +73,11 @@ class CustomAddon(models.Model):
     def _search_versions(self, operator, value):
         return [('branch_ids.name', operator, value)]
 
+
     def _compute_is_favorite(self):
         for record in self:
             record.is_favorite = self.env.user in record.favorite_user_ids
+
 
     def _inverse_is_favorite(self):
         favorite_addons = not_fav_addons = self.env['custom.addon'].sudo()
@@ -77,15 +90,6 @@ class CustomAddon(models.Model):
         not_fav_addons.write({'favorite_user_ids': [(4, self.env.uid)]})
         favorite_addons.write({'favorite_user_ids': [(3, self.env.uid)]})
 
-    def _get_default_favorite_user_ids(self):
-        # return [(6, 0, [self.env.uid])]
-        return []
-
-    favorite_user_ids = fields.Many2many(
-        'res.users', 'custom_addons_favorite_user_rel',
-        default=_get_default_favorite_user_ids,
-        string='Members')
-    is_favorite = fields.Boolean(compute='_compute_is_favorite', inverse='_inverse_is_favorite', string='Show Project on dashboard')
 
     # @api.depends('branch_ids')
     # def _compute_url(self):
@@ -106,6 +110,7 @@ class CustomAddon(models.Model):
 
         return action
 
+
     def _action_view_git_repository(self, action):
         repo_ids = self.branch_ids.mapped('repository_id').ids
         action["domain"] = [('id', 'in', repo_ids)]
@@ -116,16 +121,9 @@ class CustomAddon(models.Model):
     def action_open_url(self):
         self.ensure_one()
         action = super(CustomAddon, self).action_open_url()
-        # _logger.warning(dict(self.env.context))
         res_id = self.env.context.get('branch_id')
         action['url'] = os.path.join(self.env['git.branch'].browse(res_id).url, self.technical_name) if res_id else None
 
         return action
 
 
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #     _logger.error(vals_list)
-    #     res_ids = super(CustomAddon, self).create(vals_list)
-
-    #     return res_ids

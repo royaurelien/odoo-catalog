@@ -77,9 +77,9 @@ class GitBranch(models.Model):
 
     custom_addon_count = fields.Integer(compute='_compute_custom_addon', store=True)
 
+
     @api.depends('custom_addon_ids')
     def _compute_custom_addon(self, context=None):
-        # _logger.error(context)
         for record in self:
             record.custom_addon_count = len(record.custom_addon_ids)
 
@@ -92,9 +92,9 @@ class GitBranch(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        # _logger.error(vals_list)
         res_ids = super(GitBranch, self).create(vals_list)
         names = res_ids.filtered(lambda x: x.major).mapped('name')
+        # FIXME : search_or_create not used ?
         versions = self.env['custom.addon.version'].search_or_create(names)
 
         return res_ids

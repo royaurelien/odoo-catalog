@@ -29,6 +29,7 @@
 
     # always loaded
     'data': [
+        'security/security.xml',
         'views/actions.xml',
     ],
     # only loaded in demonstration mode

@@ -2,15 +2,21 @@
 <odoo>
     <data noupdate="0">
 
+        <record model="ir.module.category" id="module_category_custom_addons">
+            <field name="name">Custom Addons</field>
+            <field name="sequence">99</field>
+            <field name="visible" eval="1" />
+        </record>
+
         <record id="custom_addons.group_user" model="res.groups">
-            <field name="name">Custom Addons user</field>
-            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="name">User</field>
+            <field name="category_id" ref="module_category_custom_addons"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <record id="custom_addons.group_manager" model="res.groups">
-            <field name="name">Custom Addons manager</field>
-            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_custom_addons"/>
             <field name="implied_ids" eval="[(4, ref('custom_addons.group_user'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
