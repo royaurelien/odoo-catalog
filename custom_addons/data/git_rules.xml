@@ -13,6 +13,18 @@
             <field name="name">Migration</field>
         </record>
 
+        <record model="custom.addon.tags" id="tags_saas">
+            <field name="name">SaaS</field>
+        </record>
+
+        <record model="custom.addon.tags" id="tags_community">
+            <field name="name">Community</field>
+        </record>
+
+        <record model="custom.addon.tags" id="tags_enterprise">
+            <field name="name">Enterprise</field>
+        </record>
+
         <record model="git.rules" id="git_rules_branch_major">
             <field name="active" eval="True"/>
             <field name="name">Branch: Sync. major version</field>

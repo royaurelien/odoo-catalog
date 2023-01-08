@@ -54,7 +54,7 @@
       <field name="binding_model_id" ref="model_git_organization"/>
       <field name="state">action</field>
       <field name="state">code</field>
-      <field name="code">model._action_sync(records.ids, force_update=False)</field>
+      <field name="code">model.with_delay()._action_sync(records.ids, force_update=False)</field>
     </record>
 
     <record model="ir.actions.server" id="action_server_sync_branches">
@@ -63,7 +63,7 @@
       <field name="binding_model_id" ref="model_git_repository"/>
       <field name="state">action</field>
       <field name="state">code</field>
-      <field name="code">model._action_sync(records.ids, force_update=False)</field>
+      <field name="code">model.with_delay()._action_sync(records.ids, force_update=False)</field>
     </record>
 
     <record model="ir.actions.server" id="action_server_sync_addons">
@@ -72,7 +72,7 @@
       <field name="binding_model_id" ref="model_git_branch"/>
       <field name="state">action</field>
       <field name="state">code</field>
-      <field name="code">model._action_sync(records.ids, force_update=False)</field>
+      <field name="code">model.with_delay()._action_sync(records.ids, force_update=False)</field>
     </record>
 
     <record model="ir.actions.server" id="action_server_toggle_sync_repositories">

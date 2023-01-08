@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-
-from odoo import models, fields, api, _
-from odoo.tools import safe_eval
-
+from collections import ChainMap, OrderedDict
 from datetime import datetime
 import logging
 from random import randint
 import re
+from multiprocessing import synchronize
+
+from odoo import models, fields, api, _
+from odoo.tools import safe_eval
+from odoo.tools.misc import get_lang
+
 
 _logger = logging.getLogger(__name__)
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -43,6 +45,42 @@ class GitSync(models.AbstractModel):
     exclude_names = fields.Char()
 
 
+    def _update_tags(self, vals_list, records):
+        def apply(vals):
+            tags = [(4, tag.id) for tag in records]
+            if tags:
+                x = vals.setdefault('tag_ids', [])
+                _logger.warning(vals)
+                _logger.warning(tags)
+                vals['tag_ids'] += tags
+            return vals
+        return list(map(apply, vals_list))
+
+
+    def _update_category(self, vals_list, categories):
+
+        def apply(vals):
+            search_key = vals.get('category', False)
+            if not search_key:
+                category = False
+
+            else:
+                # Exact match
+                category = categories.get(search_key.lower(), False)
+
+                if not category:
+                    res = dict(filter(lambda item: search_key.lower() in item[0], categories.items()))
+                    category = list(res.values())[0] if res else False
+                    _logger.warning(res)
+
+            _logger.warning(f"Search: {search_key}, Found: {category}")
+            del vals['category']
+            vals['category_id'] = category
+            return vals
+
+        return list(map(apply, vals_list))
+
+
     def _update_list_of_vals(self, vals_list, vals):
         def apply(x):
             x.update(vals)
@@ -60,7 +98,7 @@ class GitSync(models.AbstractModel):
 
     def __get_method(self, name, value, default_value, *args, **kwargs):
         method = name.format(value)
-        found = hasattr(self, method)
+        # found = hasattr(self, method)
         # _logger.debug("Search {} in {}: {}".format(method, self._name, found))
         return getattr(self, method)(*args) if hasattr(self, method) else default_value
 
@@ -169,6 +207,27 @@ class GitSync(models.AbstractModel):
         return re.compile(regex)
 
     @api.model
+    def _get_categories(self):
+        """
+        Return dict of ir.module categories (name & id) in english and current language if not the same
+        """
+        default_lang = get_lang(self.env).code
+        languages = [default_lang]
+        categories = {}
+
+        if not default_lang.startswith('en_'):
+            languages.append('en_US')
+
+        for lang in languages:
+            records = self.env['ir.module.category'].with_context({'lang': lang}).search([]).read(['name', 'id'])
+            categories.update({item['name'].lower():item['id'] for item in records})
+
+        categories = OrderedDict(sorted(categories.items()))
+        _logger.warning(list(categories.keys()))
+
+        return categories
+
+    @api.model
     def _action_sync(self, ids=[], **kwargs):
 
         cron_mode = kwargs.get('cron', False)
@@ -207,6 +266,10 @@ class GitSync(models.AbstractModel):
         values = kwargs.copy()
         values['regex'] = self._get_major_version_regex()
         values['subtypes'] = {item['res_model']:item['id'] for item in subtypes}
+
+        if self._name == 'git.branch':
+            values['categories'] = self._get_categories()
+
         result = []
 
         for service_name in list(set(records.mapped(self._git_service))):
@@ -228,6 +291,7 @@ class GitSync(models.AbstractModel):
         excludes = self._get_excludes()
         subtypes = kwargs.get('subtypes', {})
         regex = kwargs.get('regex')
+        categories = kwargs.get('categories', {})
 
         # _logger.warning("Excludes: {}".format(excludes))
 
@@ -242,7 +306,14 @@ class GitSync(models.AbstractModel):
         # Prepare values, aka convert Git(hub/lab) values to Odoo values
         vals_list = [self._convert_to_odoo(item) for item in items]
 
-        # _logger.debug(vals_list)
+        if self._name == 'git.branch':
+            tags = self.repository_id.tag_ids
+            vals_list = self._update_category(vals_list, categories)
+            vals_list = self._update_tags(vals_list, tags)
+
+        # for vals in vals_list:
+        #     _logger.error(f"{vals['name']}: {vals['category_id']}")
+        # _logger.error(vals_list)
 
         if self._name == 'git.repository':
             vals_list = self._check_major_version(vals_list, regex)
@@ -332,7 +403,7 @@ class GitSync(models.AbstractModel):
             to_update = {object_ids.get(vals[match_field]):vals for vals in vals_list if vals[match_field] in object_ids.keys()}
             record_ids = self.env[model_name].browse(to_update.keys())
             for rec in record_ids:
-                # _logger.warning("Update forced on {} {}".format(model_name, rec.id))
+                _logger.warning("Update forced on {} {}".format(model_name, rec.id))
                 vals = to_update.get(rec.id)
                 vals['last_sync_date'] = datetime.now()
                 rec.update(vals)
@@ -341,5 +412,6 @@ class GitSync(models.AbstractModel):
 
 
     def action_sync(self):
-        self._action_sync(self.ids, force_update=False)
+        # self.with_delay()._action_sync(self.ids, force_update=False)
+        self._action_sync(self.ids, force_update=True)
 

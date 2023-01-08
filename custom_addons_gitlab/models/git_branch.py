@@ -77,13 +77,14 @@ class GitBranch(models.Model):
             'description': item.get('description'),
             'web_description': item.get('web_description'),
             'summary': item.get('summary'),
+            'category': item.get('category'),
         }
 
-        category = item.get('category')
-        if category:
-            category_id = self.env['ir.module.category'].search([('name', 'ilike', category)], limit=1)
-            if category_id:
-                vals.update({'category_id': category_id.id})
+        # category = item.get('category')
+        # if category:
+        #     category_id = self.env['ir.module.category'].search([('name', 'ilike', category)], limit=1)
+        #     if category_id:
+        #         vals.update({'category_id': category_id.id})
 
         return vals
 

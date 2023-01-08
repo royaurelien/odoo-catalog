@@ -35,9 +35,10 @@ class GitBranch(models.Model):
         python_modules = ""
         addons = []
         ref = branch.name
+        path = self.repository_id.subfolder or ""
 
         try:
-            contents = repo.get_contents("", ref=ref)
+            contents = repo.get_contents(path, ref=ref)
         except GithubException as message:
             _logger.error(message)
             return []
@@ -48,6 +49,7 @@ class GitBranch(models.Model):
                 continue
 
             if file_content.type == "dir":
+                _logger.warning(file_content.name)
                 for filename in MANIFEST_NAMES:
                     try:
                         manifest = repo.get_contents(os.path.join(file_content.path, filename), ref=ref)
@@ -99,13 +101,14 @@ class GitBranch(models.Model):
             'description': item.get('description'),
             'web_description': item.get('web_description'),
             'summary': item.get('summary'),
+            'category': item.get('category'),
         }
 
-        category = item.get('category')
-        if category:
-            category_id = self.env['ir.module.category'].search([('name', 'ilike', category)], limit=1)
-            if category_id:
-                vals.update({'category_id': category_id.id})
+        # category = item.get('category')
+        # if category:
+        #     category_id = self.env['ir.module.category'].search([('name', 'ilike', category)], limit=1)
+        #     if category_id:
+        #         vals.update({'category_id': category_id.id})
 
         return vals
 

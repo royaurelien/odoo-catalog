@@ -20,7 +20,7 @@
             <field name="name">Custom addons : Synchronize Git Organization</field>
             <field name="model_id" ref="model_git_organization"/>
             <field name="state">code</field>
-            <field name="code">model._action_sync(cron=True)</field>
+            <field name="code">model.with_delay()._action_sync(cron=True)</field>
             <field name="interval_number">1</field>
             <field name="interval_type">weeks</field>
             <field name="numbercall">-1</field>
@@ -31,7 +31,7 @@
             <field name="name">Custom addons : Synchronize Git Repository</field>
             <field name="model_id" ref="model_git_repository"/>
             <field name="state">code</field>
-            <field name="code">model._action_sync(cron=True, job_count=50)</field>
+            <field name="code">model.with_delay()._action_sync(cron=True, job_count=50)</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
@@ -42,7 +42,7 @@
             <field name="name">Custom addons : Synchronize Git Branch</field>
             <field name="model_id" ref="model_git_branch"/>
             <field name="state">code</field>
-            <field name="code">model._action_sync(cron=True, job_count=20)</field>
+            <field name="code">model.with_delay()._action_sync(cron=True, job_count=20)</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>

@@ -26,6 +26,7 @@ class GitRepository(models.Model):
     _git_parent_field = 'organization_id'
 
     path = fields.Char(required=True)
+    subfolder = fields.Char(string="Subfolder")
     description = fields.Char()
     repo_id = fields.Integer(string="Repository ID")
     http_git_url = fields.Char(string="HTTP Url")

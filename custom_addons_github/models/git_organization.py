@@ -6,7 +6,7 @@ from odoo.tools import datetime
 from odoo.exceptions import ValidationError, UserError
 
 from datetime import datetime
-from github import Github, GithubException, RateLimitExceededException, UnknownObjectException
+from github import Github, GithubException, RateLimitExceededException, UnknownObjectException, BadCredentialsException
 import logging
 import re
 import os
@@ -25,8 +25,15 @@ class GitOrganization(models.Model):
 
         self.ensure_one()
         org = None
-        g = Github(self.auth_id.token)
-        limit = g.get_rate_limit()
+
+        try:
+            g = Github(self.auth_id.token)
+            limit = g.get_rate_limit()
+        except BadCredentialsException as error:
+            _logger.error(error)
+            raise UserError("Bad Credentials")
+
+
         rate_limit = "Remaining {o.remaining}/{o.limit}, Reset at {o.reset}.".format(o=limit.core)
         _logger.warning(limit.core)
 
