@@ -54,7 +54,7 @@ class GitBranch(models.Model):
                     try:
                         manifest = repo.get_contents(os.path.join(file_content.path, filename), ref=ref)
                         manifest = eval(manifest.decoded_content)
-                        manifest['technical_name'] = file_content.path
+                        manifest['technical_name'] = file_content.path.split('/')[-1]
 
                         try:
                             web_description = repo.get_contents(os.path.join(file_content.path, 'static/description/index.html'), ref=ref)

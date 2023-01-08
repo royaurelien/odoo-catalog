@@ -241,7 +241,7 @@ class GitSync(models.AbstractModel):
         if cron_mode:
 
             domain = [('is_synchronized', '=', True)]
-            groupby = ['organization_id']
+            groupby = ['service']
 
             res_dict = self.read_group(domain, ['id'], groupby)
             records_by_service = [self.search(item['__domain']) for item in res_dict]
@@ -249,14 +249,13 @@ class GitSync(models.AbstractModel):
             for records in records_by_service:
                 prev_count = len(records)
                 records = records._filter_on_delay(sync_delay)
-                # _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+                _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
 
                 chunked_ids = [records.ids[i:i+job_count] for i in range(0, len(records.ids), job_count)]
                 for current_ids in chunked_ids:
-                    # _logger.error(current_ids)
-
-                    # self._action_sync(current_ids, cron=True, delay=sync_delay)
-                    self.env['git.queue'].add('action_sync', self._name, current_ids)
+                    _logger.error(current_ids)
+                    # self.with_delay()._action_sync(current_ids, cron=False, delay=sync_delay)
+                    # self.env['git.queue'].add('action_sync', self._name, current_ids)
             return True
 
 
@@ -293,7 +292,7 @@ class GitSync(models.AbstractModel):
         regex = kwargs.get('regex')
         categories = kwargs.get('categories', {})
 
-        # _logger.warning("Excludes: {}".format(excludes))
+        _logger.warning("Excludes: {}".format(excludes))
 
         # Get items from specific methods
         items = self._get_items_for_odoo()
@@ -414,4 +413,3 @@ class GitSync(models.AbstractModel):
     def action_sync(self):
         # self.with_delay()._action_sync(self.ids, force_update=False)
         self._action_sync(self.ids, force_update=True)
-

@@ -30,7 +30,11 @@ class GitOrganization(models.Model):
         gl = self._get_gitlab()
         projects = gl.projects.list(all=True, order_by='last_activity_at')
 
-        return [repo for repo in projects]
+        res = [repo for repo in projects]
+        # for r in res:
+        #     _logger.warning(r.name)
+
+        return res
 
 
     def _gitlab_date_to_datetime(self, curr_date):
