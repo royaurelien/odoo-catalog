@@ -128,7 +128,20 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="view_git_organization_graph">
+      <field name="model">git.organization</field>
+      <field name="name">git.organization.graph</field>
+      <field name="arch" type="xml">
+        <graph string="Git Organization" type="bar" sample="1" stacked="False" disable_linking="1">
+            <field name="name"/>
+            <field name="service"/>
+            <field name="repository_count" type='measure'/>
+            <field name="branch_count" type='measure'/>
+            <field name="custom_addons_count" type='measure'/>
+        </graph>
 
+      </field>
+    </record>
 
   </data>
 </odoo>

@@ -1,0 +1,36 @@
+<odoo>
+  <data>
+
+    <!-- <record model="ir.ui.view" id="view_catalog_dashboard">
+      <field name="model">git.organization</field>
+      <field name="name">git.organization.dashboard</field>
+      <field name="mode">primary</field>
+      <field name="arch" type="xml">
+        <dashboard>
+          <view type="graph" ref="catalog.view_git_organization_graph"/>
+          <group string="Sale">
+            <aggregate name="repository_count" field="repository_count" string="Repositories"/>
+            <aggregate name="branch_count" field="branch_count" string="Branches"/>
+            <aggregate name="custom_addons_count" field="custom_addons_count" string="Addons"/>
+          </group>
+        </dashboard>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_organization">
+      <field name="view_mode">dashboard,tree,form,graph</field>
+    </record> -->
+
+
+    <record id="catalog_dashboard_action" model="ir.actions.client">
+      <field name="name">Dashboard</field>
+      <field name="tag">catalog_dashboard_tags</field>
+    </record>
+
+    <menuitem name="Dashboard" id="menu_dasboard"
+              parent="catalog.menu_custom_addons_root"
+              sequence="15"
+              action="catalog_dashboard_action"/>
+
+  </data>
+</odoo>
