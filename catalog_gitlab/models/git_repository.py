@@ -44,7 +44,6 @@ class GitRepository(models.Model):
                 'last_commit_url': item.commit.get('web_url'),
             })
 
-        # _logger.debug(vals)
         return vals
 
 

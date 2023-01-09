@@ -122,7 +122,7 @@ class GitSync(models.AbstractModel):
                 res = dict(filter(lambda item: search_key in item[0], categories.items()))
                 category = list(res.values())[0] if res else False
 
-            _logger.warning(f"Search: {search_key}, Found: {category}")
+            # _logger.warning(f"Search: {search_key}, Found: {category}")
 
             # del vals['category']
             vals['category_id'] = category
@@ -284,7 +284,10 @@ class GitSync(models.AbstractModel):
     @api.model
     def _get_test_mode(self):
         res = self.env["ir.config_parameter"].sudo().get_param('catalog.enable_test')
-        test = bool(res) or False
+        try:
+            test = bool(eval(res))
+        except:
+            test = False
 
         res = self.env["ir.config_parameter"].sudo().get_param('catalog.limit_test')
         limit = int(res) or 10
@@ -323,7 +326,7 @@ class GitSync(models.AbstractModel):
             categories.update({self._format_category(record):record.id for record in records})
 
         categories = OrderedDict(sorted(categories.items()))
-        _logger.warning(list(categories.keys()))
+        # _logger.warning(list(categories.keys()))
 
         return categories
 
@@ -357,7 +360,7 @@ class GitSync(models.AbstractModel):
             prev_count = len(records)
 
             # records = records._filter_on_delay(values['sync_delay'])
-            _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+            # _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
 
             chunked_ids = [records.ids[i:i+values['job_count']] for i in range(0, len(records.ids), values['job_count'])]
             for current_ids in chunked_ids:
@@ -374,8 +377,6 @@ class GitSync(models.AbstractModel):
 
     @api.model
     def _action_sync(self, ids=[], **kwargs):
-
-        _logger.error("action_sync")
 
         values = self._prepare_sync_values(kwargs)
         result = []

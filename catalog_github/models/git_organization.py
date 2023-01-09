@@ -35,7 +35,7 @@ class GitOrganization(models.Model):
 
 
         rate_limit = "Remaining {o.remaining}/{o.limit}, Reset at {o.reset}.".format(o=limit.core)
-        _logger.warning(limit.core)
+        _logger.warning(rate_limit)
 
         try:
             org = g.get_user(self.name) if self.is_user else g.get_organization(self.name)
@@ -70,7 +70,7 @@ class GitOrganization(models.Model):
             'repository_create_date': item.created_at,
             'repository_update_date': item.updated_at,
         }
-        # _logger.warning(vals)
+        
         return vals
 
 

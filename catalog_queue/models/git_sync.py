@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from collections import ChainMap, OrderedDict
-from datetime import datetime
 import logging
-from random import randint
-import re
-from multiprocessing import synchronize
+# from multiprocessing import synchronize
 
 from odoo import models, fields, api, _
-from odoo.tools import safe_eval
-from odoo.tools.misc import get_lang
-
 from odoo.addons.queue_job.delay import group, chain
 
 
@@ -25,7 +19,6 @@ class GitSync(models.AbstractModel):
     def _get_batch_name(self):
         # ", ".join(list(map(str, self.ids)))
         return f"{self._description}: {self.ids[0]}..{self.ids[-1]} ({len(self.ids)})"
-
 
 
     @api.model

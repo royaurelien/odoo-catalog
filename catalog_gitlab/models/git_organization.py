@@ -29,10 +29,7 @@ class GitOrganization(models.Model):
         self.ensure_one()
         gl = self._get_gitlab()
         projects = gl.projects.list(all=True, order_by='last_activity_at')
-
         res = [repo for repo in projects]
-        # for r in res:
-        #     _logger.warning(r.name)
 
         return res
 
@@ -57,7 +54,6 @@ class GitOrganization(models.Model):
             'repository_update_date': self._gitlab_date_to_datetime(item.last_activity_at),
         }
 
-        # _logger.debug(vals)
         return vals
 
 
