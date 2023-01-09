@@ -29,7 +29,7 @@
 
     <menuitem name="Dashboard" id="menu_dasboard"
               parent="catalog.menu_custom_addons_root"
-              sequence="15"
+              sequence="5"
               action="catalog_dashboard_action"/>
 
   </data>

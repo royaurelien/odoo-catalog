@@ -75,8 +75,7 @@
                         name="action_sync"
                         type="object"
                         string="Branches Sync."
-                        class="btn btn-default"
-                        icon="fa-chevron-right"
+                        class="btn btn-primary"
                         groups="catalog.group_manager"
                     />
                     <button

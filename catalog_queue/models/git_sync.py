@@ -11,6 +11,9 @@ from odoo import models, fields, api, _
 from odoo.tools import safe_eval
 from odoo.tools.misc import get_lang
 
+from odoo.addons.queue_job.delay import group, chain
+
+
 
 _logger = logging.getLogger(__name__)
 
@@ -20,37 +23,56 @@ class GitSync(models.AbstractModel):
 
 
     def _get_batch_name(self):
-        return "Sync {}: {}".format(self._description, ", ".join(list(map(str, self.ids))))
+        # ", ".join(list(map(str, self.ids)))
+        return f"{self._description}: {self.ids[0]}..{self.ids[-1]} ({len(self.ids)})"
+
 
 
     @api.model
     def action_sync_with_delay(self, ids=[], **kwargs):
-        cron_mode = kwargs.get('cron', False)
-        job_count = kwargs.get('job_count', 10)
-        force_update = kwargs.get('force_update', False)
-        sync_delay = kwargs.get('delay', self._get_sync_delay())
-        # auto_search = kwargs.get('auto_search', False)
 
-        self = self.browse(ids)
-        batch = self.env['queue.job.batch'].get_new_batch(self._get_batch_name())
+        values = self._prepare_sync_values(kwargs)
+        result = []
+        # values['cron_mode'] = True
+        all_records = self.browse(ids)
+        # batch = self.env['queue.job.batch'].get_new_batch(all_records._get_batch_name())
+        # batch = self.env['queue.job.batch'].get_new_batch('Group')
+        chunk_ids = all_records._group_records_by_identidier(values)
 
-        records_by_service = [self.filtered(lambda rec: rec.service == service) for service in list(set(self.mapped('service')))]
+        message = f"Synchronizing {self._description}: {chunk_ids[0]}..{chunk_ids[-1]} ({len(chunk_ids)})"
+        self.env.user.notify_info(message=message)
 
-        for records in records_by_service:
-            prev_count = len(records)
-            # records = records._filter_on_delay(sync_delay)
-            _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
+        group_a = group(*[self.delayable()._action_sync(current_ids, cron=False) for current_ids in chunk_ids])
+        chain(group_a).delay()
 
 
-            chunked_ids = [records.ids[i:i+job_count] for i in range(0, len(records.ids), job_count)]
-            for current_ids in chunked_ids:
-                _logger.error(current_ids)
-                names = records.filtered_domain([('id', 'in', current_ids)]).mapped('name')
-                # self.with_delay()._action_sync(current_ids, cron=False, delay=sync_delay)
-                # self.env['git.queue'].add('action_sync', self._name, current_ids)
-                message = f"Synchronizing: {', '.join(names)} ({len(current_ids)})"
-                self.env.user.notify_info(message=message)
-                _logger.warning(message)
-                self.with_context(job_batch=batch).with_delay(channel='catalog')._action_sync(current_ids, cron=False)
 
-        batch.enqueue()
+        return True
+
+        # for current_ids in chunk_ids:
+        #     # records = all_records.browse(current_ids)
+
+
+        #     message = f"Synchronizing {self._description}: {current_ids[0]}..{current_ids[-1]} ({len(current_ids)})"
+        #     # res = self.with_context(job_batch=batch).with_delay(channel='catalog')._action_sync(current_ids, **values)
+        #     # self.with_delay()._action_sync(current_ids, **values)
+        #     self.with_context(job_batch=batch).with_delay(channel='catalog')._action_sync(current_ids, cron=False)
+        #     # self._action_sync(current_ids, **values)
+        #     self.env.user.notify_info(message=message)
+
+        #     # for record in records:
+
+        #     #     _logger.warning(record)
+
+        #     #     # # message = f"Synchronizing {self._description}: {current_ids[0]}..{current_ids[-1]} ({len(current_ids)})"
+        #     #     message = f"Synchronizing {self._description}: {record.id} ({len(record)})"
+
+        #     #     self = record.with_context(job_batch=batch)
+        #     #     self.with_context(job_batch=batch).with_delay(channel='catalog')._action_process(**values)
+        #     #     self.env.user.notify_info(message=message)
+
+        #     #     # res = record._action_process(**values)
+        #     #     # result.append(res)
+
+        # batch.enqueue()
+

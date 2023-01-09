@@ -22,7 +22,7 @@ class GitOrganization(models.Model):
 
     def _get_gitlab(self):
         self.ensure_one()
-        return gitlab.Gitlab(url=self.url, private_token=self.auth_id.token)
+        return gitlab.Gitlab(url=self.url, private_token=self.auth_id.token, keep_base_url=True)
 
 
     def _get_items_from_gitlab(self, **kwargs):

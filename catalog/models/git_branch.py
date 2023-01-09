@@ -61,6 +61,7 @@ class GitBranch(models.Model):
     repository_id = fields.Many2one(comodel_name='git.repository', ondelete='cascade')
     organization_id = fields.Many2one(related='repository_id.organization_id', store=True, ondelete='cascade')
     service = fields.Selection(related='repository_id.organization_id.service', store=True)
+    sync_identifier = fields.Char(related='repository_id.organization_id.sync_identifier', store=True)
     user_id = fields.Many2one(comodel_name='res.users')
     path = fields.Char(related='repository_id.path', store=True)
 

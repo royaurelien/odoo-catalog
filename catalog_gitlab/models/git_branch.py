@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-from odoo.tools import datetime
-
-from datetime import datetime
 import gitlab
 import logging
-import re
 import os
 
+from odoo import models, fields, api
+
 MANIFEST_NAMES = ['__manifest__.py', '__openerp__.py']
-REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
-# TYPE = [('github', 'Github')]
+
 
 _logger = logging.getLogger(__name__)
 
@@ -25,6 +20,8 @@ class GitBranch(models.Model):
         gl = self.repository_id.organization_id._get_gitlab()
         project = gl.projects.get(self.repository_id.repo_id)
 
+        test, limit = self._get_test_mode()
+        count = 0
         requirements = False
         addons = []
         python_modules = []
@@ -57,6 +54,10 @@ class GitBranch(models.Model):
                         break
                     except gitlab.GitlabGetError:
                         continue
+            count += 1
+
+            if test and count >= limit:
+                break
 
         vals = {
             'requirements': requirements,
@@ -66,25 +67,12 @@ class GitBranch(models.Model):
 
         return addons
 
+
     def _convert_gitlab_to_odoo(self, item):
         self.ensure_one()
-        vals = {
-            # 'branch_ids': [(4, self.id)],
-            'name': item.get('name'),
-            'technical_name': item.get('technical_name'),
-            'version': item.get('version'),
-            'author': item.get('author'),
-            'description': item.get('description'),
-            'web_description': item.get('web_description'),
-            'summary': item.get('summary'),
-            'category': item.get('category'),
-        }
 
-        # category = item.get('category')
-        # if category:
-        #     category_id = self.env['ir.module.category'].search([('name', 'ilike', category)], limit=1)
-        #     if category_id:
-        #         vals.update({'category_id': category_id.id})
+        mapping, keys = self._get_manifest_mapping()
+        vals = {k:item.get(v, False) for k,v in mapping.items()}
 
         return vals
 

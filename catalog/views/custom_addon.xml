@@ -138,6 +138,7 @@
                             <field name="description" readonly="1"/>
                             <field name="url" widget="url" readonly="1"/>
                             <field name="category_id" readonly="1"/>
+                            <field name="category" groups="base.group_no_one"/>
                             <field name="application" readonly="1"/>
                             <field name="depends" readonly="1"/>
                         </group>
@@ -148,6 +149,7 @@
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="version_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                             <field name="version" readonly="1" groups="base.group_no_one"/>
+                            <field name="origin" groups="base.group_no_one"/>
                         </group>
                     </group>
                     <notebook>

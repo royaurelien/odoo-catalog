@@ -45,6 +45,7 @@ class GitRepository(models.Model):
                                       readonly=True,
                                       ondelete="cascade",)
     service = fields.Selection(related='organization_id.service', store=True)
+    sync_identifier = fields.Char(related='organization_id.sync_identifier', store=True)
     branch_ids = fields.One2many(comodel_name='git.branch', inverse_name='repository_id')
 
     branch_count = fields.Integer(compute='_compute_branch', store=True, compute_sudo=True, string="# Branches")

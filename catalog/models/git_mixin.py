@@ -20,7 +20,8 @@ class GitMixin(models.AbstractModel):
     _description = "Git Mixin"
 
     note = fields.Html()
-    
+    origin = fields.Char(tracking=True)
+
 
     def action_open_url(self):
         self.ensure_one()

@@ -30,6 +30,8 @@ class CustomAddon(models.Model):
     icon = fields.Char('Icon URL')
     icon_image = fields.Binary(string='Icon')
     url = fields.Char()
+    # python_modules = fields.Char()
+
     version = fields.Char()
     # version_ids = fields.Many2many('custom.addon.version', string='Versions')
     version_ids = fields.One2many(comodel_name='custom.addon.version',
@@ -39,6 +41,7 @@ class CustomAddon(models.Model):
     partner_id = fields.Many2one(comodel_name='res.partner')
     user_id = fields.Many2one(comodel_name='res.users')
     category_id = fields.Many2one(comodel_name='ir.module.category')
+    category = fields.Char(string="Category (original)")
     last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
 
     tag_ids = fields.Many2many('custom.addon.tags', string='Tags')
@@ -61,7 +64,7 @@ class CustomAddon(models.Model):
         default=_get_default_favorite_user_ids,
         string='Members')
     is_favorite = fields.Boolean(compute='_compute_is_favorite', inverse='_inverse_is_favorite', string='Show Project on dashboard')
-
+    
 
     @api.depends('branch_ids')
     def _compute_versions(self):
@@ -124,7 +127,15 @@ class CustomAddon(models.Model):
         self.ensure_one()
         action = super(CustomAddon, self).action_open_url()
         res_id = self.env.context.get('branch_id')
-        action['url'] = os.path.join(self.env['git.branch'].browse(res_id).url, self.technical_name) if res_id else None
+
+        if res_id:
+            branch = self.env['git.branch'].browse(res_id)
+            parts = [branch.url, branch.repository_id.subfolder, self.technical_name]
+            # if self.repository_id.subfolder:
+            #     parts.insert(1, self.repository_id.subfolder)
+            action['url'] = os.path.join(*parts)
+        else:
+            action['url'] = None
 
         return action
 

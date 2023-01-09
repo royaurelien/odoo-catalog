@@ -29,6 +29,7 @@ class GitOrganization(models.Model):
     # password = fields.Char()
     # token = fields.Char()
     service = fields.Selection([])
+    sync_identifier = fields.Char(compute='_compute_identifier', store=True)
 
     exclude_names = fields.Char(copy=False)
     is_user = fields.Boolean(default=False)
@@ -37,6 +38,16 @@ class GitOrganization(models.Model):
     branch_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     custom_addons_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     force_update = fields.Boolean(default=False)
+
+
+    @api.depends('service', 'auth_method', 'auth_id')
+    def _compute_identifier(self):
+        for record in self:
+            items = [record.service, record.auth_method]
+            if record.auth_id:
+                items.append(str(record.auth_id.id))
+            record.sync_identifier = "-".join(items)
+
 
     @api.depends('repository_ids')
     def _compute_repository(self):
@@ -49,6 +60,12 @@ class GitOrganization(models.Model):
             # repository_ids = self.env['custom.addon'].search([]).mapped('branch_ids.repository_id')
             # addons = len(repository_ids.filtered(lambda rec: rec.id in record.repository_ids.ids))
             record.custom_addons_count = addons
+
+
+    @api.onchange('auth_method')
+    def _onchange_auth_method(self):
+        if not self.auth_method or self.auth_method == 'public':
+            self.auth_id = False
 
 
     def _action_view_git_repository(self, action):

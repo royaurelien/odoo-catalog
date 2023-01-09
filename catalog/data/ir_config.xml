@@ -21,6 +21,16 @@
             <field name="value">True</field>
         </record>
 
+        <record model="ir.config_parameter" id="enable_test">
+            <field name="key">catalog.enable_test</field>
+            <field name="value">False</field>
+        </record>
+
+        <record model="ir.config_parameter" id="limit_test">
+            <field name="key">catalog.limit_test</field>
+            <field name="value">10</field>
+        </record>
+
     </data>
 
 </odoo>

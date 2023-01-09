@@ -14,18 +14,13 @@ from odoo.tools import datetime
 
 
 MANIFEST_NAMES = ['__manifest__.py', '__openerp__.py']
-REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
-# TYPE = [('github', 'Github')]
+
 
 _logger = logging.getLogger(__name__)
 
 class GitBranch(models.Model):
     _inherit = 'git.branch'
 
-
-    # def _get_github(self):
-    #     self.ensure_one()
-    #     return Github(self.organization_id.token)
 
     def _get_items_from_github(self):
         self.ensure_one()
@@ -34,6 +29,8 @@ class GitBranch(models.Model):
         repo = org.get_repo(self.path)
         branch = repo.get_branch(self.name)
         icon_search = self._get_icon_search()
+        test, limit = self._get_test_mode()
+        count = 0
 
         requirements = False
         python_modules = ""
@@ -58,7 +55,6 @@ class GitBranch(models.Model):
                     try:
                         manifest = repo.get_contents(os.path.join(file_content.path, filename), ref=ref)
                         manifest = eval(manifest.decoded_content)
-                        _logger.info(manifest)
                         # ast.literal_eval(manifest_data)
                         manifest['technical_name'] = file_content.path.split('/')[-1]
 
@@ -79,8 +75,10 @@ class GitBranch(models.Model):
                         break
                     except:
                         continue
+                count += 1
 
-
+            if test and count >= limit:
+                break
 
             elif file_content.name == "requirements.txt":
                 try:
@@ -98,8 +96,6 @@ class GitBranch(models.Model):
             'python_modules': python_modules,
         }
         self.update(vals)
-
-        # _logger.warning(addons)
 
         return addons
 

@@ -30,8 +30,7 @@
                         name="action_sync"
                         type="object"
                         string="Repositories Sync."
-                        class="btn btn-default"
-                        icon="fa-chevron-right"
+                        class="btn btn-primary"
                         attrs="{'invisible': [('is_synchronized', '!=', True)]}"
                         groups="catalog.group_manager"/>
                 </header>
@@ -128,7 +127,7 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="view_git_organization_graph">
+    <!-- <record model="ir.ui.view" id="view_git_organization_graph">
       <field name="model">git.organization</field>
       <field name="name">git.organization.graph</field>
       <field name="arch" type="xml">
@@ -141,7 +140,7 @@
         </graph>
 
       </field>
-    </record>
+    </record> -->
 
   </data>
 </odoo>
