@@ -52,6 +52,7 @@ class CustomAddon(models.Model):
             'update_addons': len(records.filtered_domain(update_today)),
             'today_sync_addons': round(len(records.filtered_domain(sync_today)) * 100 / len(records), 2),
             'all_category': len(records.mapped('category_id')),
+            'all_author': len(list(set(records.mapped('author')))),
         }
 
         _logger.error(result)

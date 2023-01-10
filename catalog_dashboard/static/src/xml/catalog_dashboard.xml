@@ -77,7 +77,7 @@
                     <tr>
                         <td class="o_text">
                             <div class="o_highlight">Statistics</div>
-                            Addons
+                            Total
                         </td>
                         <td title="New addons"
                             t-att-class="'o_dashboard_action o_main'"
@@ -86,7 +86,7 @@
                                 <span class="o_highlight">
                                     <t t-esc="values['all_addons']"/>
                                 </span><br/>
-                                Total
+                                Addons
                             </a>
                         </td>
                         <td title="Today Happy Rating"
@@ -126,7 +126,7 @@
                         </td>
                         <td title="Avg 7 Success Rate" t-att-class="'o_secondary o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_7dayssuccess">
                             <a href="#">
-                                <!-- <t t-esc="values['all_addons']"/>% -->
+                                <t t-esc="values['all_author']"/> author(s)
                             </a>
                         </td>
                     </tr><tr>
