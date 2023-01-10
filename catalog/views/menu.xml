@@ -119,7 +119,7 @@
         id="menu_custom_addons_root"
         name="Catalog"
         groups="catalog.group_user"
-        web_icon="fa fa-cubes,#FFFFFF,#BC4242"
+        web_icon="fa fa-search,#FFFFFF,#0088aaff"
         sequence="75"/>
 
     <!-- menu categories -->
