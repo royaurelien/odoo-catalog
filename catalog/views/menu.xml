@@ -179,7 +179,7 @@
               sequence="20"
               action="catalog.action_view_rules"/>
 
-    <menuitem name="Authentication" id="catalog.menu_auth"
+    <menuitem name="Authentications" id="catalog.menu_auth"
               parent="menu_custom_addons_config"
               groups="catalog.group_manager"
               sequence="99"
