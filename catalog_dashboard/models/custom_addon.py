@@ -24,20 +24,34 @@ class CustomAddon(models.Model):
         Repository = self.env['git.repository']
         Branch = self.env['git.branch']
         favorites_domain = [('favorite_user_ids', 'in', self.env.user.id)]
+        sync_domain = [('is_synchronized', '=', True)]
+        create_today = [('create_date', '>=', today)]
+        update_today = [('write_date', '>=', today)]
+        sync_today = [('last_sync_date', '>=', today)]
 
         records = self.search([])
         branches = records.mapped('branch_ids')
+
+
 
         result = {
             'all_organization': Organization.search_count([]),
             'all_repository': Repository.search_count([]),
             'all_branches': Branch.search_count([]),
+            'sync_organization': Organization.search_count(sync_domain),
+            'sync_repository': Repository.search_count(sync_domain),
+            'sync_branches': Branch.search_count(sync_domain),
+            'create_organization': Organization.search_count(create_today),
+            'create_repository': Repository.search_count(create_today),
+            'create_branches': Branch.search_count(create_today),
             'all_addons': len(records),
             'active_branches': len(branches),
             'my_addons': len(records.filtered_domain(favorites_domain)),
             'my_repositories': Repository.search_count(favorites_domain),
-            'create_addons': len(records.filtered_domain([('create_date', '>=', today)])),
-            'update_addons': len(records.filtered_domain([('write_date', '>=', today)])),
+            'create_addons': len(records.filtered_domain(create_today)),
+            'update_addons': len(records.filtered_domain(update_today)),
+            'today_sync_addons': round(len(records.filtered_domain(sync_today)) * 100 / len(records), 2),
+            'all_category': len(records.mapped('category_id')),
         }
 
         _logger.error(result)

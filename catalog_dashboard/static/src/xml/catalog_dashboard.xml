@@ -8,14 +8,184 @@
    </t>
     <t t-name="DashboardCatalog">
 
-        <div class="o_purchase_dashboard container">
-        <div class="row">
+
+        <div t-if="widget.values" class="o_catalog_dashboard py-4 mb-3">
+            <t t-set="values" t-value="widget.values"/>
+            <div>
+                <table class="table table-sm">
+                    <tr>
+                        <td class="o_text">
+                            <div class="o_highlight">Catalog</div>
+                        </td>
+                        <td t-att-class="' o_main o_dashboard_action'" title="My Open Tickets" name="helpdesk.helpdesk_my_ticket_action_no_create">
+                            <a href="#">
+                                <span class="o_highlight"><t t-esc="values['all_organization']"/></span><br/>
+                                Organizations
+                            </a>
+                        </td>
+                        <td t-att-class="' o_main o_dashboard_action'" title="My High Priority Tickets" name="helpdesk.helpdesk_my_ticket_action_no_create" context="{'search_default_priority': '2'}">
+                            <a href="#">
+                                <span class="o_highlight"><t t-esc="values['all_repository']"/></span><br/>
+                                Repositories
+                            </a>
+                        </td>
+                        <td t-att-class="' o_main o_dashboard_action'" title="My Urgent Tickets" name="helpdesk.helpdesk_my_ticket_action_no_create" context="{'search_default_priority': '3'}">
+                            <a href="#">
+                                <span class="o_highlight"><t t-esc="values['all_branches']"/></span><br/>
+                                Branches
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_text">Synchronized</td>
+                        <td title="My Open Tickets Analysis"  t-att-class="' o_main o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_dashboard">
+                            <a href="#"><t t-esc="values['sync_organization']"/></a>
+                        </td>
+                        <td title="My High Priority Tickets Analysis" t-att-class="' o_main o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_dashboard" context="{'search_default_priority': '2'}">
+                            <a href="#">
+                                <t t-esc="values['sync_repository']"/>
+                            </a>
+                        </td>
+                        <td title="My Urgent Tickets Analysis" t-att-class="' o_main o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_dashboard" context="{'search_default_priority': '3'}">
+                            <a href="#">
+                                <t t-esc="values['sync_branches']"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_text">Created Today</td>
+                        <td t-att-class="(values['create_organization'] ? 'o_main' : 'o_warning') + ' o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_sla" title="My Failed Tickets">
+                            <a href="#" class="o_dashboard_action" name="helpdesk.helpdesk_ticket_action_sla" data-extra="overdue">
+                                <t t-esc="values['create_organization']"/>
+                            </a>
+                        </td>
+                        <td t-att-class="(values['create_repository'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_sla" title="My High Priority Failed Tickets" context="{'search_default_priority': '2'}">
+                            <a href="#" data-extra="overdue">
+                                <t t-esc="values['create_repository']"/>
+                            </a>
+                        </td>
+                        <td t-att-class="(values['create_branches'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_sla" title="My Urgent Failed Tickets" context="{'search_default_priority': '3'}">
+                            <a href="#" data-extra="overdue">
+                                <t t-esc="values['create_branches']"/>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+            </div><div>
+                <table class="d-none d-md-table table table-sm">
+                    <tr>
+                        <td class="o_text">
+                            <div class="o_highlight">Statistics</div>
+                            Addons
+                        </td>
+                        <td title="New addons"
+                            t-att-class="'o_dashboard_action o_main'"
+                            name="helpdesk.helpdesk_ticket_action_close_analysis">
+                            <a href="#">
+                                <span class="o_highlight">
+                                    <t t-esc="values['all_addons']"/>
+                                </span><br/>
+                                Total
+                            </a>
+                        </td>
+                        <td title="Today Happy Rating"
+                            t-att-class="'o_dashboard_action o_main'"
+                            name="action_view_rating_today"
+                            type="object">
+                            <a href="#">
+                                <span class="o_highlight">
+                                    <t t-esc="values['all_category']"/>
+                                </span><br/>
+                                Categories
+                            </a>
+                        </td>
+                        <td title="Today's Success Rate"
+                            t-att-class="'o_dashboard_action o_secondary'"
+                            name="helpdesk.helpdesk_ticket_action_success">
+
+                            <a href="#">
+                                <span class="o_highlight">
+                                    <t t-esc="values['today_sync_addons']"/>%
+                                </span><br/>
+                                Sync Rate
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="o_text">Today</td>
+                        <td title="Tickets Closed Avg 7 Days"  t-att-class="'o_secondary o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_7days_analysis">
+                            <a href="#">
+                                <t t-esc="values['create_addons']"/>
+                            </a>
+                        </td>
+                        <td title="Avg 7 Days Happy Rating" t-att-class="'o_secondary o_dashboard_action'" name="action_view_rating_7days">
+                            <a href="#">
+                                <t t-esc="values['update_addons']"/>
+                            </a>
+                        </td>
+                        <td title="Avg 7 Success Rate" t-att-class="'o_secondary o_dashboard_action'" name="helpdesk.helpdesk_ticket_action_7dayssuccess">
+                            <a href="#">
+                                <!-- <t t-esc="values['all_addons']"/>% -->
+                            </a>
+                        </td>
+                    </tr><tr>
+                        <td class="o_text">Avg 7 days</td>
+                        <td t-att-class="'o_secondary'">
+                            <span t-att-class="'o_target_to_set'" name='helpdesk_target_closed' t-att-value="values['all_addons'] ? values['all_addons'] : undefined" title="Click to set">
+                                <t t-if="values['all_addons']">
+                                    <!-- <t t-esc="values['all_addons']"/> -->
+                                </t>
+                                <t t-if="!values['all_addons']">
+                                    Click to set
+                                </t>
+                            </span>
+                        </td>
+                        <td t-att-class="'o_secondary'">
+                            <span t-att-class="'o_target_to_set'" name='helpdesk_target_rating' t-att-value="values['all_addons'] ? values['all_addons'] : undefined" title="Click to set">
+                                <t t-if="values['all_addons']">
+                                    <!-- <t t-esc="values['all_addons']"/> -->
+                                </t>
+                                <t t-if="!values['all_addons']">
+                                    Click to set
+                                </t>
+                            </span>
+                        </td>
+                        <td t-att-class="'o_secondary'">
+                            <span t-att-class="'o_target_to_set'" name='helpdesk_target_success' t-att-value="values['all_addons'] ? values['all_addons'] : undefined" title="Click to set">
+                                <t t-if="values['all_addons']">
+                                    <!-- <t t-esc="values['all_addons']"/>% -->
+                                </t>
+                                <t t-if="!values['all_addons']">
+                                    Click to set
+                                </t>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- <div class="row">
             <div class="col-sm-6">
             <table class="table table-sm">
-                <!-- thead needed to avoid list view rendering error for some reason -->
+
                 <thead>
                     <tr>
-                    <!-- can't use th tag due to list rendering error when no values in list... -->
+
                         <td class="o_text">
                             <div>All RFQs</div>
                         </td>
@@ -56,10 +226,10 @@
 
             <div class="col-sm-6">
             <table class="table table-sm">
-                <!-- thead needed to avoid list view rendering error for some reason -->
+
                 <thead>
                     <tr>
-                        <!-- can't use th tag due to list rendering error when no values in list... -->
+
                         <td class="o_text">Avg Order Value (<t t-esc="widget.values['all_organization']"/>)</td>
                         <td><span><t t-esc="widget.values['all_organization']"/></span></td>
                         <td class="o_text">Created today (<t t-esc="widget.values['all_organization']"/>)</td>
@@ -75,7 +245,7 @@
                     </tr>
                 </tbody>
             </table></div>
-        </div></div>
+        </div> -->
 
 
 <!--
