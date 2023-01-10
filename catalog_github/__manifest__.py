@@ -12,13 +12,8 @@
         'catalog',
     ],
     'data': [
-        # 'security/ir.model.access.csv',
         'data/data.xml',
-        # 'views/menu.xml',
-        # 'views/views.xml',
-    ],
-    'demo': [
-        # 'demo/demo.xml',
+        'views/custom_addon.xml',
     ],
     'installable': True,
     'auto_install':False,

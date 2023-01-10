@@ -42,7 +42,7 @@ class GitSync(models.AbstractModel):
 
         # return True
 
-        message = f"{self._description} synchronization in progress: {len(chunk_ids)} item(s)"
+        message = f"{self._description} synchronization in progress: {sum(map(lambda items: len(items), chunk_ids))} item(s)"
 
         for current_ids in chunk_ids:
             # records = all_records.browse(current_ids)

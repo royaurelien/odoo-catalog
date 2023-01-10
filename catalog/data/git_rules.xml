@@ -60,6 +60,22 @@
             <field name="model">git.repository</field>
         </record>
 
+        <record model="git.rules" id="git_rules_branch_saas">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: SaaS</field>
+            <field name="action">ignore</field>
+            <field name="condition">"saas" in name</field>
+            <field name="model">git.repository</field>
+        </record>
+
+        <record model="git.rules" id="git_rules_branch_temp">
+            <field name="active" eval="True"/>
+            <field name="name">Branch: Temp</field>
+            <field name="action">ignore</field>
+            <field name="condition">"temp" in name</field>
+            <field name="model">git.repository</field>
+        </record>
+
         <record model="git.rules" id="git_rules_branch_older">
             <field name="active" eval="True"/>
             <field name="name">Branch: Skip older</field>

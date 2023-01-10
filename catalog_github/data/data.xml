@@ -6,6 +6,11 @@
             <field name="company_type">company</field>
         </record>
 
+        <record id="partner_oca" model="res.partner">
+            <field name="name">OCA</field>
+            <field name="company_type">company</field>
+        </record>
+
         <record id="git_organization_odoo" model="git.organization">
             <field name="name">Odoo</field>
             <field name="url">https://github.com/odoo</field>
@@ -14,6 +19,16 @@
             <field name="force_partner" eval="True"/>
             <field name="is_synchronized" eval="True"/>
             <field name="exclude_names">ngx_postgres, x-spreadsheet, OdooLocust, docker, ps-runbot-testing, o-spreadsheet, technical-training-solutions, docker-official-images, docker-docs, odoo-extra, runbot, iotbox, technical-training, functional-mementoes, odoo-client-lib, tutorials, odoodays-2014, mail-client-extensions, owl, documentation, postfix_exporter, petstore</field>
+        </record>
+
+        <record id="git_organization_oca" model="git.organization">
+            <field name="name">Oca</field>
+            <field name="url">https://github.com/oca</field>
+            <field name="service">github</field>
+            <field name="partner_id" ref="catalog_github.partner_oca"/>
+            <field name="force_partner" eval="True"/>
+            <field name="is_synchronized" eval="True"/>
+            <field name="exclude_names">l10n-slovenia, connector-redmine, odoo-test-helper, vertical-edition, l10n-iran, l10n-morocco, community-data-files, l10n-macedonia, l10n-indonesia, l10n-italy, odoo-community.org, l10n-netherlands, maintainer-tools, l10n-luxemburg, l10n-japan, dotnet, l10n-romania, l10n-russia, l10n-peru, l10n-vietnam, contribute-md-template, pylint-odoo, vertical-isp, oca-decorators, vertical-construction, cooperative, l10n-argentina, webkit-tools, program, vertical-cooperative-supermarket, l10n-poland, runbot-addons, l10n-china, ansible-odoo, interface-github, oca-ci, l10n-ireland, l10n-usa, l10n-taiwan, oca-addons-repo-template, odoo-pim, l10n-belgium, l10n-greece, odoorpc, l10n-austria, oca-github-bot, infrastructure, OCB, l10n-switzerland, l10n-venezuela, odoo-sentinel, l10n-cambodia, l10n-estonia, l10n-norway, l10n-colombia, oca.recipe.odoo, l10n-portugal, oca-weblate-deployment, l10n-mexico, odoo-pre-commit-hooks, l10n-turkey, connector-lims, l10n-germany, l10n-uruguay, .github, l10n-spain, connector-accountedge, oca-port, pwa-builder, odoo-module-migrator, openupgradelib, l10n-thailand, connector-lengow, l10n-brazil, l10n-ukraine, l10n-finland, odoo-sphinx-autodoc, l10n-ecuador, vertical-medical, maintainer-quality-tools, vertical-community, l10n-united-kingdom, vertical-ngo, l10n-costa-rica, mirrors-flake8, l10n-chile, connector-magento, department, rest-api, webhook, l10n-ethiopia, wallet, l10n-belarus, l10n-india, l10n-croatia, connector-odoo2odoo, l10n-canada, connector-magento-php-extension, connector-sage, OpenUpgrade</field>
         </record>
 
 
