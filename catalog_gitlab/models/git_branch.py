@@ -40,7 +40,7 @@ class GitBranch(models.Model):
                         f = project.files.get(file_path=os.path.join(item['path'], filename), ref=self.name)
                         manifest = eval(f.decode())
                         manifest['technical_name'] = item['path']
-                        _logger.warning(item['path'])
+                        # _logger.warning(item['path'])
 
                         try:
                             index_html = 'static/description/index.html'

@@ -50,7 +50,7 @@ class GitBranch(models.Model):
                 continue
 
             if file_content.type == "dir":
-                _logger.warning(file_content.name)
+                # _logger.warning(file_content.name)
                 for filename in MANIFEST_NAMES:
                     try:
                         manifest = repo.get_contents(os.path.join(file_content.path, filename), ref=ref)

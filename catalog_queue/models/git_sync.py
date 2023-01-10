@@ -32,8 +32,8 @@ class GitSync(models.AbstractModel):
         batch = self.env['queue.job.batch'].get_new_batch(self._description)
         chunk_ids = all_records._group_records_by_identidier(values)
 
-        message = f"Synchronizing {self._description}: {chunk_ids[0]}..{chunk_ids[-1]} ({len(chunk_ids)})"
-        self.env.user.notify_info(message=message)
+        # message = f"Synchronizing {self._description}: {chunk_ids[0]}..{chunk_ids[-1]} ({len(chunk_ids)})"
+        # self.env.user.notify_info(message=message)
 
         # group_a = group(*[self.delayable()._action_sync(current_ids, cron=False) for current_ids in chunk_ids])
         # chain(group_a).delay()
@@ -42,16 +42,18 @@ class GitSync(models.AbstractModel):
 
         # return True
 
+        message = f"{self._description} synchronization in progress: {len(chunk_ids)} item(s)"
+
         for current_ids in chunk_ids:
             # records = all_records.browse(current_ids)
 
 
-            message = f"Synchronizing {self._description}: {len(current_ids)} item(s)"
+            # message = f"Synchronizing {self._description}: {len(current_ids)} item(s)"
             # res = self.with_context(job_batch=batch).with_delay(channel='catalog')._action_sync(current_ids, **values)
             # self.with_delay()._action_sync(current_ids, **values)
             self.with_context(job_batch=batch).with_delay(channel='catalog')._action_sync(current_ids, cron=False)
             # self._action_sync(current_ids, **values)
-            self.env.user.notify_info(message=message)
+            # self.env.user.notify_info(message=message)
 
             # for record in records:
 
@@ -67,6 +69,8 @@ class GitSync(models.AbstractModel):
             #     # res = record._action_process(**values)
             #     # result.append(res)
 
+        self.env.user.notify_info(message=message)
         batch.enqueue()
+
         return True
 
