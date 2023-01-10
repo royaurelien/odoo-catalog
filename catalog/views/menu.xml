@@ -50,6 +50,7 @@
 
     <record model="ir.actions.server" id="action_server_sync_repositories">
       <field name="name">Repositories Sync.</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
       <field name="model_id" ref="model_git_organization"/>
       <field name="binding_model_id" ref="model_git_organization"/>
       <field name="state">action</field>
@@ -59,6 +60,7 @@
 
     <record model="ir.actions.server" id="action_server_sync_branches">
       <field name="name">Branches Sync.</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
       <field name="model_id" ref="model_git_repository"/>
       <field name="binding_model_id" ref="model_git_repository"/>
       <field name="state">action</field>
@@ -68,6 +70,7 @@
 
     <record model="ir.actions.server" id="action_server_sync_addons">
       <field name="name">Addons Sync.</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
       <field name="model_id" ref="model_git_branch"/>
       <field name="binding_model_id" ref="model_git_branch"/>
       <field name="state">action</field>
@@ -77,6 +80,7 @@
 
     <record model="ir.actions.server" id="action_server_toggle_sync_repositories">
       <field name="name">Toggle sync.</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_user'))]"/>
       <field name="model_id" ref="model_git_organization"/>
       <field name="binding_model_id" ref="model_git_organization"/>
       <field name="state">action</field>
@@ -86,6 +90,7 @@
 
     <record model="ir.actions.server" id="action_server_toggle_sync_branches">
       <field name="name">Toggle sync.</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_user'))]"/>
       <field name="model_id" ref="model_git_repository"/>
       <field name="binding_model_id" ref="model_git_repository"/>
       <field name="state">action</field>
@@ -95,6 +100,7 @@
 
     <record model="ir.actions.server" id="action_server_toggle_sync_addons">
       <field name="name">Toggle sync.</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_user'))]"/>
       <field name="model_id" ref="model_git_branch"/>
       <field name="binding_model_id" ref="model_git_branch"/>
       <field name="state">action</field>
@@ -104,6 +110,7 @@
 
     <record model="ir.actions.server" id="action_server_ignore_repositories">
       <field name="name">Ignore Repositories</field>
+      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
       <field name="model_id" ref="model_git_repository"/>
       <field name="binding_model_id" ref="model_git_repository"/>
       <field name="state">code</field>
@@ -171,6 +178,12 @@
               parent="menu_custom_addons_config"
               sequence="20"
               action="catalog.action_view_rules"/>
+
+    <menuitem name="Authentication" id="catalog.menu_auth"
+              parent="menu_custom_addons_config"
+              groups="catalog.group_manager"
+              sequence="99"
+              action="custom_auth.action_view_custom_auth"/>
 
   </data>
 </odoo>

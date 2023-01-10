@@ -161,6 +161,7 @@
                                     <field name="repo_id" readonly="1"/>
                                     <field name="http_git_url" widget="CopyClipboardChar" readonly="1"/>
                                     <field name="ssh_git_url" widget="CopyClipboardChar" readonly="1"/>
+                                    <field name="git_clone_command" widget="CopyClipboardChar" readonly="1"/>
                                 </group>
                                 <group col="2">
                                     <field name="is_synchronized" widget="boolean_toggle" options='{"active": "Synchronized", "inactive": "Not synchronized"}'/>

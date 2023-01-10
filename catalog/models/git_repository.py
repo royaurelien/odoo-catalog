@@ -31,6 +31,7 @@ class GitRepository(models.Model):
     repo_id = fields.Integer(string="Repository ID")
     http_git_url = fields.Char(string="HTTP Url")
     ssh_git_url = fields.Char(string="SSH Url")
+    git_clone_command = fields.Char(compute='_compute_clone_command', string="Clone Command")
 
     force_partner = fields.Boolean(related='organization_id.force_partner')
 
@@ -77,6 +78,25 @@ class GitRepository(models.Model):
 
         not_fav_addons.write({'favorite_user_ids': [(4, self.env.uid)]})
         favorite_addons.write({'favorite_user_ids': [(3, self.env.uid)]})
+
+
+    @api.depends('http_git_url', 'sync_identifier')
+    def _compute_clone_command(self):
+        command = "git clone --depth=1 {}"
+        for record in self:
+            if not record.organization_id or not record.http_git_url:
+                record.git_clone_command = False
+                continue
+
+            auth = record.organization_id.auth_id
+
+            # Private: token + login or login + password
+            if (auth.auth_method == 'token' and auth.login) or (auth.auth_method == 'basic'):
+                credentials = f"://{auth.login}:{auth.token if auth.auth_method == 'token' else auth.password}@"
+                record.git_clone_command = command.format(record.http_git_url.replace("://", credentials))
+            # Public
+            else:
+                record.git_clone_command = command.format(record.http_git_url)
 
 
     @api.depends('is_synchronized')

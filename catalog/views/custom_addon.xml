@@ -47,10 +47,19 @@
                         name="user"
                         context="{'group_by' : 'user_id'}"
                     />
+                    <filter
+                        string="Application"
+                        name="user"
+                        context="{'group_by' : 'application'}"
+                    />
                 </group>
                 <separator/>
-                <filter name="is_many_used" string="Many Used" domain="[['is_many_used','=',True]]"/>
-                <filter string="My Favorites" name="my_favorites" domain="[('favorite_user_ids', 'in', uid)]"/>
+                <filter name="my_favorites" string="My Favorites" domain="[('favorite_user_ids', 'in', uid)]"/>
+                <separator/>
+                <filter name="applications" string="Applications" domain="[['application', '=', True]]"/>
+                <filter name="depends" string="Depends" domain="[['depends', '!=', False]]"/>
+                <filter name="is_many_used" string="Many Used" domain="[['is_many_used', '=', True]]"/>
+                <filter name="officials" string="Officials" domain='["|", ["author", "=", "Odoo S.A."], ["author", "=", "Odoo"]]'/>
                 <separator/>
                 <filter string="Archived" domain="[('active', '=', False)]" name="archived"/>
                 <searchpanel>

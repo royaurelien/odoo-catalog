@@ -32,7 +32,7 @@
                     <group>
                       <group col="2">
                         <field name="auth_method" string="Method" widget="selection_badge"/>
-                        <field name="login" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
+                        <field name="login" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '=', 'public')]}"/>
                         <field name="password" password="True" attrs="{'required': [('auth_method', '=', 'basic')], 'invisible': [('auth_method', '!=', 'basic')]}"/>
                         <field name="token" password="True" attrs="{'required': [('auth_method', '=', 'token')], 'invisible': [('auth_method', '!=', 'token')]}"/>
                       </group>
@@ -48,12 +48,12 @@
     </record>
 
     <record model="ir.actions.act_window" id="custom_auth.action_view_custom_auth">
-      <field name="name">Custom Auth</field>
+      <field name="name">Custom Authentication</field>
       <field name="res_model">custom.auth</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem name="Custom Auth" id="menu_custom_auth"
+    <menuitem name="Custom Authentication" id="menu_custom_auth"
               parent="base.menu_ir_property"
               sequence="90"
               action="custom_auth.action_view_custom_auth"/>

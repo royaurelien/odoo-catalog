@@ -64,6 +64,7 @@ class GitBranch(models.Model):
     sync_identifier = fields.Char(related='repository_id.organization_id.sync_identifier', store=True)
     user_id = fields.Many2one(comodel_name='res.users')
     path = fields.Char(related='repository_id.path', store=True)
+    git_clone_command = fields.Char(compute='_compute_clone_command', string="Clone Command")
 
     tag_ids = fields.Many2many('custom.addon.tags', string='Tags')
 
@@ -77,6 +78,18 @@ class GitBranch(models.Model):
     )
 
     custom_addon_count = fields.Integer(compute='_compute_custom_addon', store=True)
+
+
+    @api.depends('repository_id.http_git_url', 'sync_identifier')
+    def _compute_clone_command(self):
+        command = "git clone --depth=1 {}"
+        for record in self:
+            command = record.repository_id.git_clone_command
+            if not command:
+                record.git_clone_command = False
+                continue
+
+            record.git_clone_command = "{} --branch {} --single-branch".format(command, record.name)
 
 
     @api.depends('custom_addon_ids')

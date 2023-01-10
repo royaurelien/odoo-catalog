@@ -90,7 +90,7 @@
                         type="object"
                         string="Addons Sync."
                         class="btn btn-primary"
-                        groups="catalog.group_manager"
+                        groups="catalog.group_developper"
                     />
                     <button
                         name="action_open_url"
@@ -140,6 +140,7 @@
                             <!-- <field name="url" widget="url" readonly="1" groups="base.group_no_one"/> -->
                             <field name="requirements" readonly="1"/>
                             <field name="python_modules" readonly="1"/>
+                            <field name="git_clone_command" widget="CopyClipboardChar" readonly="1" groups="catalog.group_developper"/>
                             <!-- <field name="last_commit" groups="base.group_no_one"/> -->
                         </group>
                         <group col="2">
