@@ -14,6 +14,39 @@ _logger = logging.getLogger(__name__)
 class GitBranch(models.Model):
     _inherit = 'git.branch'
 
+    def _get_commits_from_gitlab(self):
+        self.ensure_one()
+
+        gl = self.repository_id.organization_id._get_gitlab()
+        project = gl.projects.get(self.repository_id.repo_id)
+        max_count = 100
+
+        # commits = project.commits.list(ref_name=self.name, since='2023-01-10T00:00:00Z', all=True)
+        # commits = project.commits.list(ref_name=self.name, page=1, per_page=10)
+        commits = project.commits.list(ref_name=self.name, page=1, per_page=max_count)
+        # commits = project.commits.list(since='2016-01-01T00:00:00Z')
+
+        # _logger.warning(commits)
+
+        vals_list = []
+        _gitlab_date_to_datetime = self.organization_id._gitlab_date_to_datetime
+
+        for commit in commits:
+            # _logger.error(commit.title)
+            _logger.error(_gitlab_date_to_datetime(commit.committed_date))
+            vals_list.append({
+                'commit_date': _gitlab_date_to_datetime(commit.committed_date),
+                'name': commit.title,
+                'author': commit.author_name,
+                'email': commit.author_email,
+                'commit_id': commit.short_id,
+                'commit_url': commit.web_url,
+                'repository_id': False,
+            })
+
+        return vals_list
+
+
     def _get_items_from_gitlab(self):
         self.ensure_one()
 

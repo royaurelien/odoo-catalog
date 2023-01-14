@@ -13,6 +13,30 @@ class GitRepository(models.Model):
     _inherit = 'git.repository'
 
 
+    def _get_commits_from_github(self):
+        self.ensure_one()
+        org = self.organization_id._get_github()
+        repo = org.get_repo(self.path)
+        # total = repo.get_commits().totalCount
+        # commits = repo.get_commits()
+        vals_list = []
+        max_count = 100
+
+        for item in repo.get_commits()[:max_count]:
+            commit = item.commit
+            committer = commit.committer
+
+            vals_list.append({
+                'name': commit.message,
+                'author': committer.name,
+                'email': committer.email,
+                'commit_id': item.sha,
+                'commit_url': item.html_url,
+                'commit_date': committer.date,
+            })
+
+            # _logger.warning(committer.date)
+        return vals_list
 
 
     def _get_items_from_github(self):
@@ -23,6 +47,7 @@ class GitRepository(models.Model):
         branches = repo.get_branches()
 
         return branches
+
 
     def _convert_github_to_odoo(self, item):
         vals = {

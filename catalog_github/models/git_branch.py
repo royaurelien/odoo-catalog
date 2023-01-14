@@ -22,6 +22,34 @@ class GitBranch(models.Model):
     _inherit = 'git.branch'
 
 
+    def _get_commits_from_github(self):
+        self.ensure_one()
+        org = self.organization_id._get_github()
+        repo = org.get_repo(self.path)
+        max_count = 100
+        # commits = repo.get_commits(self.name)
+        vals_list = []
+
+        for item in repo.get_commits(self.name)[:max_count]:
+            commit = item.commit
+            committer = commit.committer
+            # stats = item.stats
+
+            vals_list.append({
+                'name': commit.message,
+                'author': committer.name,
+                'email': committer.email,
+                'commit_id': item.sha,
+                'commit_url': item.html_url,
+                'commit_date': committer.date,
+                'repository_id': False,
+                # 'stats': "+{o.additions}/-{o.deletions}/{o.total}".format(o=stats),
+            })
+
+        return vals_list
+
+
+
     def _get_items_from_github(self):
         self.ensure_one()
         org = self.organization_id._get_github()

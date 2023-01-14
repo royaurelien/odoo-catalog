@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from multiprocessing import synchronize
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 from datetime import datetime
 import logging
@@ -79,6 +79,15 @@ class GitBranch(models.Model):
 
     custom_addon_count = fields.Integer(compute='_compute_custom_addon', store=True)
 
+    commit_ids = fields.One2many(comodel_name='git.commit.items', inverse_name='branch_id')
+    commit_count = fields.Integer(compute='_compute_commit', compute_sudo=True)
+
+
+    @api.depends('commit_ids')
+    def _compute_commit(self):
+        for record in self:
+            record.commit_count = len(record.commit_ids)
+
 
     @api.depends('repository_id.http_git_url', 'sync_identifier')
     def _compute_clone_command(self):
@@ -100,7 +109,11 @@ class GitBranch(models.Model):
 
     def _action_view_custom_addons(self, action):
         action["domain"] = [('id', 'in', self.custom_addon_ids.ids)]
+        return action
 
+
+    def _action_view_git_commits(self, action):
+        action["domain"] = [('id', 'in', self.commit_ids.ids)]
         return action
 
 
@@ -108,7 +121,7 @@ class GitBranch(models.Model):
     def create(self, vals_list):
         res_ids = super(GitBranch, self).create(vals_list)
         names = res_ids.filtered(lambda x: x.major).mapped('name')
-        # FIXME : search_or_create not used ?
+        # FIXME : res of search_or_create not used ?
         versions = self.env['custom.addon.version'].search_or_create(names)
 
         return res_ids

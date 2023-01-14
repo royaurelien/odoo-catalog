@@ -10,6 +10,7 @@ from multiprocessing import synchronize
 from odoo import models, fields, api, registry, _
 from odoo.tools import safe_eval
 from odoo.tools.misc import get_lang
+from odoo.exceptions import UserError
 
 
 _logger = logging.getLogger(__name__)
@@ -160,9 +161,14 @@ class GitSync(models.AbstractModel):
         # found = hasattr(self, method)
         # _logger.debug("Search {} in {}: {}".format(method, self._name, found))
 
+        raise_if_not_exists = kwargs.get('raise_if_not_exists', False)
+
         if not hasattr(self, method):
-            _logger.error(f"No method '{method}' found for {self._name}")
-            return default_value
+            if raise_if_not_exists:
+                raise NotImplementedError(f"Method not implemented for {self._description} on {self.service}.")
+            else:
+                _logger.error(f"No method '{method}' found for {self._name}")
+                return default_value
 
         try:
             res = getattr(self, method)(*args)
@@ -178,6 +184,9 @@ class GitSync(models.AbstractModel):
 
     def _get_items_for_odoo(self, service=None):
         return self.__get_method("_get_items_from_{}", self.service, {})
+
+    def _get_commits_for_odoo(self, service=None):
+        return self.__get_method("_get_commits_from_{}", self.service, {}, raise_if_not_exists=True)
 
     def _get_rules(self):
         rules = self.env['git.rules'].search([('model', '=', self._name)])
@@ -348,7 +357,6 @@ class GitSync(models.AbstractModel):
         return vals
 
 
-
     def _group_records_by_identidier(self, values):
 
         identifiers = list(set(self.mapped('sync_identifier')))
@@ -372,8 +380,20 @@ class GitSync(models.AbstractModel):
         return result
 
 
+    def action_update_commits(self):
+        self.ensure_one()
+        try:
+            vals_list = self._get_commits_for_odoo()
+        except NotImplementedError as error:
+            raise UserError(error)
+        except:
+            vals_list = []
 
+        _logger.error(f"{self._name}: {self.id} / {len(vals_list)}")
+        _logger.error(vals_list[0])
 
+        self.write({'commit_ids': [(5, False, False)] + [(0, False, vals) for vals in vals_list]})
+        return True
 
     @api.model
     def _action_sync(self, ids=[], **kwargs):

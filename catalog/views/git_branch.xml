@@ -100,10 +100,25 @@
                         icon="fa-github"
                         attrs="{'invisible': [('url', '=', False)]}"
                     />
+                    <button
+                        name="action_update_commits"
+                        type="object"
+                        string="Fetch Commits"
+                        class="btn btn-default"
+                    />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-
+                        <button
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-code"
+                            name="action_view_commits">
+                            <div class="o_stat_info">
+                                <field name="commit_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> Commits</span>
+                            </div>
+                        </button>
                         <button
                             type="object"
                             class="oe_stat_button"
@@ -115,7 +130,6 @@
                                 <span class="o_stat_text"> Addons</span>
                             </div>
                         </button>
-
                     </div>
                     <field name="active" invisible="1" />
                     <field name="custom_addon_count" invisible="1"/>
@@ -167,12 +181,13 @@
                                 </tree>
                             </field>
                         </page>
-                        <page name="info" string="Informations" groups="base.group_no_one">
-                            <group name="commits" string="Commits">
+                        <page name="info" string="Informations">
+                            <group name="commits" string="Last commit">
                                 <field name="last_commit_date" string="Date" widget="datetime" readonly="1" />
                                 <field name="last_commit_message" string="Message" readonly="1"/>
                                 <field name="last_commit_author" string="Author" readonly="1"/>
                                 <field name="last_commit_url" string="Url" widget="url" readonly="1"/>
+                                <field name="last_commit_short_id" string="ID" readonly="1" groups="base.group_no_one"/>
                             </group>
                         </page>
                         <page name="note" string="Notes">

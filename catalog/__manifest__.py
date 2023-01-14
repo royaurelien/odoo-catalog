@@ -6,7 +6,7 @@
     'author': "Aurelien ROY",
     'website': "https://odoo.com",
     'category': 'Productivity',
-    'version': '14.0.1.0.0',
+    'version': '14.0.1.0.1',
     'depends': [
         'base',
         'mail',
@@ -19,6 +19,7 @@
         'views/git_organization.xml',
         'views/git_repository.xml',
         'views/git_branch.xml',
+        'views/git_commit_items.xml',
         'views/git_rules.xml',
         'views/custom_addon.xml',
         'views/custom_addon_tags.xml',

@@ -62,6 +62,18 @@ class GitRepository(models.Model):
         default=_get_default_favorite_user_ids,
         string='Members')
 
+    # commit_ids = fields.One2many(comodel_name='git.commit.items', compute='_compute_commit')
+    commit_ids = fields.One2many(comodel_name='git.commit.items', inverse_name='repository_id')
+    commit_count = fields.Integer(compute='_compute_commit')
+
+
+    def _compute_commit(self):
+        Commit = self.env['git.commit.items']
+        for record in self:
+            # records = Commit.search(['&', ('repository_id', '=', record.id), ('branch_id', '=', False)])
+            # record.commit_ids = records
+            record.commit_count = len(record.commit_ids)
+
 
     def _compute_is_favorite(self):
         for record in self:
@@ -124,6 +136,10 @@ class GitRepository(models.Model):
 
         return action
 
+    def _action_view_git_commits(self, action):
+        action["domain"] = [('id', 'in', self.commit_ids.ids)]
+
+        return action
 
     def action_ignore(self):
         for organization_id in self.mapped('organization_id'):

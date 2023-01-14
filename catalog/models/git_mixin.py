@@ -13,6 +13,7 @@ XML_ACTIONS = {
     'git_branch': "catalog.action_view_branch",
     'git_repository': "catalog.action_view_repository",
     'git_organization': "catalog.action_view_organization",
+    'git_commits': "catalog.action_view_commits",
 }
 
 class GitMixin(models.AbstractModel):
@@ -43,6 +44,8 @@ class GitMixin(models.AbstractModel):
         action = self._get_xml_action(name)
         action["context"] = dict(self.env.context)
 
+        action.update(kwargs)
+
         method = getattr(self, "_action_view_{}".format(name))
         action = method(action)
 
@@ -67,4 +70,7 @@ class GitMixin(models.AbstractModel):
 
     def action_view_custom_addons(self):
         return self._action_view('custom_addons')
+
+    def action_view_commits(self):
+        return self._action_view('git_commits', context=dict(create=False))
 

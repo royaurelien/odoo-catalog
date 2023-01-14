@@ -87,6 +87,12 @@
                         attrs="{'invisible': [('url', '=', False)]}"
                     />
                     <button
+                        name="action_update_commits"
+                        type="object"
+                        string="Fetch Commits"
+                        class="btn btn-default"
+                    />
+                    <button
                         name="action_ignore"
                         type="object"
                         string="Ignore"
@@ -99,6 +105,16 @@
                         <button
                             type="object"
                             class="oe_stat_button"
+                            icon="fa-code"
+                            name="action_view_commits">
+                            <div class="o_stat_info">
+                                <field name="commit_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> Commits</span>
+                            </div>
+                        </button>
+                        <button
+                            type="object"
+                            class="oe_stat_button"
                             icon="fa-code-fork"
                             name="action_view_git_branch"
                             attrs="{'invisible': [('branch_count', '=', False)]}">
@@ -108,7 +124,6 @@
                                 <span class="o_stat_text" attrs="{'invisible': [('branch_count', '&gt;', 1)]}"> Branch</span>
                             </div>
                         </button>
-
                         <button
                             type="object"
                             class="oe_stat_button"
