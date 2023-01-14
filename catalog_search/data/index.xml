@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="trgm_index_gin_custom_addon_name" model="trgm.index">
+        <field name="field_id" ref="catalog.field_custom_addon__name" />
+        <field name="index_type">gin</field>
+    </record>
+
+    <record id="trgm_index_gin_custom_addon_technical_name" model="trgm.index">
+        <field name="field_id" ref="catalog.field_custom_addon__technical_name" />
+        <field name="index_type">gin</field>
+    </record>
+
+</odoo>

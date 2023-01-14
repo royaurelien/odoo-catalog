@@ -19,7 +19,7 @@
     <record model="ir.actions.act_window" id="catalog.action_view_organization">
       <field name="name">Git Organization</field>
       <field name="res_model">git.organization</field>
-      <field name="view_mode">tree,form,graph</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_repository">

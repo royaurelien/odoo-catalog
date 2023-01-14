@@ -58,6 +58,7 @@ class GitBranch(models.Model):
         branch = repo.get_branch(self.name)
         icon_search = self._get_icon_search()
         test, limit = self._get_test_mode()
+        test = True
         count = 0
 
         requirements = False

@@ -19,11 +19,11 @@ class CustomAddon(models.Model):
         # return [(6, 0, [self.env.uid])]
         return []
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, index=True)
     description = fields.Text()
     web_description = fields.Html()
     summary = fields.Char()
-    technical_name = fields.Char(required=True)
+    technical_name = fields.Char(required=True, index=True)
     application = fields.Boolean(default=False)
     depends = fields.Char()
     active = fields.Boolean(default=True)
