@@ -133,6 +133,7 @@ var CatalogListDashboardController = ListController.extend({
      * @param {OdooEvent} e
      */
     _onDashboardOpenAction: function (e) {
+        console.log(e.data.action_name)
         return this.do_action(e.data.action_name,
             {additional_context: JSON.parse(e.data.action_context)});
     },
@@ -159,15 +160,26 @@ var CatalogKanbanDashboardRenderer = KanbanRenderer.extend({
      * @private
      * @returns {Promise}
      */
-    _render: function () {
+    // _render: function () {
+    //     var self = this;
+    //     return this._super.apply(this, arguments).then(function () {
+    //         var values = self.state.dashboardValues;
+    //         var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
+    //             values: values,
+    //         });
+    //         self.$el.parent().find(".o_catalog_dashboard").remove();
+    //         self.$el.before(catalog_dashboard);
+    //     });
+    // },
+
+    _renderView: function () {
         var self = this;
         return this._super.apply(this, arguments).then(function () {
             var values = self.state.dashboardValues;
             var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
                 values: values,
             });
-            self.$el.parent().find(".o_catalog_dashboard").remove();
-            self.$el.before(catalog_dashboard);
+            self.$el.prepend(catalog_dashboard);
         });
     },
 
@@ -178,6 +190,7 @@ var CatalogKanbanDashboardRenderer = KanbanRenderer.extend({
     _onDashboardActionClicked: function (e) {
         e.preventDefault();
         var $action = $(e.currentTarget);
+        console.log($action.attr('name'))
         this.trigger_up('dashboard_open_action', {
             action_name: $action.attr('name')+"_kanban",
             action_context: $action.attr('context'),
@@ -249,6 +262,7 @@ var CatalogKanbanDashboardController = KanbanController.extend({
      * @param {OdooEvent} e
      */
     _onDashboardOpenAction: function (e) {
+        console.log(e.data.action_name)
         return this.do_action(e.data.action_name,
             {additional_context: JSON.parse(e.data.action_context)});
     },

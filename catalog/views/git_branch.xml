@@ -57,6 +57,8 @@
                 <filter name="synchronized" string="Synchronized" domain="[['is_synchronized','=',True]]"/>
                 <separator/>
                 <filter name="active" string="Archived" domain="[['active','=',False]]"/>
+                <separator/>
+                <filter name="created_today" string="Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
             </search>
         </field>
     </record>

@@ -62,6 +62,8 @@
                 <filter name="officials" string="Officials" domain='["|", ["author", "=", "Odoo S.A."], ["author", "=", "Odoo"]]'/>
                 <separator/>
                 <filter string="Archived" domain="[('active', '=', False)]" name="archived"/>
+                <separator/>
+                <filter name="created_today" string="Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
                 <searchpanel>
                     <field name="category_id" string="Categories" enable_counters="1"/>
                     <field name="partner_id" select="multi" string="Partners" icon="fa-users" enable_counters="1"/>

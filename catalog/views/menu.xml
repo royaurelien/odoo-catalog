@@ -8,30 +8,65 @@
       <field name="name">Custom Addons</field>
       <field name="res_model">custom.addon</field>
       <field name="view_mode">kanban,tree,form,graph</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No addons to display
+        </p><p>
+          If you haven't already done so, synchronize a branch to get addons.
+        </p>
+      </field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_commits">
       <field name="name">Commits</field>
       <field name="res_model">git.commit.items</field>
       <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_neutral_face">
+          No commits to display
+        </p><p>
+          Use the button to fetch commits on the project or branch.
+        </p><p>
+          Note that the commits are kept for one hour.
+        </p>
+      </field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_organization">
       <field name="name">Git Organization</field>
       <field name="res_model">git.organization</field>
       <field name="view_mode">kanban,tree,form,graph</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No organization to display
+        </p>
+      </field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_repository">
       <field name="name">Git Repository</field>
       <field name="res_model">git.repository</field>
       <field name="view_mode">kanban,tree,form,graph</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No repository to display
+        </p><p>
+          Note that the easiest way to add a git repository is to do it directly from the organization.
+        </p>
+      </field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_branch">
       <field name="name">Git Branch</field>
       <field name="res_model">git.branch</field>
       <field name="view_mode">tree,kanban,form,graph</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No addons to display
+        </p><p>
+          If you haven't already done so, synchronize a repository to retrieve its branches.
+        </p>
+      </field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_tags">

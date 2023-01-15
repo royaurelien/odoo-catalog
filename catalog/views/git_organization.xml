@@ -1,5 +1,41 @@
 <odoo>
   <data>
+
+    <record id="view_git_organization_search" model="ir.ui.view">
+        <field name="model">git.organization</field>
+        <field name="arch" type="xml">
+            <search>
+                <field
+                    name="name"
+                    string="Name"
+                    filter_domain="[('name', 'ilike', self)]"
+                />
+                <field name="service"/>
+
+                <group expand="1" string="Group By">
+                    <filter
+                        string="Service"
+                        name="service"
+                        context="{'group_by' : 'service'}"
+                    />
+                    <filter
+                        string="Auth"
+                        name="auth_method"
+                        context="{'group_by' : 'auth_method'}"
+                    />
+                    <filter
+                        string="Partner"
+                        name="partner"
+                        context="{'group_by' : 'partner_id'}"
+                    />
+                </group>
+                <separator/>
+                <filter name="synchronized" string="Synchronized" domain="[['is_synchronized','=',True]]"/>
+                <separator/>
+                <filter name="created_today" string="Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+            </search>
+        </field>
+    </record>  
     <!-- explicit list view definition -->
 
     <record model="ir.ui.view" id="view_git_organization_tree">
@@ -175,11 +211,11 @@
                             <span class="text-left text-muted">
                                 <t t-esc="record.url.value"/>
                             </span>-->
-<!--                            <hr class="mt4 mb4"/>
+                           <!-- <hr class="mt4 mb4"/>
                             <span class="text-left text-muted">
                                 <i class="fa fa-clock-o" role="img" aria-label="Date" title="Date"></i>
-                                <t t-esc="record.last_sync_date.value"/>
-                            </span>-->
+                                <t t-esc="record.last_sync_date.value" t-options='{"hide_seconds": True}'/>
+                            </span> -->
                             <hr class="mt4 mb4"/>
                             <div class="row">
                                 <div class="col-2">

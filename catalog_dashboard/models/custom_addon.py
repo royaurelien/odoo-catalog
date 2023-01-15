@@ -35,22 +35,25 @@ class CustomAddon(models.Model):
 
 
         result = {
-            'all_organization': Organization.search_count([]),
-            'all_repository': Repository.search_count([]),
+            'all_organizations': Organization.search_count([]),
+            'all_repositories': Repository.search_count([]),
             'all_branches': Branch.search_count([]),
-            'sync_organization': Organization.search_count(sync_domain),
-            'sync_repository': Repository.search_count(sync_domain),
-            'sync_branches': Branch.search_count(sync_domain),
-            'create_organization': Organization.search_count(create_today),
-            'create_repository': Repository.search_count(create_today),
-            'create_branches': Branch.search_count(create_today),
             'all_addons': len(records),
+            'today_sync_organizations': Organization.search_count(sync_domain),
+            'today_sync_repositories': Repository.search_count(sync_domain),
+            'today_sync_branches': Branch.search_count(sync_domain),
+            'today_sync_addons': int(round(len(records.filtered_domain(sync_today)) * 100 / len(records), 2)),
+            'today_created_organization': Organization.search_count(create_today),
+            'today_created_repository': Repository.search_count(create_today),
+            'today_created_branches': Branch.search_count(create_today),
+            'today_created_addons': len(records.filtered_domain(create_today)),
+            'today_updated_addons': len(records.filtered_domain(update_today)),
+
+
             'active_branches': len(branches),
             'my_addons': len(records.filtered_domain(favorites_domain)),
             'my_repositories': Repository.search_count(favorites_domain),
-            'create_addons': len(records.filtered_domain(create_today)),
-            'update_addons': len(records.filtered_domain(update_today)),
-            'today_sync_addons': round(len(records.filtered_domain(sync_today)) * 100 / len(records), 2),
+
             'all_category': len(records.mapped('category_id')),
             'all_author': len(list(set(records.mapped('author')))),
         }
@@ -73,7 +76,7 @@ class CustomAddon(models.Model):
 
         # return result
 
-        result = {
+        result.update({
             'all_to_send': 0,
             'all_waiting': 0,
             'all_late': 0,
@@ -85,6 +88,8 @@ class CustomAddon(models.Model):
             'all_total_last_7_days': 0,
             'all_sent_rfqs': 0,
             'company_currency_symbol': self.env.company.currency_id.symbol
-        }
+        })
+
+        # result['today_created_organization'] = 0
 
         return result

@@ -14,7 +14,7 @@
     .o_dashboard_action {
         cursor: pointer;
     }
-    
+
     .table {
         margin-bottom: 0;
         table-layout: fixed;
@@ -30,7 +30,7 @@
                 vertical-align: middle;
                 border-top: 1px solid $o-view-background-color;
                 background-color: $o-brand-lightsecondary;
-                
+
                 &.o_text{
                     background-color: $o-view-background-color;
                 }
@@ -47,6 +47,28 @@
                     > a {
                         color: white;
                     }
+                }
+                &.o_warning {
+                    background-color: orange;
+                    &:hover {
+                        background-color: darken(orange, 10%);
+                    }
+                    a {
+                        color: white;
+                    }
+                }
+                &.o_secondary {
+                    background-color: $o-brand-lightsecondary;
+                    &:hover {
+                        background-color: darken($o-brand-lightsecondary, 10%);
+                    }
+                    a {
+                        color: black;
+                    }
+                }
+                &.o_highlight, .o_highlight {
+                    font-size: 15px;
+                    font-weight: bold;
                 }
             }
         }
