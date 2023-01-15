@@ -42,6 +42,8 @@
             <xpath expr="//kanban" position="attributes">
                 <attribute name="js_class">catalog_kanban_dashboard</attribute>
                 <attribute name="sample">0</attribute>
+                <attribute name="group_create">0</attribute>
+                <!-- <attribute name="class">oe_background_grey o_kanban_dashboard o_catalog_kanban</attribute> -->
             </xpath>
         </field>
     </record>
@@ -105,13 +107,37 @@
         </field>
     </record>
 
+    <record id="catalog_git_organization_action_dashboard_list" model="ir.actions.act_window">
+        <field name="name">Git Organization</field>
+        <field name="res_model">git.organization</field>
+        <field name="view_mode">form,tree,kanban</field>
+        <field name="view_id" ref="catalog_dashboard.view_git_organization_tree"/>
+        <field name="search_view_id" ref="catalog.view_git_organization_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No organization to display
+            </p>
+        </field>
+    </record>
 
+
+    <record model="ir.actions.act_window" id="action_view_dashboard">
+      <field name="name">Dashboard</field>
+      <field name="res_model">git.organization</field>
+      <field name="view_mode">kanban,tree,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No organization to display
+        </p>
+      </field>
+    </record>
 
 
     <menuitem name="Dashboard" id="menu_dasboard"
               parent="catalog.menu_custom_addons_root"
               sequence="5"
-              action="catalog.action_view_organization"/>
+              action="action_view_dashboard"/>
 
   </data>
 </odoo>

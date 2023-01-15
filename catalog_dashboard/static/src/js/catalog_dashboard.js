@@ -145,6 +145,7 @@ var CatalogListDashboardView = ListView.extend({
         Renderer: CatalogListDashboardRenderer,
         Controller: CatalogListDashboardController,
     }),
+    searchview_hidden: true,
 });
 
 //--------------------------------------------------------------------------
@@ -274,6 +275,8 @@ var CatalogKanbanDashboardView = KanbanView.extend({
         Renderer: CatalogKanbanDashboardRenderer,
         Controller: CatalogKanbanDashboardController,
     }),
+    // display_name: _lt('Dashboard'),
+    searchview_hidden: true,
 });
 
 view_registry.add('catalog_list_dashboard', CatalogListDashboardView);

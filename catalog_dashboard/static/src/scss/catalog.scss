@@ -1,10 +1,22 @@
+// .o_kanban_view.o_kanban_dashboard.o_catalog_kanban {
+//     $helpdesk-record-width: 420px;
+
+//     .o_kanban_group {
+//         width: $helpdesk-record-width + 2*$o-kanban-group-padding;
+//     }
+//     .o_kanban_record {
+//         width: $helpdesk-record-width;
+//         min-height: 250px;
+//     }
+// }
+
 .o_catalog_dashboard {
     flex: 1 0 100%;
     padding: 10px 10px 18px 10px;
 
     background-color: $o-view-background-color;
     position: relative;
-    max-width:100%;
+    max-width: 100%;
 
     .row {
         margin-right: 0;
@@ -22,8 +34,9 @@
         border-collapse: separate;
         font-size: 13px;
 
-        > thead, tbody {
-            & > tr > td {
+        >thead,
+        tbody {
+            &>tr>td {
                 text-align: center;
                 width: 25%;
                 height: 33px;
@@ -31,45 +44,68 @@
                 border-top: 1px solid $o-view-background-color;
                 background-color: $o-brand-lightsecondary;
 
-                &.o_text{
+                &.o_text {
                     background-color: $o-view-background-color;
                 }
 
-                > a:hover {
+                span {
+                    display: inline;
+                }
+
+                >a:hover {
                     text-decoration: none;
                 }
 
                 &.o_main {
                     background-color: $o-brand-primary;
+
                     &:hover {
                         background-color: darken($o-brand-primary, 10%);
                     }
-                    > a {
+
+                    >a {
                         color: white;
                     }
                 }
+
                 &.o_warning {
                     background-color: orange;
+
                     &:hover {
                         background-color: darken(orange, 10%);
                     }
+
                     a {
                         color: white;
                     }
                 }
+
                 &.o_secondary {
                     background-color: $o-brand-lightsecondary;
+
                     &:hover {
                         background-color: darken($o-brand-lightsecondary, 10%);
                     }
+
                     a {
                         color: black;
                     }
                 }
-                &.o_highlight, .o_highlight {
-                    font-size: 15px;
+
+                &.o_highlight,
+                .o_highlight {
+                    font-size: 20px;
+                }
+
+                &.o_title,
+                .o_title {
+                    // font-size: 14px;
                     font-weight: bold;
                 }
+
+                // &.o_text {
+                //     text-align: left;
+                // }
             }
         }
     }
