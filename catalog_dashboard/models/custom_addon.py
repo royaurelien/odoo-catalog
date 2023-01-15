@@ -73,4 +73,18 @@ class CustomAddon(models.Model):
 
         # return result
 
+        result = {
+            'all_to_send': 0,
+            'all_waiting': 0,
+            'all_late': 0,
+            'my_to_send': 0,
+            'my_waiting': 0,
+            'my_late': 0,
+            'all_avg_order_value': 0,
+            'all_avg_days_to_purchase': 0,
+            'all_total_last_7_days': 0,
+            'all_sent_rfqs': 0,
+            'company_currency_symbol': self.env.company.currency_id.symbol
+        }
+
         return result

@@ -22,15 +22,45 @@
     </record> -->
 
 
-    <record id="catalog_dashboard_action" model="ir.actions.client">
+    <!-- <record id="catalog_dashboard_action" model="ir.actions.client">
       <field name="name">Dashboard</field>
       <field name="tag">catalog_dashboard_tags</field>
+    </record> -->
+
+    <!-- <menuitem name="Dashboard" id="menu_dasboard"
+              parent="catalog.menu_custom_addons_root"
+              sequence="5"
+              action="catalog_dashboard_action"/> -->
+
+    <record id="view_git_organization_kanban" model="ir.ui.view">
+        <field name="name">git.organization.kanban.inherited</field>
+        <field name="model">git.organization</field>
+        <field name="inherit_id" ref="catalog.view_git_organization_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="js_class">catalog_kanban_dashboard</attribute>
+                <attribute name="sample">0</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_git_organization_tree" model="ir.ui.view">
+        <field name="name">git.organization.tree.inherited</field>
+        <field name="model">git.organization</field>
+        <field name="inherit_id" ref="catalog.view_git_organization_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_purchase_order</attribute>
+                <attribute name="js_class">catalog_list_dashboard</attribute>
+                <attribute name="sample">0</attribute>
+            </xpath>
+        </field>
     </record>
 
     <menuitem name="Dashboard" id="menu_dasboard"
               parent="catalog.menu_custom_addons_root"
               sequence="5"
-              action="catalog_dashboard_action"/>
+              action="catalog.action_view_organization"/>
 
   </data>
 </odoo>

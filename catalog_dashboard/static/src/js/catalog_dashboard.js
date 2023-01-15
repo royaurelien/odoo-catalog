@@ -1,51 +1,277 @@
-odoo.define('custom_dashboard.dashboard_action', function (require){
-    "use strict";
-    var AbstractAction = require('web.AbstractAction');
-    var core = require('web.core');
-    var QWeb = core.qweb;
-    var rpc = require('web.rpc');
-    var ajax = require('web.ajax');
-    var CatalogDashBoard = AbstractAction.extend({
-       template: 'CatalogDashBoard',
-       init: function(parent, context) {
-           this._super(parent, context);
-           this.dashboards_templates = ['DashboardCatalog'];
-           this.today_sale = [];
-       },
-           willStart: function() {
-           var self = this;
-           return $.when(ajax.loadLibs(this), this._super()).then(function() {
-               return self.fetch_data();
-           });
-       },
-       start: function() {
-               var self = this;
-               this.set("title", 'Dashboard');
-               return this._super().then(function() {
-                   self.render_dashboards();
-               });
-           },
-           render_dashboards: function(){
-           var self = this;
-           _.each(this.dashboards_templates, function(template) {
-                   self.$('.o_pj_dashboard').append(QWeb.render(template, {widget: self}));
-               });
-       },
-    fetch_data: function() {
-           var self = this;
-           var def1 =  this._rpc({
-                   model: 'custom.addon',
-                   method: 'retrieve_dashboard'
-       }).then(function(result)
-        {
-            self.values = result;
-        //   self.total_projects = result['total_projects'],
-        //   self.total_tasks = result['total_tasks'],
-        //   self.total_employees = result['total_employees']
-       });
-           return $.when(def1);
-       },
-    })
-    core.action_registry.add('catalog_dashboard_tags', CatalogDashBoard);
-    return CatalogDashBoard;
-})
+odoo.define('catalog.dashboard', function (require) {
+"use strict";
+
+/**
+ * This file defines the Purchase Dashboard view (alongside its renderer, model
+ * and controller). This Dashboard is added to the top of list and kanban Purchase
+ * views, it extends both views with essentially the same code except for
+ * _onDashboardActionClicked function so we can apply filters without changing our
+ * current view.
+ */
+
+var core = require('web.core');
+var ListController = require('web.ListController');
+var ListModel = require('web.ListModel');
+var ListRenderer = require('web.ListRenderer');
+var ListView = require('web.ListView');
+var KanbanController = require('web.KanbanController');
+var KanbanModel = require('web.KanbanModel');
+var KanbanRenderer = require('web.KanbanRenderer');
+var KanbanView = require('web.KanbanView');
+var SampleServer = require('web.SampleServer');
+var view_registry = require('web.view_registry');
+
+var QWeb = core.qweb;
+
+// Add mock of method 'retrieve_dashboard' in SampleServer, so that we can have
+// the sample data in empty purchase kanban and list view
+let dashboardValues;
+SampleServer.mockRegistry.add('custom.addon/retrieve_dashboard', () => {
+    return Object.assign({}, dashboardValues);
+});
+
+
+//--------------------------------------------------------------------------
+// List View
+//--------------------------------------------------------------------------
+
+var CatalogListDashboardRenderer = ListRenderer.extend({
+    events:_.extend({}, ListRenderer.prototype.events, {
+        'click .o_dashboard_action': '_onDashboardActionClicked',
+    }),
+    /**
+     * @override
+     * @private
+     * @returns {Promise}
+     */
+    _renderView: function () {
+        var self = this;
+        return this._super.apply(this, arguments).then(function () {
+            var values = self.state.dashboardValues;
+            var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
+                values: values,
+            });
+            self.$el.prepend(catalog_dashboard);
+        });
+    },
+
+    /**
+     * @private
+     * @param {MouseEvent}
+     */
+    _onDashboardActionClicked: function (e) {
+        e.preventDefault();
+        var $action = $(e.currentTarget);
+        this.trigger_up('dashboard_open_action', {
+            action_name: $action.attr('name')+"_list",
+            action_context: $action.attr('context'),
+        });
+    },
+});
+
+var CatalogListDashboardModel = ListModel.extend({
+    /**
+     * @override
+     */
+    init: function () {
+        this.dashboardValues = {};
+        this._super.apply(this, arguments);
+    },
+
+    /**
+     * @override
+     */
+    __get: function (localID) {
+        var result = this._super.apply(this, arguments);
+        if (_.isObject(result)) {
+            result.dashboardValues = this.dashboardValues[localID];
+        }
+        return result;
+    },
+    /**
+     * @override
+     * @returns {Promise}
+     */
+    __load: function () {
+        return this._loadDashboard(this._super.apply(this, arguments));
+    },
+    /**
+     * @override
+     * @returns {Promise}
+     */
+    __reload: function () {
+        return this._loadDashboard(this._super.apply(this, arguments));
+    },
+
+    /**
+     * @private
+     * @param {Promise} super_def a promise that resolves with a dataPoint id
+     * @returns {Promise -> string} resolves to the dataPoint id
+     */
+    _loadDashboard: function (super_def) {
+        var self = this;
+        var dashboard_def = this._rpc({
+            model: 'custom.addon',
+            method: 'retrieve_dashboard',
+        });
+        return Promise.all([super_def, dashboard_def]).then(function(results) {
+            var id = results[0];
+            dashboardValues = results[1];
+            self.dashboardValues[id] = dashboardValues;
+            return id;
+        });
+    },
+});
+
+var CatalogListDashboardController = ListController.extend({
+    custom_events: _.extend({}, ListController.prototype.custom_events, {
+        dashboard_open_action: '_onDashboardOpenAction',
+    }),
+
+    /**
+     * @private
+     * @param {OdooEvent} e
+     */
+    _onDashboardOpenAction: function (e) {
+        return this.do_action(e.data.action_name,
+            {additional_context: JSON.parse(e.data.action_context)});
+    },
+});
+
+var CatalogListDashboardView = ListView.extend({
+    config: _.extend({}, ListView.prototype.config, {
+        Model: CatalogListDashboardModel,
+        Renderer: CatalogListDashboardRenderer,
+        Controller: CatalogListDashboardController,
+    }),
+});
+
+//--------------------------------------------------------------------------
+// Kanban View
+//--------------------------------------------------------------------------
+
+var CatalogKanbanDashboardRenderer = KanbanRenderer.extend({
+    events:_.extend({}, KanbanRenderer.prototype.events, {
+        'click .o_dashboard_action': '_onDashboardActionClicked',
+    }),
+    /**
+     * @override
+     * @private
+     * @returns {Promise}
+     */
+    _render: function () {
+        var self = this;
+        return this._super.apply(this, arguments).then(function () {
+            var values = self.state.dashboardValues;
+            var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
+                values: values,
+            });
+            self.$el.parent().find(".o_catalog_dashboard").remove();
+            self.$el.before(catalog_dashboard);
+        });
+    },
+
+    /**
+     * @private
+     * @param {MouseEvent}
+     */
+    _onDashboardActionClicked: function (e) {
+        e.preventDefault();
+        var $action = $(e.currentTarget);
+        this.trigger_up('dashboard_open_action', {
+            action_name: $action.attr('name')+"_kanban",
+            action_context: $action.attr('context'),
+        });
+    },
+});
+
+var CatalogKanbanDashboardModel = KanbanModel.extend({
+    /**
+     * @override
+     */
+    init: function () {
+        this.dashboardValues = {};
+        this._super.apply(this, arguments);
+    },
+
+    /**
+     * @override
+     */
+    __get: function (localID) {
+        var result = this._super.apply(this, arguments);
+        if (_.isObject(result)) {
+            result.dashboardValues = this.dashboardValues[localID];
+        }
+        return result;
+    },
+    /**
+     * @override
+     * @returns {Promise}
+     */
+    __load: function () {
+        return this._loadDashboard(this._super.apply(this, arguments));
+    },
+    /**
+     * @override
+     * @returns {Promise}
+     */
+    __reload: function () {
+        return this._loadDashboard(this._super.apply(this, arguments));
+    },
+
+    /**
+     * @private
+     * @param {Promise} super_def a promise that resolves with a dataPoint id
+     * @returns {Promise -> string} resolves to the dataPoint id
+     */
+    _loadDashboard: function (super_def) {
+        var self = this;
+        var dashboard_def = this._rpc({
+            model: 'custom.addon',
+            method: 'retrieve_dashboard',
+        });
+        return Promise.all([super_def, dashboard_def]).then(function(results) {
+            var id = results[0];
+            dashboardValues = results[1];
+            self.dashboardValues[id] = dashboardValues;
+            return id;
+        });
+    },
+});
+
+var CatalogKanbanDashboardController = KanbanController.extend({
+    custom_events: _.extend({}, KanbanController.prototype.custom_events, {
+        dashboard_open_action: '_onDashboardOpenAction',
+    }),
+
+    /**
+     * @private
+     * @param {OdooEvent} e
+     */
+    _onDashboardOpenAction: function (e) {
+        return this.do_action(e.data.action_name,
+            {additional_context: JSON.parse(e.data.action_context)});
+    },
+});
+
+var CatalogKanbanDashboardView = KanbanView.extend({
+    config: _.extend({}, KanbanView.prototype.config, {
+        Model: CatalogKanbanDashboardModel,
+        Renderer: CatalogKanbanDashboardRenderer,
+        Controller: CatalogKanbanDashboardController,
+    }),
+});
+
+view_registry.add('catalog_list_dashboard', CatalogListDashboardView);
+view_registry.add('catalog_kanban_dashboard', CatalogKanbanDashboardView);
+
+return {
+    CatalogListDashboardModel: CatalogListDashboardModel,
+    CatalogListDashboardRenderer: CatalogListDashboardRenderer,
+    CatalogListDashboardController: CatalogListDashboardController,
+    CatalogKanbanDashboardModel: CatalogKanbanDashboardModel,
+    CatalogKanbanDashboardRenderer: CatalogKanbanDashboardRenderer,
+    CatalogKanbanDashboardController: CatalogKanbanDashboardController
+};
+
+});

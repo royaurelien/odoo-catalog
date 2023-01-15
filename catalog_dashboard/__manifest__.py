@@ -18,8 +18,6 @@
     ],
     'qweb': [
         "static/src/xml/catalog_dashboard.xml",
-        # "static/src/xml/purchase_dashboard.xml",
-        # "static/src/xml/purchase_toaster_button.xml",
     ],
     'demo': [
         # 'demo/demo.xml',
