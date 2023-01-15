@@ -38,6 +38,14 @@ class GitOrganization(models.Model):
     branch_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     custom_addons_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     force_update = fields.Boolean(default=False)
+    icon = fields.Char(compute='_compute_icon')
+
+
+    @api.depends('service')
+    def _compute_icon(self):
+        for record in self:
+            path = "/catalog_%s/static/src/img/logo.png" % record.service
+            record.icon = path
 
 
     @api.depends('service', 'auth_method', 'auth_id')

@@ -73,8 +73,6 @@
                         </button>
                     </div>
 
-
-
                     <div class="oe_title">
                         <h1>
                             <field name="name" />
@@ -128,66 +126,87 @@
     </record>
 
     <record id="view_git_organization_kanban" model="ir.ui.view">
-        <field name="name">Git Organization</field>
+        <field name="name">git.organization.kanban</field>
         <field name="model">git.organization</field>
         <field name="arch" type="xml">
             <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
-            <field name="name"/>
-            <field name="service"/>
-            <!-- <field name="color"/> -->
-            <!-- <field name="description"/> -->
-            <field name="partner_id"/>
-            <!-- <field name="tag_ids"/> -->
-            <!-- <field name="branch_ids"/> -->
-            <field name="last_sync_date"/>
-            <field name="url"/>
-            <field name="branch_count"/>
-            <field name="repository_count"/>
-            <field name="branch_count"/>
-            <field name="custom_addons_count"/>
-            <field name="is_synchronized"/>
-            <!-- <field name="is_favorite"/> -->
-            <field name="message_needaction_counter"/>
+                <field name="name"/>
+                <field name="service"/>
+                <field name="icon"/>
+                <field name="partner_id"/>
+                <field name="last_sync_date"/>
+                <field name="url"/>
+                <field name="branch_count"/>
+                <field name="repository_count"/>
+                <field name="branch_count"/>
+                <field name="custom_addons_count"/>
+                <field name="is_synchronized"/>
+                <field name="message_needaction_counter"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div t-attf-class="oe_kanban_global_click o_has_icon">
-                            <div class="o_project_kanban_main">
-                                <div class="o_kanban_card_content">
-                                    <div class="o_kanban_primary_left">
-                                        <div class="o_primary">
-                                            <span><t t-esc="record.name.value"/></span>
-                                            <span t-if="record.url.value">
-                                                <strong><t t-esc="record.url.value"/></strong>
-                                            </span>
-                                            <span t-if="record.partner_id.value">
-                                                <t t-esc="record.partner_id.value"/>
-                                            </span>
-                                        </div>
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="row">
+                                <div class="col-2">
+                                    <img t-attf-src="#{record.icon.value}" t-att-title="record.name.value" t-att-alt="record.icon.value" class="o_image_40_cover float-left"/>
+                                </div>
+                                <div class="col-10">
+                                    <div class="float-right">
+                                        <i t-if="record.last_sync_date.value" class="fa fa-clock-o text-success" t-attf-aria-label="#{record.last_sync_date.value}" role="img" t-attf-title="#{record.last_sync_date.value}"></i>
+                                        <i t-else="" class="fa fa-clock-o text-muted" label="Never synchronized" role="img" title="Never synchronized"></i>
+                                        <i t-if="record.is_synchronized.raw_value" class="fa fa-circle-o text-success" aria-label="Synchronized" role="img" title="Synchronized"/>
+                                        <i t-else="" class="fa fa-circle-o text-muted" aria-label="Not Synchronized" role="img" title="Not Synchronized"/>
+                                        <!-- <i t-if="record.last_sync_date.value" class="fa fa-clock-o text-success" t-attf-aria-label="#{record.last_sync_date.value}" role="img" t-attf-title="#{record.last_sync_date.value}"></i> -->
                                     </div>
+                                    <div>
+                                        <strong><t t-esc="record.name.value"/></strong>
+                                    </div>
+                                    <div class="text-muted">
+                                        <field name="partner_id"/>
+                                        <!-- <span>
+                                            <t t-esc="record.partner_id.value"/>
+                                        </span> -->
+                                    </div>
+                                    <!-- <div class="text-muted">
+                                        <span t-if="record.url.raw_value" t-esc="record.url.value"/>
+                                    </div> -->
                                 </div>
-                                <div>
-                                    <a class="o_project_kanban_box" name="action_view_git_repository" type="object">
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-cube" />
-                                            <t t-esc="record.repository_count.value" />
-                                        </span>
-                                    </a>
-                                    <a class="o_project_kanban_box" name="action_view_git_branch" type="object">
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-cube" />
-                                            <t t-esc="record.branch_count.value" />
-                                        </span>
-                                    </a>
-                                    <a class="o_project_kanban_box" name="action_view_custom_addons" type="object">
-                                        <span class="badge">
-                                            <i class="fa fa-fw fa-cube" />
-                                            <t t-esc="record.custom_addons_count.value" />
-                                        </span>
-                                    </a>
+                            </div>
+<!--                            <hr class="mt4 mb4"/>
+                            <span class="text-left text-muted">
+                                <t t-esc="record.url.value"/>
+                            </span>-->
+<!--                            <hr class="mt4 mb4"/>
+                            <span class="text-left text-muted">
+                                <i class="fa fa-clock-o" role="img" aria-label="Date" title="Date"></i>
+                                <t t-esc="record.last_sync_date.value"/>
+                            </span>-->
+                            <hr class="mt4 mb4"/>
+                            <div class="row">
+                                <div class="col-2">
+                                    <!--<i class="fa fa-clock-o float-right" role="img" aria-label="Date" title="Date"/>-->
                                 </div>
-                                <!-- <div class="oe_kanban_bottom_right" name="studio_div_9d19b4">
-                                    <img t-if="record.partner_id.raw_value" t-att-src="kanban_image('res.partner', 'image_128', record.partner_id.raw_value)" t-att-title="record.partner_id.value" t-att-alt="record.partner_id.value" class="oe_kanban_avatar o_image_24_cover float-right"/>
-                                </div> -->
+                                <div class="col-10">
+                                    <a name="action_view_custom_addons" type="object" class="float-right">
+                                        <span class="badge">
+                                            <i class="fa fa-fw fa-cube"/>
+                                            <t t-esc="record.custom_addons_count.value"/>
+                                        </span>
+                                    </a>
+                                    <a name="action_view_git_branch" type="object" class="float-right">
+                                        <span class="badge">
+                                            <i class="fa fa-fw fa-code-fork"/>
+                                            <t t-esc="record.branch_count.value"/>
+                                        </span>
+                                    </a>
+                                    <a name="action_view_git_repository" type="object" class="float-right">
+                                        <span class="badge">
+                                            <i class="fa fa-fw fa-folder-o"/>
+                                            <t t-esc="record.repository_count.value"/>
+                                        </span>
+                                    </a>
+
+                                </div>
+
                             </div>
                         </div>
                     </t>
