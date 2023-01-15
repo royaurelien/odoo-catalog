@@ -206,7 +206,9 @@
         <field name="name">Git Repository</field>
         <field name="model">git.repository</field>
         <field name="arch" type="xml">
-            <kanban class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
+            <kanban group_create="0" group_delete="0" group_edit="0"
+                    quick_create="0" records_draggable="0" sample="0"
+                    class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
             <field name="name"/>
             <field name="color"/>
             <field name="description"/>

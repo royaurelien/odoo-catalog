@@ -187,7 +187,9 @@
         <field name="name">Custom Addons Kanban</field>
         <field name="model">custom.addon</field>
         <field name="arch" type="xml">
-            <kanban create="false" class="o_modules_kanban">
+            <kanban group_create="0" group_delete="0" group_edit="0"
+                    quick_create="0" records_draggable="0" sample="0"
+                    create="false" class="o_modules_kanban">
                 <!-- <field name="to_buy"/> -->
                 <!-- <field name="state"/> -->
                 <field name="id"/>

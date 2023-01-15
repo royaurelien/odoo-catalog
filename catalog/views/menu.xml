@@ -59,10 +59,10 @@
     <record model="ir.actions.act_window" id="catalog.action_view_branch">
       <field name="name">Git Branch</field>
       <field name="res_model">git.branch</field>
-      <field name="view_mode">tree,kanban,form,graph</field>
+      <field name="view_mode">kanban,tree,form,graph</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
-          No addons to display
+          No branch to display
         </p><p>
           If you haven't already done so, synchronize a repository to retrieve its branches.
         </p>

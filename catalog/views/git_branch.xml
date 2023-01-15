@@ -151,12 +151,9 @@
                         </h3>
                     </div>
                     <group>
-                        <group col="2">
-                            <!-- <field name="service" groups="base.group_no_one"/> -->
-                            <!-- <field name="url" widget="url" readonly="1" groups="base.group_no_one"/> -->
+                        <group col="2" string="Technical">
                             <field name="requirements" readonly="1"/>
                             <field name="python_modules" readonly="1"/>
-                            <field name="git_clone_command" widget="CopyClipboardChar" readonly="1" groups="catalog.group_developper"/>
                             <!-- <field name="last_commit" groups="base.group_no_one"/> -->
                         </group>
                         <group col="2">
@@ -183,7 +180,9 @@
                                 </tree>
                             </field>
                         </page>
+
                         <page name="info" string="Informations">
+                        <group>
                             <group name="commits" string="Last commit">
                                 <field name="last_commit_date" string="Date" widget="datetime" readonly="1" />
                                 <field name="last_commit_message" string="Message" readonly="1"/>
@@ -191,6 +190,13 @@
                                 <field name="last_commit_url" string="Url" widget="url" readonly="1"/>
                                 <field name="last_commit_short_id" string="ID" readonly="1" groups="base.group_no_one"/>
                             </group>
+                            <group name="branch" string="Branch">
+                                <field name="is_synchronized" widget="boolean_toggle" options='{"active": "Synchronized", "inactive": "Not synchronized"}'/>
+                                <field name="git_clone_command" widget="CopyClipboardChar" readonly="1" groups="catalog.group_developper"/>
+                                <field name="service" groups="base.group_no_one"/>
+                                <field name="url" widget="url" readonly="1" groups="base.group_no_one"/>
+                            </group>
+                        </group>
                         </page>
                         <page name="note" string="Notes">
                             <field name="note" widget="html" nolabel="1"/>
@@ -203,6 +209,53 @@
                     <field name="message_ids" widget="mail_thread"/>
                 </div>
             </form>
+        </field>
+    </record>
+
+    <record id="view_git_branch_kanban" model="ir.ui.view">
+        <field name="name">Git Branch</field>
+        <field name="model">git.branch</field>
+        <field name="arch" type="xml">
+            <kanban group_create="0" group_delete="0" group_edit="0"
+                    quick_create="0" records_draggable="0" sample="0"
+                    class="oe_background_grey o_kanban_dashboard o_emphasize_colors">
+            <field name="name"/>
+            <field name="repository_id"/>
+            <field name="partner_id"/>
+            <field name="tag_ids"/>
+            <field name="custom_addon_count"/>
+            <field name="is_synchronized"/>
+            <field name="message_needaction_counter"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click o_has_icon">
+                            <div class="o_project_kanban_main">
+                                <div class="o_kanban_card_content">
+                                    <div class="o_kanban_primary_left">
+                                        <div class="o_primary">
+                                            <span><t t-esc="record.name.value"/></span>
+                                            <span t-if="record.repository_id.value">
+                                                from <strong><t t-esc="record.repository_id.value"/></strong>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span><field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_project_kanban_boxes">
+                                <a class="o_project_kanban_box" name="action_view_custom_addons" type="object">
+                                    <div>
+                                        <span class="o_value"><t t-esc="record.custom_addon_count.value"/></span>
+                                        <span class="o_label"> Addons</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
     </record>
 

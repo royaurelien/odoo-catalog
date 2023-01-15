@@ -6,15 +6,15 @@
         <field name="model">git.commit.items</field>
         <field name="arch" type="xml">
             <tree create="0" delete="0">
+                <field name="commit_date" widget="datetime" optional="show"/>
                 <field name="branch_id" optional="hide"/>
                 <field name="repository_id" optional="hide"/>
                 <field name="commit_id" optional="hide"/>
                 <field name="name"/>
                 <field name="author"/>
                 <field name="email" optional="show"/>
-                <field name="stats" optional="show"/>
+                <field name="stats" optional="hide"/>
                 <field name="commit_url" optional="hide"/>
-                <field name="commit_date" widget="datetime" optional="hide"/>
                 <button name="action_open_url" type="object" icon="fa-external-link"/>
             </tree>
         </field>
