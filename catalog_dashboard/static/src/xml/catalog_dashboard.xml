@@ -40,14 +40,14 @@
                                     </span>
                                 </a>
                             </td>
-                            <td class="o_main" title="All Repositories">
+                            <td class="o_main o_dashboard_action" title="All Repositories" name="catalog_dashboard.catalog_repository_action_dashboard" context='{}'>
                                 <a href="#">
                                     <span class="o_highlight">
                                         <t t-esc="values['all_repositories']"/>
                                     </span>
                                 </a>
                             </td>
-                            <td class="o_main" title="All Branches">
+                            <td class="o_main o_dashboard_action" title="All Branches" name="catalog_dashboard.catalog_branch_action_dashboard" context='{}'>
                                 <a href="#">
                                     <span class="o_highlight">
                                         <t t-esc="values['all_branches']"/>
@@ -64,35 +64,35 @@
                         </tr>
                         <tr>
                             <td class="o_text">
-                                <div>Sync</div>
+                                <div>Synchronized</div>
                             </td>
-                            <td class="o_main o_dashboard_action" title="My Draft RFQs" name="catalog_dashboard.catalog_git_organization_action_dashboard" context='{"search_default_synchronized": true}'>
+                            <td class="o_main o_dashboard_action" title="Organizations Synchronized" name="catalog_dashboard.catalog_git_organization_action_dashboard" context='{"search_default_synchronized": true}'>
                                 <a href="#"><t t-esc="values['today_sync_organizations']"/></a>
                             </td>
-                            <td class="o_main" title="My Draft RFQs">
+                            <td class="o_main o_dashboard_action" title="Repositories Synchronized" name="catalog_dashboard.catalog_repository_action_dashboard" context='{"search_default_synchronized": true}'>
                                 <a href="#"><t t-esc="values['today_sync_repositories']"/></a>
                             </td>
-                            <td class="o_main" title="My Waiting RFQs">
+                            <td class="o_main o_dashboard_action" title="Branches Synchronized" name="catalog_dashboard.catalog_branch_action_dashboard" context='{"search_default_synchronized": true}'>
                                 <a href="#"><t t-esc="values['today_sync_branches']"/></a>
                             </td>
-                            <td class="o_main" title="My Late RFQs">
+                            <td class="o_main" title="Organizations Updated">
                                 <a href="#"><t t-esc="values['today_sync_addons']"/>%</a>
                             </td>
                         </tr>
                         <tr>
                             <td class="o_text">
-                                <div>Created</div>
+                                <div>Created Today</div>
                             </td>
-                            <td t-att-class="(values['today_created_organization'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" title="Created Today" name="catalog_dashboard.catalog_git_organization_action_dashboard" context='{"search_default_created_today": true}'>
+                            <td t-att-class="(values['today_created_organization'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" title="Organizations Created Today" name="catalog_dashboard.catalog_git_organization_action_dashboard" context='{"search_default_created_today": true}'>
                                 <a href="#"><t t-esc="values['today_created_organization']"/></a>
                             </td>
-                            <td t-att-class="(values['today_created_repository'] ? 'o_warning' : 'o_main')" title="My Draft RFQs">
+                            <td t-att-class="(values['today_created_repository'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" title="Repositories Created Today" name="catalog_dashboard.catalog_repository_action_dashboard" context='{"search_default_created_today": true}'>
                                 <a href="#"><t t-esc="values['today_created_repository']"/></a>
                             </td>
-                            <td t-att-class="(values['today_created_branches'] ? 'o_warning' : 'o_main')" title="My Waiting RFQs">
+                            <td t-att-class="(values['today_created_branches'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" title="Branches Created Today" name="catalog_dashboard.catalog_branch_action_dashboard" context='{"search_default_created_today": true}'>
                                 <a href="#"><t t-esc="values['today_created_branches']"/></a>
                             </td>
-                            <td t-att-class="(values['today_created_addons'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" title="Created Today" name="catalog_dashboard.catalog_action_dashboard" context='{"search_default_created_today": true}'>
+                            <td t-att-class="(values['today_created_addons'] ? 'o_warning' : 'o_main') + ' o_dashboard_action'" title="Addons Created Today" name="catalog_dashboard.catalog_action_dashboard" context='{"search_default_created_today": true}'>
                                 <a href="#"><t t-esc="values['today_created_addons']"/></a>
                             </td>
                         </tr>
@@ -101,7 +101,7 @@
 
                 <div class="col-sm-6">
                     <!-- <h3>Help</h3> -->
-                    <p>About Catalog</p>
+                    <!-- <p>About Catalog</p> -->
                     <!-- <p>How to use the catalog</p> -->
                     <!-- thead needed to avoid list view rendering error for some reason -->
                     <!-- can't use th tag due to list rendering error when no values in list... -->

@@ -1,0 +1,165 @@
+<odoo>
+  <data>
+
+    <!-- Dashboard action buttons -->
+    <!-- Dashboard action buttons: Custom Addons -->
+    <record id="catalog_action_dashboard_list" model="ir.actions.act_window">
+        <field name="name">Custom Addons</field>
+        <field name="res_model">custom.addon</field>
+        <field name="view_mode">form,tree,kanban</field>
+        <field name="view_id" ref="catalog.view_custom_addon_tree"/>
+        <field name="search_view_id" ref="catalog.view_custom_addon_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No addons to display
+            </p>
+        </field>
+    </record>
+
+    <record id="catalog_action_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Custom Addons</field>
+        <field name="res_model">custom.addon</field>
+        <field name="view_mode">form,kanban,tree</field>
+        <field name="view_id" ref="catalog.custom_addon_view_kanban"/>
+        <field name="search_view_id" ref="catalog.view_custom_addon_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No addons to display
+            </p>
+        </field>
+    </record>
+
+    <!-- Dashboard action buttons: Git Repository -->
+    <record id="catalog_repository_action_dashboard_list" model="ir.actions.act_window">
+        <field name="name">Git Repository</field>
+        <field name="res_model">git.repository</field>
+        <field name="view_mode">form,tree,kanban</field>
+        <field name="view_id" ref="catalog.view_git_repository_tree"/>
+        <field name="search_view_id" ref="catalog.view_git_repository_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No repository to display
+            </p>
+        </field>
+    </record>
+
+    <record id="catalog_repository_action_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Git Repository</field>
+        <field name="res_model">git.repository</field>
+        <field name="view_mode">form,kanban,tree</field>
+        <field name="view_id" ref="catalog.view_git_repository_kanban"/>
+        <field name="search_view_id" ref="catalog.view_git_repository_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No repository to display
+            </p>
+        </field>
+    </record>
+
+    <!-- Dashboard action buttons: Git Branch -->
+    <record id="catalog_branch_action_dashboard_list" model="ir.actions.act_window">
+        <field name="name">Git Branch</field>
+        <field name="res_model">git.branch</field>
+        <field name="view_mode">form,tree,kanban</field>
+        <field name="view_id" ref="catalog.view_git_branch_tree"/>
+        <field name="search_view_id" ref="catalog.view_git_branch_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No branch to display
+            </p>
+        </field>
+    </record>
+
+    <record id="catalog_branch_action_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Git Branch</field>
+        <field name="res_model">git.branch</field>
+        <field name="view_mode">form,kanban,tree</field>
+        <field name="view_id" ref="catalog.view_git_branch_tree"/>
+        <field name="search_view_id" ref="catalog.view_git_branch_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No branch to display
+            </p>
+        </field>
+    </record>
+
+    <!-- Dashboard action buttons: Git Organization -->
+    <record id="catalog_git_organization_action_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Git Organization</field>
+        <field name="res_model">git.organization</field>
+        <field name="view_mode">form,kanban,tree</field>
+        <!-- <field name="view_id" ref="catalog_dashboard.view_dashboard_kanban"/> -->
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('catalog_dashboard.view_dashboard_kanban')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('catalog_dashboard.view_dashboard_tree')}),
+            (0, 0, {'view_mode': 'form'})]"/>
+        <field name="search_view_id" ref="catalog.view_git_organization_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No organization to display
+            </p>
+        </field>
+    </record>
+
+    <record id="catalog_git_organization_action_dashboard_list" model="ir.actions.act_window">
+        <field name="name">Git Organization</field>
+        <field name="res_model">git.organization</field>
+        <field name="view_mode">form,tree,kanban</field>
+        <!-- <field name="view_id" ref="catalog_dashboard.view_dashboard_tree"/> -->
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('catalog_dashboard.view_dashboard_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('catalog_dashboard.view_dashboard_kanban')}),
+            (0, 0, {'view_mode': 'form'})]"/>
+        <field name="search_view_id" ref="catalog.view_git_organization_search"/>
+        <field name="target">main</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No organization to display
+            </p>
+        </field>
+    </record>
+
+    <!-- Dashboard -->
+    <record model="ir.actions.act_window" id="action_view_dashboard">
+      <field name="name">Dashboard</field>
+      <field name="res_model">git.organization</field>
+      <!-- <field name="view_id" ref="catalog_dashboard.view_dashboard_kanban"/> -->
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('catalog_dashboard.view_dashboard_kanban')}),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('catalog_dashboard.view_dashboard_tree')}),
+            (0, 0, {'view_mode': 'form'})]"/>
+      <field name="view_mode">kanban,tree,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No organization to display
+        </p>
+      </field>
+    </record>
+
+    <!-- <record model="ir.actions.act_window" id="catalog.action_view_organization">
+      <field name="view_id" ref="catalog.view_git_organization_kanban"/>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('catalog.view_git_organization_tree')}),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('catalog.view_git_organization_kanban')}),
+            (0, 0, {'view_mode': 'form'})]"/>
+    </record> -->
+
+
+    <menuitem name="Dashboard" id="menu_dasboard"
+              parent="catalog.menu_custom_addons_root"
+              sequence="5"
+              action="action_view_dashboard"/>
+
+  </data>
+</odoo>

@@ -6,7 +6,7 @@
     'author': "Aurelien ROY",
     'website': "https://odoo.com",
     'category': 'Technical',
-    'version': '14.0.0.1.0',
+    'version': '14.0.1.0.0',
     'depends': [
         'base',
         'catalog',
@@ -15,12 +15,10 @@
     'data': [
         'views/assets.xml',
         'views/dashboard.xml',
+        'views/menu.xml',
     ],
     'qweb': [
         "static/src/xml/catalog_dashboard.xml",
-    ],
-    'demo': [
-        # 'demo/demo.xml',
     ],
     'installable': True,
     'auto_install':False,

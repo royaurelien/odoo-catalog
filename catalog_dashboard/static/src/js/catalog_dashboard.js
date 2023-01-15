@@ -161,28 +161,30 @@ var CatalogKanbanDashboardRenderer = KanbanRenderer.extend({
      * @private
      * @returns {Promise}
      */
-    // _render: function () {
-    //     var self = this;
-    //     return this._super.apply(this, arguments).then(function () {
-    //         var values = self.state.dashboardValues;
-    //         var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
-    //             values: values,
-    //         });
-    //         self.$el.parent().find(".o_catalog_dashboard").remove();
-    //         self.$el.before(catalog_dashboard);
-    //     });
-    // },
-
-    _renderView: function () {
+    _render: function () {
         var self = this;
         return this._super.apply(this, arguments).then(function () {
             var values = self.state.dashboardValues;
             var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
                 values: values,
             });
-            self.$el.prepend(catalog_dashboard);
+            self.$el.parent().find(".o_catalog_dashboard").remove();
+            self.$el.before(catalog_dashboard);
+            self.$el.parent().find('.o_dashboard_action')
+              .on('click', self, self._onDashboardActionClicked.bind(self));
         });
     },
+
+    // _renderView: function () {
+    //     var self = this;
+    //     return this._super.apply(this, arguments).then(function () {
+    //         var values = self.state.dashboardValues;
+    //         var catalog_dashboard = QWeb.render('catalog.CatalogDashboard', {
+    //             values: values,
+    //         });
+    //         self.$el.prepend(catalog_dashboard);
+    //     });
+    // },
 
     /**
      * @private
