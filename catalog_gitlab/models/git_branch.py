@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class GitBranch(models.Model):
     _inherit = 'git.branch'
 
-    def _get_commits_from_gitlab(self):
+    def _get_commits_from_gitlab(self, **kwargs):
         self.ensure_one()
 
         gl = self.repository_id.organization_id._get_gitlab()

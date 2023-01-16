@@ -66,7 +66,7 @@
     <record id="view_git_branch_tree" model="ir.ui.view">
         <field name="model">git.branch</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="custom_addon_count == 0">
+            <tree create="0" decoration-muted="custom_addon_count == 0">
                 <field name="name"/>
                 <field name="repository_id"/>
                 <field name="major" optional="show"/>
@@ -218,6 +218,7 @@
         <field name="arch" type="xml">
             <kanban group_create="0" group_delete="0" group_edit="0"
                     quick_create="0" records_draggable="0" sample="0"
+                    create="0"
                     class="oe_background_grey o_kanban_dashboard o_emphasize_colors">
             <field name="name"/>
             <field name="repository_id"/>

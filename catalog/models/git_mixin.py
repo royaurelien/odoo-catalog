@@ -50,6 +50,8 @@ class GitMixin(models.AbstractModel):
         method = getattr(self, "_action_view_{}".format(name))
         action = method(action)
 
+        res_id = kwargs.get('res_id', False)
+
         # switch to form view if only one record
         if action['domain'] and action['domain'][0][0] == 'id':
             items = action['domain'][0][2]
@@ -57,11 +59,15 @@ class GitMixin(models.AbstractModel):
             if len(items) == 1:
                 action['res_id'] = items[0]
                 action['views'] = [(False, 'form')]
+        elif res_id:
+            # action['domain'] = []
+            action['res_id'] = res_id
+            action['views'] = [(False, 'form')]
 
         return action
 
-    def action_view_git_repository(self):
-        return self._action_view('git_repository')
+    def action_view_git_repository(self, **kwargs):
+        return self._action_view('git_repository', **kwargs)
 
     def action_view_git_branch(self):
         return self._action_view('git_branch')

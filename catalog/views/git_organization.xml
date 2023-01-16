@@ -137,13 +137,13 @@
                       </group>
                     </group>
                     <notebook>
-                        <page name="extra_setting" string="Settings">
-                            <group cols="4" string="Ignored Repositories">
-                                <field
-                                    name="exclude_names"
-                                    colspan="4"
-                                    nolabel="1"
-                                />
+                        <page name="settings" string="Settings">
+                            <group>
+                                <group col="3" string="Ignored Repositories">
+                                    <field name="exclude_names" colspan="3" nolabel="1"/>
+                                </group>
+                                <group col="1" name="other_settings" string="Other">
+                                </group>
                             </group>
                         </page>
                         <page name="note" string="Notes">

@@ -51,7 +51,7 @@
     <record id="view_git_repository_tree" model="ir.ui.view">
         <field name="model">git.repository</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="branch_count == 0">
+            <tree create="0" decoration-muted="branch_count == 0">
                 <field name="is_favorite" widget="boolean_favorite" nolabel="1" force_save="1" optional="show"/>
                 <field name="name"/>
                 <field name="description"/>
@@ -77,6 +77,13 @@
                         name="action_sync"
                         type="object"
                         string="Branches Sync."
+                        class="btn btn-primary"
+                        groups="catalog.group_manager"
+                    />
+                    <button
+                        name="action_update"
+                        type="object"
+                        string="Update"
                         class="btn btn-primary"
                         groups="catalog.group_manager"
                     />
@@ -218,6 +225,7 @@
         <field name="arch" type="xml">
             <kanban group_create="0" group_delete="0" group_edit="0"
                     quick_create="0" records_draggable="0" sample="0"
+                    create="0"
                     class="oe_background_grey o_kanban_dashboard o_project_kanban o_emphasize_colors">
             <field name="name"/>
             <field name="color"/>

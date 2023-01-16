@@ -162,6 +162,7 @@ class GitSync(models.AbstractModel):
         # _logger.debug("Search {} in {}: {}".format(method, self._name, found))
 
         raise_if_not_exists = kwargs.get('raise_if_not_exists', False)
+        _logger.error(kwargs)
 
         if not hasattr(self, method):
             if raise_if_not_exists:
@@ -171,7 +172,7 @@ class GitSync(models.AbstractModel):
                 return default_value
 
         try:
-            res = getattr(self, method)(*args)
+            res = getattr(self, method)(*args, **kwargs)
         except Exception as error:
             _logger.error(error)
             res = default_value
@@ -179,14 +180,17 @@ class GitSync(models.AbstractModel):
             return res
 
 
-    def _convert_to_odoo(self, item):
-        return self.__get_method("_convert_{}_to_odoo", self.service, {}, item)
+    def _convert_to_odoo(self, item, **kwargs):
+        return self.__get_method("_convert_{}_to_odoo", self.service, {}, item, **kwargs)
 
-    def _get_items_for_odoo(self, service=None):
-        return self.__get_method("_get_items_from_{}", self.service, {})
+    def _get_item_for_odoo(self, service=None, **kwargs):
+        return self.__get_method("_get_item_from_{}", self.service, {}, **kwargs)
 
-    def _get_commits_for_odoo(self, service=None):
-        return self.__get_method("_get_commits_from_{}", self.service, {}, raise_if_not_exists=True)
+    def _get_items_for_odoo(self, service=None, **kwargs):
+        return self.__get_method("_get_items_from_{}", self.service, {}, **kwargs)
+
+    def _get_commits_for_odoo(self, service=None, **kwargs):
+        return self.__get_method("_get_commits_from_{}", self.service, {}, **kwargs)
 
     def _get_rules(self):
         rules = self.env['git.rules'].search([('model', '=', self._name)])
@@ -383,14 +387,14 @@ class GitSync(models.AbstractModel):
     def action_update_commits(self):
         self.ensure_one()
         try:
-            vals_list = self._get_commits_for_odoo()
+            vals_list = self._get_commits_for_odoo(raise_if_not_exists=True)
         except NotImplementedError as error:
             raise UserError(error)
         except:
             vals_list = []
 
         _logger.error(f"{self._name}: {self.id} / {len(vals_list)}")
-        _logger.error(vals_list[0])
+
 
         self.write({'commit_ids': [(5, False, False)] + [(0, False, vals) for vals in vals_list]})
         return True
@@ -500,14 +504,14 @@ class GitSync(models.AbstractModel):
         self.message_post(body=sync_message, message_type='notification')
 
         child_ids = self[rel_field]
-        self.update({rel_field: to_update + to_create})
+        self.write({rel_field: to_update + to_create})
 
         # if use_new_cursor:
         #     self._cr.commit()
 
         new_childs = self[rel_field] - child_ids
 
-        # [record]                  [childs]            [parent field]
+        # [record]                  [child]             [parent field]
         # git.organization  -->     git.repository
         # git.repository    -->     git.branch          organization_id
         # git.branch        -->     custom.addon        repository_id
@@ -543,7 +547,7 @@ class GitSync(models.AbstractModel):
                 _logger.warning("Update forced on {} {}".format(model_name, rec.id))
                 vals = to_update.get(rec.id)
                 # vals['last_sync_date'] = datetime.now()
-                rec.update(vals)
+                rec.write(vals)
 
         self.write({'last_sync_date': datetime.now()})
 
@@ -561,3 +565,23 @@ class GitSync(models.AbstractModel):
     def action_sync(self):
         # self.with_delay()._action_sync(self.ids, force_update=False)
         self._action_sync(self.ids, force_update=True)
+
+
+    def _action_update(self, **kwargs):
+        self.ensure_one()
+        vals = {}
+
+        parent = self[self._git_parent_field] if self._git_parent_field else False
+        _logger.error(parent)
+        if parent:
+            item = self._get_item_for_odoo()
+            vals = parent._convert_to_odoo(item, contributors=True)
+            _logger.warning(vals)
+
+        vals['last_sync_date'] =  datetime.now()
+        self.write(vals)
+
+
+    def action_update(self):
+        for record in self:
+            record._action_update()

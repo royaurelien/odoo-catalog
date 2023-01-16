@@ -14,7 +14,7 @@
     'data': [
         # 'security/ir.model.access.csv',
         # 'views/menu.xml',
-        # 'views/views.xml',
+        'views/git_organization.xml',
     ],
     'demo': [
         # 'demo/demo.xml',

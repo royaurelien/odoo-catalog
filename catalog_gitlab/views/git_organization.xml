@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+
+    <record id="view_git_organization_form" model="ir.ui.view">
+        <field name="name">view.git.organization.form.inherited</field>
+        <field name="model">git.organization</field>
+        <field name="inherit_id" ref="catalog.view_git_organization_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='other_settings']" position="inside">
+              <field name="option_keep_base_url"/>
+              <field name="option_limit_visibility"/>
+              <field name="option_visibility"/>
+            </xpath>
+        </field>
+    </record>
+
+  </data>
+</odoo>

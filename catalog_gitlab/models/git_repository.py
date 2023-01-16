@@ -17,8 +17,22 @@ _logger = logging.getLogger(__name__)
 class GitRepository(models.Model):
     _inherit = 'git.repository'
 
+    def _create_branch_from_gitlab(self, vals):
+        self.ensure_one()
 
-    def _get_commits_from_gitlab(self):
+        gl = self.organization_id._get_gitlab()
+        project = gl.projects.get(self.repo_id, lazy=True)
+
+        branch = project.branches.create(vals)
+
+        _logger.error(branch)
+
+        if branch:
+            self.write({'branch_ids': [(0, False, self._convert_gitlab_to_odoo(branch))]})
+
+        return True
+
+    def _get_commits_from_gitlab(self, **kwargs):
         """
             {
                 'project_id': '137',
@@ -72,6 +86,14 @@ class GitRepository(models.Model):
         branches = project.branches.list(get_all=True)
 
         return [branch for branch in branches]
+
+
+    def _get_item_from_gitlab(self):
+        gl = self.organization_id._get_gitlab()
+        project = gl.projects.get(self.repo_id)
+
+        return project
+
 
     def _convert_gitlab_to_odoo(self, item):
         vals = {
