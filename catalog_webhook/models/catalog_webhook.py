@@ -7,6 +7,7 @@ from odoo import models, fields, api, registry, _
 
 _logger = logging.getLogger(__name__)
 
+DEFAULT_MESSAGE = "<strong>{}</strong>: {} ({}), on {}"
 
 class CatalogWebhook(models.Model):
     _name = 'catalog.webhook'
@@ -55,7 +56,7 @@ class CatalogWebhook(models.Model):
 
     def _get_valid_events(self):
         self.ensure_one()
-        return self.event_ids.mapped('code')
+        return self.event_ids.mapped('event')
 
     @api.model
     def _get_by_id(self, id):
@@ -69,10 +70,15 @@ class CatalogWebhook(models.Model):
             self = self.with_env(self.env(cr=cr))
 
 		# working
+        repository = self.repository_id
+        user_name = data.get('user_name', 'Unknown user')
+        user_email = data.get('user_email', '')
+        project_name = data.get('project', {}).get('name', 'project')
+        object_kind = data.get('object_kind', '???')
 
         try:
-            body = "test message"
-            self.message_post(body=body, message_type='comment')
+            body = DEFAULT_MESSAGE.format(object_kind, user_name, user_email, project_name)
+            repository.message_post(body=body, message_type='comment')
         except Exception as error:
             _logger.error(error)
             if use_new_cursor:
@@ -95,12 +101,12 @@ class CatalogWebhook(models.Model):
                 _logger.warning('POST')
 
                 self._action_post_message(data, use_new_cursor=self._cr.dbname)
-                new_cr.close()
+        new_cr.close()
 
-            return {}
+        return {}
 
     def action_postprocess_thread(self, data):
-        threaded_calculation = threading.Thread(target=self._run_postprocess_thread, args=(data))
+        threaded_calculation = threading.Thread(target=self._run_postprocess_thread, kwargs=dict(data=data))
         threaded_calculation.start()
         return {}
 
@@ -108,7 +114,7 @@ class CatalogWebhook(models.Model):
     def _prepare_webhook_values(self):
         self.ensure_one()
 
-        vals = {value: 1 for value in self._get_valid_events()}
+        vals = {value: 1 for value in self.mapped('code')}
         vals.update({
             'url': self.webhook_url,
             'token': self.repository_id.organization_id.webhook_token,
@@ -128,4 +134,4 @@ class CatalogWebhook(models.Model):
         _logger.error(hook)
 
         if hook:
-            self.url = hook.get('url', False)
+            self.url = hook.url

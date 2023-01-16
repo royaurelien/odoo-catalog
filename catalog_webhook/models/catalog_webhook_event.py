@@ -15,6 +15,7 @@ class CatalogWebhookEvent(models.Model):
 
     name = fields.Char(required=True)
     code = fields.Char(required=True)
+    event = fields.Char()
     description = fields.Char()
     service = fields.Selection([])
     active = fields.Boolean(default=True)

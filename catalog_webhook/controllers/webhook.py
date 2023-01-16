@@ -37,7 +37,7 @@ class WebhookController(Controller):
 			_logger.error("Received token missing or not matching.")
 			return {"status": "error"}
 
-		webhook = request.env['catalog.webhook']._get_by_id(id)
+		webhook = request.env['catalog.webhook'].sudo()._get_by_id(id)
 		if not webhook:
 			_logger.error("No webhook.")
 			return {"status": "error"}
