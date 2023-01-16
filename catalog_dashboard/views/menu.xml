@@ -146,14 +146,14 @@
       </field>
     </record>
 
-    <!-- <record model="ir.actions.act_window" id="catalog.action_view_organization">
+    <record model="ir.actions.act_window" id="catalog.action_view_organization">
       <field name="view_id" ref="catalog.view_git_organization_kanban"/>
         <field name="view_ids" eval="[
             (5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('catalog.view_git_organization_tree')}),
             (0, 0, {'view_mode': 'kanban', 'view_id': ref('catalog.view_git_organization_kanban')}),
             (0, 0, {'view_mode': 'form'})]"/>
-    </record> -->
+    </record>
 
 
     <menuitem name="Dashboard" id="menu_dasboard"
