@@ -36,7 +36,7 @@ class GitRepository(models.Model):
         """
             {
                 'project_id': '137',
-                'id': '0ddeb21adbbfac223556d4121ee1f06a120d1474',
+                'id': '0ddeb21adbbfac223556d412xxxxxxxxxxxxxxxxx',
                 'short_id': '0ddeb21a',
                 'created_at': '2021-10-07T10:55:49.000+02:00',
                 'parent_ids': [],
@@ -48,8 +48,9 @@ class GitRepository(models.Model):
                 'committer_name': 'GitHub',
                 'committer_email': 'noreply@github.com',
                 'committed_date': '2021-10-07T10:55:49.000+02:00',
-                'web_url': 'http://gitlab.xxxx.xxxx/dev/xxx_xxxxx/-/commit/0ddeb21adbbfac223556d4121ee1f06a120d1474',
-                'stats': {'additions': 1, 'deletions': 0, 'total': 1}}
+                'web_url': 'http://gitlab.xxxx.xxxx/dev/xxx_xxxxx/-/commit/0ddeb21adbbfac223556d412xxxxxxxxxxxxxxxxx',
+                'stats': {'additions': 1, 'deletions': 0, 'total': 1}
+            }
         """
         self.ensure_one()
 

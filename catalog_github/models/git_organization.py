@@ -48,13 +48,20 @@ class GitOrganization(models.Model):
 
         return org
 
+
     def _get_items_from_github(self):
         self.ensure_one()
         org = self._get_github()
-        repos = org.get_repos()
-        # excludes = self.exclude_names.strip().split(",")
-        return [repo for repo in repos]
-        # return [repo for repo in repos if repo.name not in excludes]
+        repositories = org.get_repos()
+
+        # return [repo for repo in repos]
+        return self._filter_from_github(repositories)
+
+
+    def _filter_from_github(self, repositories):
+        excludes = self._get_excludes()
+        return [repo for repo in repositories if repo.name not in excludes]
+
 
     def _convert_github_to_odoo(self, item):
         vals = {
@@ -70,7 +77,7 @@ class GitOrganization(models.Model):
             'repository_create_date': item.created_at,
             'repository_update_date': item.updated_at,
         }
-        
+
         return vals
 
 

@@ -7,9 +7,13 @@
         <field name="inherit_id" ref="catalog.view_git_organization_form"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='other_settings']" position="inside">
-              <field name="option_keep_base_url"/>
-              <field name="option_limit_visibility"/>
-              <field name="option_visibility"/>
+              <group name="gitlab" string="Gitlab" attrs="{'invisible': [('service', '!=', 'gitlab')]}">
+                <field name="gitlab_option_pre_auth" widget="boolean_toggle"/>
+                <field name="gitlab_option_enable_debug" widget="boolean_toggle"/>
+                <field name="gitlab_option_keep_base_url" widget="boolean_toggle"/>
+                <field name="gitlab_option_limit_visibility" widget="boolean_toggle"/>
+                <field name="gitlab_option_visibility" attrs="{'required': [('gitlab_option_limit_visibility', '=', True)]}"/>
+              </group>
             </xpath>
         </field>
     </record>

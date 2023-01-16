@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from collections import ChainMap, OrderedDict
+from collections import OrderedDict
 from datetime import datetime
 import logging
-from random import randint
+# from random import randint
 import re
-from multiprocessing import synchronize
+# from multiprocessing import synchronize
+import time
 
 from odoo import models, fields, api, registry, _
 from odoo.tools import safe_eval
@@ -162,7 +163,7 @@ class GitSync(models.AbstractModel):
         # _logger.debug("Search {} in {}: {}".format(method, self._name, found))
 
         raise_if_not_exists = kwargs.get('raise_if_not_exists', False)
-        _logger.error(kwargs)
+        # _logger.error(kwargs)
 
         if not hasattr(self, method):
             if raise_if_not_exists:
@@ -393,7 +394,7 @@ class GitSync(models.AbstractModel):
         except:
             vals_list = []
 
-        _logger.error(f"{self._name}: {self.id} / {len(vals_list)}")
+        # _logger.error(f"{self._name}: {self.id} / {len(vals_list)}")
 
 
         self.write({'commit_ids': [(5, False, False)] + [(0, False, vals) for vals in vals_list]})
@@ -430,7 +431,7 @@ class GitSync(models.AbstractModel):
         #     cr = registry(self._cr.dbname).cursor()
         #     self = self.with_env(self.env(cr=cr))
 
-        excludes = self._get_excludes()
+        # excludes = self._get_excludes()
         subtypes = kwargs.get('subtypes', {})
         regex = kwargs.get('regex')
         categories = kwargs.get('categories', {})
@@ -438,12 +439,16 @@ class GitSync(models.AbstractModel):
         # _logger.warning("Excludes: {}".format(excludes))
 
         # Get items from specific methods
+        start = time.time()
         items = self._get_items_for_odoo()
+        end = time.time() - start
 
-        try:
-            items = [item for item in items if item.name not in excludes]
-        except AttributeError:
-            items = [item for item in items if item.get('name') not in excludes]
+        _logger.warning(f"Execution time: {end}")
+
+        # try:
+        #     items = [item for item in items if item.name not in excludes]
+        # except AttributeError:
+        #     items = [item for item in items if item.get('name') not in excludes]
 
         # Prepare values, aka convert Git(hub/lab) values to Odoo values
         vals_list = [self._convert_to_odoo(item) for item in items]
@@ -544,7 +549,7 @@ class GitSync(models.AbstractModel):
             to_update = {object_ids.get(vals[match_field]):vals for vals in vals_list if vals[match_field] in object_ids.keys()}
             record_ids = self.env[model_name].browse(to_update.keys())
             for rec in record_ids:
-                _logger.warning("Update forced on {} {}".format(model_name, rec.id))
+                # _logger.warning("Update forced on {} {}".format(model_name, rec.id))
                 vals = to_update.get(rec.id)
                 # vals['last_sync_date'] = datetime.now()
                 rec.write(vals)
@@ -572,11 +577,11 @@ class GitSync(models.AbstractModel):
         vals = {}
 
         parent = self[self._git_parent_field] if self._git_parent_field else False
-        _logger.error(parent)
+        # _logger.error(parent)
         if parent:
             item = self._get_item_for_odoo()
             vals = parent._convert_to_odoo(item, contributors=True)
-            _logger.warning(vals)
+            # _logger.warning(vals)
 
         vals['last_sync_date'] =  datetime.now()
         self.write(vals)
