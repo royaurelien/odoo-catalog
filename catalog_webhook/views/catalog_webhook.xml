@@ -30,10 +30,10 @@
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="name"/>
+                            <field name="name" required="1"/>
                         </h1>
                         <h3 class="oe_fade">
-                            <field name="repository_id" class="oe_inline" />
+                            <field name="repository_id" class="oe_inline" required="1"/>
                         </h3>
                     </div>
                     <group>
@@ -48,6 +48,7 @@
                             <field name="create_date" widget="datetime"/>
                             <field name="write_date"  widget="datetime"/>
                             <field name="url"  widget="url"/>
+                            <field name="webhook_url"/>
                             <field name="uuid"/>
                             <field name="action"/>
                         </group>

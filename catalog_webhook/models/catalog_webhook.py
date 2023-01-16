@@ -22,7 +22,8 @@ class CatalogWebhook(models.Model):
     repository_id = fields.Many2one('git.repository')
     organization_id = fields.Many2one(related='repository_id.organization_id')
     uuid = fields.Char(default=_default_uuid, required=True)
-    url = fields.Char(compute='_compute_url', store=True)
+    webhook_url = fields.Char(compute='_compute_url', store=True)
+    url = fields.Char()
     action = fields.Selection([('post', 'Post message')])
 
     allowed_event_ids = fields.One2many('catalog.webhook.event', compute='_compute_event_ids')
@@ -39,10 +40,10 @@ class CatalogWebhook(models.Model):
 
     @api.depends('uuid')
     def _compute_url(self):
-        # base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        base_url = "https://recette-catalog.apik.cloud"
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        # base_url = "https://recette-catalog.apik.cloud"
         for record in self:
-            record.url = "{}/webhook/catalog/{}".format(base_url, record.uuid)
+            record.webhook_url = "{}/webhook/catalog/{}".format(base_url, record.uuid)
 
 
     @api.depends('repository_id')
@@ -109,7 +110,7 @@ class CatalogWebhook(models.Model):
 
         vals = {value: 1 for value in self._get_valid_events()}
         vals.update({
-            'url': self.url,
+            'url': self.webhook_url,
             'token': self.repository_id.organization_id.webhook_token,
             'enable_ssl_verification': True,
         })
@@ -125,3 +126,6 @@ class CatalogWebhook(models.Model):
         hook = project.hooks.create(vals)
 
         _logger.error(hook)
+
+        if hook:
+            self.url = hook.get('url', False)

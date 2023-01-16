@@ -13,7 +13,7 @@ NEW_COMMIT_MESSAGE = "{} ({}) just pushed new commits on {}."
 
 class WebhookController(Controller):
 
-	@route('/catalog/webhook/<string:id>', type='json', auth="public", website=True, csrf=False)
+	@route('/webhook/catalog/<string:id>', type='json', auth="public", website=True, csrf=False)
 	def catalog_public_webhook(self, id, **kwargs):
 
 		tokens = request.env['git.organization'].sudo()._get_tokens()
