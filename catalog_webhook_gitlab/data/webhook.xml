@@ -1,0 +1,63 @@
+<odoo>
+    <data>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_push">
+            <field name="name">Push event</field>
+            <field name="code">push_events</field>
+            <field name="description">A push is made to the repository.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_tag">
+            <field name="name">Tag event</field>
+            <field name="code">tag_push_events</field>
+            <field name="description">Tags are created or deleted in the repository.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_issues">
+            <field name="name">Issue event</field>
+            <field name="code">issues_events</field>
+            <field name="description">A new issue is created or an existing issue is updated, closed, or reopened.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_merge_request">
+            <field name="name">Merge request event</field>
+            <field name="code">merge_requests_events</field>
+            <field name="description">A merge request is created, updated, merged, or closed, or a commit is added in the source branch.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_note">
+            <field name="name">Comment event</field>
+            <field name="code">note_events</field>
+            <field name="description">A new comment is made on commits, merge requests, issues, and code snippets.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_wiki">
+            <field name="name">Wiki page event</field>
+            <field name="code">wiki_page_events</field>
+            <field name="description">A wiki page is created, updated, or deleted.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_job">
+            <field name="name">Job event</field>
+            <field name="code">job_events</field>
+            <field name="description">A push is made to the repository.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+        <record model="catalog.webhook.event" id="webhook_event_gitlab_pipeline">
+            <field name="name">Pipeline event</field>
+            <field name="code">pipeline_events</field>
+            <field name="description">A pipeline status changes.</field>
+            <field name="service">gitlab</field>
+        </record>
+
+
+
+    </data>
+</odoo>

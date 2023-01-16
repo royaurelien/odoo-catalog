@@ -1,0 +1,17 @@
+<odoo>
+  <data>
+
+    <record id="view_git_organization_form" model="ir.ui.view">
+        <field name="name">view.git.organization.form.inherited</field>
+        <field name="model">git.organization</field>
+        <field name="inherit_id" ref="catalog.view_git_organization_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='namespace_ids']" position="after">
+              <field name="webhook_enable"/>
+              <field name="webhook_token"/>
+            </xpath>
+        </field>
+    </record>
+
+  </data>
+</odoo>

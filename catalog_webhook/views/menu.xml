@@ -1,0 +1,45 @@
+<odoo>
+  <data>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="action_view_webhook">
+      <field name="name">Webhook</field>
+      <field name="res_model">catalog.webhook</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_neutral_face">
+          No webhook to display
+        </p>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_view_webhook_event">
+      <field name="name">Webhook Event</field>
+      <field name="res_model">catalog.webhook.event</field>
+      <field name="view_mode">tree</field>
+      <field name="context">{'active_test': False}</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_neutral_face">
+          No webhook to display
+        </p>
+      </field>
+    </record>
+
+    <!-- menu categories -->
+
+    <menuitem name="Webhooks" id="menu_webhook"
+              parent="catalog.menu_custom_addons_config"
+              groups="catalog.group_manager"
+              sequence="90"
+              action="action_view_webhook"/>
+
+    <menuitem name="Events" id="menu_webhook_event"
+              parent="catalog.menu_custom_addons_config"
+              groups="catalog.group_manager"
+              sequence="90"
+              action="action_view_webhook_event"/>
+
+  </data>
+</odoo>

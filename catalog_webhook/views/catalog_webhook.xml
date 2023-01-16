@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+
+    <record id="view_catalog_webhook_tree" model="ir.ui.view">
+        <field name="model">catalog.webhook</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="res_id"/>
+                <field name="res_model"/>
+                <!-- <button name="action_open_url" type="object" icon="fa-external-link"/> -->
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_catalog_webhook_form" model="ir.ui.view">
+        <field name="model">catalog.webhook</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        name="action_update"
+                        type="object"
+                        string="update"
+                        class="btn btn-default"
+                        icon="fa-plug"
+                    />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                        <h3 class="oe_fade">
+                            <field name="repository_id" class="oe_inline" />
+                        </h3>
+                    </div>
+                    <group>
+                        <group>
+                            <!-- <field name="res_id"/> -->
+                            <!-- <field name="res_model"/> -->
+                            <!-- <field name="allowed_event_ids" widget="many2many_tags" groups="base.group_no_one"/> -->
+                            <field name="allowed_event_ids" widget="many2many_tags" invisible="1"/>
+                            <field name="event_ids" widget="many2many_checkboxes" domain="[('id', 'in', allowed_event_ids)]"/>
+                        </group>
+                        <group>
+                            <field name="create_date" widget="datetime"/>
+                            <field name="write_date"  widget="datetime"/>
+                            <field name="url"  widget="url"/>
+                            <field name="uuid"/>
+                            <field name="action"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="lines" string="Events">
+                            <field name="line_ids"
+                                    nolabel="1"
+                                    widget="section_and_note_one2many"
+                                    mode="tree"
+                                    context="{'webhook_id': id}">
+                                <tree editable="false">
+                                    <!-- <field name="name" class="oe_highlight"/> -->
+                                    <!-- <field name="code"/> -->
+                                    <!-- <field name="description"/> -->
+                                    <field name="event_id"/>
+                                    <field name="code"/>
+                                    <field name="description"/>
+                                    <field name="action"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>
