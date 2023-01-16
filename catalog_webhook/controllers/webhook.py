@@ -30,8 +30,8 @@ class WebhookController(Controller):
 		received_token = request.httprequest.headers.get('X-Gitlab-Token')
 		received_event = request.httprequest.headers.get('X-Gitlab-Event')
 
-		_logger.info(data)
-		_logger.debug(request)
+		# _logger.info(data)
+		# _logger.debug(request)
 
 		if not received_token or received_token not in tokens:
 			_logger.error("Received token missing or not matching.")

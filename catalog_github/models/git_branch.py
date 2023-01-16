@@ -22,7 +22,7 @@ class GitBranch(models.Model):
     _inherit = 'git.branch'
 
 
-    def _get_commits_from_github(self):
+    def _get_commits_from_github(self, **kwargs):
         self.ensure_one()
         org = self.organization_id._get_github()
         repo = org.get_repo(self.path)
@@ -129,7 +129,7 @@ class GitBranch(models.Model):
         return addons
 
 
-    def _convert_github_to_odoo(self, item):
+    def _convert_github_to_odoo(self, item, **kwargs):
         self.ensure_one()
 
         mapping, keys = self._get_manifest_mapping()

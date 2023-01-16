@@ -25,7 +25,7 @@ class GitRepository(models.Model):
 
         branch = project.branches.create(vals)
 
-        _logger.error(branch)
+        # _logger.error(branch)
 
         if branch:
             self.write({'branch_ids': [(0, False, self._convert_gitlab_to_odoo(branch))]})
@@ -63,7 +63,7 @@ class GitRepository(models.Model):
         _gitlab_date_to_datetime = self.organization_id._gitlab_date_to_datetime
 
         for commit in commits:
-            _logger.error(commit.attributes)
+            # _logger.error(commit.attributes)
 
             vals_list.append({
                 'commit_date': _gitlab_date_to_datetime(commit.committed_date),
@@ -89,14 +89,14 @@ class GitRepository(models.Model):
         return [branch for branch in branches]
 
 
-    def _get_item_from_gitlab(self):
+    def _get_item_from_gitlab(self, **kwargs):
         gl = self.organization_id._get_gitlab()
         project = gl.projects.get(self.repo_id)
 
         return project
 
 
-    def _convert_gitlab_to_odoo(self, item):
+    def _convert_gitlab_to_odoo(self, item, **kwargs):
         vals = {
             'repository_id': self.id,
             'name': item.name,

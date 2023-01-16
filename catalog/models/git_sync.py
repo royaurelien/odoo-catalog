@@ -11,7 +11,7 @@ import time
 from odoo import models, fields, api, registry, _
 from odoo.tools import safe_eval
 from odoo.tools.misc import get_lang
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 _logger = logging.getLogger(__name__)
@@ -509,7 +509,7 @@ class GitSync(models.AbstractModel):
         self.message_post(body=sync_message, message_type='notification')
 
         child_ids = self[rel_field]
-        self.write({rel_field: to_update + to_create})
+        self.update({rel_field: to_update + to_create})
 
         # if use_new_cursor:
         #     self._cr.commit()
@@ -552,7 +552,7 @@ class GitSync(models.AbstractModel):
                 # _logger.warning("Update forced on {} {}".format(model_name, rec.id))
                 vals = to_update.get(rec.id)
                 # vals['last_sync_date'] = datetime.now()
-                rec.write(vals)
+                rec.update(vals)
 
         self.write({'last_sync_date': datetime.now()})
 
@@ -579,7 +579,7 @@ class GitSync(models.AbstractModel):
         parent = self[self._git_parent_field] if self._git_parent_field else False
         # _logger.error(parent)
         if parent:
-            item = self._get_item_for_odoo()
+            item = self._get_item_for_odoo(raise_if_not_exists=True)
             vals = parent._convert_to_odoo(item, contributors=True)
             # _logger.warning(vals)
 
@@ -589,4 +589,7 @@ class GitSync(models.AbstractModel):
 
     def action_update(self):
         for record in self:
-            record._action_update()
+            try:
+                record._action_update()
+            except Exception as error:
+                raise ValidationError(error)

@@ -23,14 +23,14 @@ class GitOrganization(models.Model):
 
     def action_update_repository(self):
         vals_list = self._get_namespaces_from_gitlab()
-        _logger.error(vals_list)
+        # _logger.error(vals_list)
         to_create = []
 
         for item in vals_list:
             if item['namespace_id'] not in self.namespace_ids.mapped('namespace_id'):
                 to_create.append(item)
 
-        _logger.error(to_create)
+        # _logger.error(to_create)
         if to_create:
             self.write({'namespace_ids': [(0, False, vals) for vals in to_create]})
 

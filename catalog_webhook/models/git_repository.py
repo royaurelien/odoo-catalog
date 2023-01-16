@@ -26,6 +26,5 @@ class GitRepository(models.Model):
         action["context"].update({
             'default_repository_id': self.id,
         })
-        _logger.error(action)
 
         return action

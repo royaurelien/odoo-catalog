@@ -33,7 +33,7 @@ class GitBranch(models.Model):
 
         for commit in commits:
             # _logger.error(commit.title)
-            _logger.error(_gitlab_date_to_datetime(commit.committed_date))
+            # _logger.error(_gitlab_date_to_datetime(commit.committed_date))
             vals_list.append({
                 'commit_date': _gitlab_date_to_datetime(commit.committed_date),
                 'name': commit.title,
@@ -102,7 +102,7 @@ class GitBranch(models.Model):
         return addons
 
 
-    def _convert_gitlab_to_odoo(self, item):
+    def _convert_gitlab_to_odoo(self, item, **kwargs):
         self.ensure_one()
 
         mapping, keys = self._get_manifest_mapping()

@@ -101,9 +101,8 @@ class CatalogWebhook(models.Model):
             self = self.with_env(self.env(cr=new_cr))
 
             if self.action == 'post':
-                _logger.warning('POST')
-
                 self._action_post_message(data, use_new_cursor=self._cr.dbname)
+
         new_cr.close()
 
         return {}
@@ -182,7 +181,7 @@ class CatalogWebhook(models.Model):
                 }
         """
         vals = self._prepare_webhook_values()
-        _logger.warning(vals)
+        # _logger.warning(vals)
 
         project = self.repository_id._get_item_for_odoo()
 

@@ -63,7 +63,7 @@ class GitOrganization(models.Model):
         return [repo for repo in repositories if repo.name not in excludes]
 
 
-    def _convert_github_to_odoo(self, item):
+    def _convert_github_to_odoo(self, item, **kwargs):
         vals = {
             'organization_id': self.id,
             'repo_id': item.id,
