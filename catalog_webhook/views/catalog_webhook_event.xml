@@ -9,6 +9,7 @@
                 <field name="active" invisible="1"/>
                 <field name="name"/>
                 <field name="code"/>
+                <field name="event"/>
                 <field name="description"/>
                 <field name="service"/>
             </tree>

@@ -114,7 +114,7 @@ class CatalogWebhook(models.Model):
     def _prepare_webhook_values(self):
         self.ensure_one()
 
-        vals = {value: 1 for value in self.mapped('code')}
+        vals = {value: 1 for value in self.event_ids.mapped('code')}
         vals.update({
             'url': self.webhook_url,
             'token': self.repository_id.organization_id.webhook_token,
