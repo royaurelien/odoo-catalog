@@ -3,6 +3,7 @@
 from . import git_sync
 from . import git_mixin
 from . import git_commit_items
+from . import git_contributor
 from . import ir_module_category
 from . import custom_addon
 from . import custom_addon_tags

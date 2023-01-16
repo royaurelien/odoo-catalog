@@ -66,7 +66,24 @@ class GitRepository(models.Model):
     commit_ids = fields.One2many(comodel_name='git.commit.items', inverse_name='repository_id')
     commit_count = fields.Integer(compute='_compute_commit')
 
+    contributor_ids = fields.Many2many(
+        string="Contributors",
+        comodel_name="git.contributor",
+        relation="git_repository_contributor_rel",
+        column1="contributor_id",
+        column2="repository_id",
+        tracking=True,
+    )
 
+    contributor_count = fields.Integer(compute='_compute_contributor', store=True)
+
+    @api.depends('contributor_ids')
+    def _compute_contributor(self):
+        for record in self:
+            record.contributor_count = len(record.contributor_ids)
+
+
+    @api.depends('commit_ids')
     def _compute_commit(self):
         Commit = self.env['git.commit.items']
         for record in self:
@@ -140,6 +157,13 @@ class GitRepository(models.Model):
         action["domain"] = [('id', 'in', self.commit_ids.ids)]
 
         return action
+
+
+    def _action_view_git_contributor(self, action):
+        action["domain"] = [('id', 'in', self.contributor_ids.ids)]
+
+        return action
+
 
     def action_ignore(self):
         for organization_id in self.mapped('organization_id'):

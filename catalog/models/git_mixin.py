@@ -14,6 +14,7 @@ XML_ACTIONS = {
     'git_repository': "catalog.action_view_repository",
     'git_organization': "catalog.action_view_organization",
     'git_commits': "catalog.action_view_commits",
+    'git_contributor': "catalog.action_view_contributor",
 }
 
 class GitMixin(models.AbstractModel):
@@ -74,3 +75,5 @@ class GitMixin(models.AbstractModel):
     def action_view_commits(self):
         return self._action_view('git_commits', context=dict(create=False))
 
+    def action_view_contributor(self):
+        return self._action_view('git_contributor', context=dict(create=False))

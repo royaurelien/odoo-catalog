@@ -20,6 +20,7 @@
         'views/git_repository.xml',
         'views/git_branch.xml',
         'views/git_commit_items.xml',
+        'views/git_contributor.xml',
         'views/git_rules.xml',
         'views/custom_addon.xml',
         'views/custom_addon_tags.xml',

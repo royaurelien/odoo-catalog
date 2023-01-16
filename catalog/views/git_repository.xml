@@ -107,6 +107,16 @@
                         <button
                             type="object"
                             class="oe_stat_button"
+                            icon="fa-users"
+                            name="action_view_contributor">
+                            <div class="o_stat_info">
+                                <field name="contributor_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> Contributors</span>
+                            </div>
+                        </button>
+                        <button
+                            type="object"
+                            class="oe_stat_button"
                             icon="fa-code"
                             name="action_view_commits">
                             <div class="o_stat_info">

@@ -15,4 +15,6 @@ access_custom_addon_tags,access_custom_addon_tags,model_custom_addon_tags,catalo
 manager_custom_addon_tags,manager_custom_addon_tags,model_custom_addon_tags,catalog.group_manager,1,1,1,1
 access_custom_addon_version,access_custom_addon_version,model_custom_addon_version,catalog.group_user,1,0,0,0
 manager_custom_addon_version,manager_custom_addon_version,model_custom_addon_version,catalog.group_manager,1,1,1,1
+access_git_contributor,access_git_contributor,model_git_contributor,catalog.group_user,1,1,1,1
+manager_git_contributor,manager_git_contributor,model_git_contributor,catalog.group_manager,1,1,1,1
 access_ir_module_category,catalog.ir_module_category,model_ir_module_category,catalog.group_user,1,0,0,0

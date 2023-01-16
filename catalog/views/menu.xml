@@ -32,6 +32,17 @@
       </field>
     </record>
 
+    <record model="ir.actions.act_window" id="catalog.action_view_contributor">
+      <field name="name">Contributor</field>
+      <field name="res_model">git.contributor</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_neutral_face">
+          No contributor to display
+        </p>
+      </field>
+    </record>
+
     <record model="ir.actions.act_window" id="catalog.action_view_organization">
       <field name="name">Git Organization</field>
       <field name="res_model">git.organization</field>
