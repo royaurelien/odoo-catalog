@@ -24,7 +24,7 @@ class CatalogWebhook(models.Model):
     res_model = fields.Char()
     repository_id = fields.Many2one('git.repository')
     organization_id = fields.Many2one(related='repository_id.organization_id')
-    uuid = fields.Char(default=_default_uuid, required=True)
+    uuid = fields.Char(default=_default_uuid, index=True, required=True)
     webhook_url = fields.Char(compute='_compute_url')
     branch_filter = fields.Char(string="Branch filter")
     url = fields.Char()
@@ -61,10 +61,17 @@ class CatalogWebhook(models.Model):
         self.ensure_one()
         return self.event_ids.mapped('event')
 
+
     @api.model
-    def _get_by_id(self, id):
-        record = self.search([('uuid', '=', id)], limit=1)
+    def _get_by_id(self, search_uuid):
+        search_uuid = str(search_uuid).rstrip()
+        record = self.search([('uuid', '=', search_uuid)], limit=1)
+
         return record
+
+    def _get_event_by_http_code(self, http_code):
+        res = self.event_ids.filtered_domain([('event', '=', http_code)])
+        return res[0] if res else False
 
 
     def _action_post_message(self, data, use_new_cursor=False):
@@ -73,15 +80,25 @@ class CatalogWebhook(models.Model):
             self = self.with_env(self.env(cr=cr))
 
 		# working
+        received_event = data.pop('received_event')
         repository = self.repository_id
-        user_name = data.get('user_name', 'Unknown user')
-        user_email = data.get('user_email', '')
-        project_name = data.get('project', {}).get('name', 'project')
-        object_kind = data.get('object_kind', '???')
+        event = self._get_event_by_http_code(received_event)
+
+        # subtype = self.env.ref('catalog_webhook.mail_message_subtype_webhook_event')
+        subtype = 'catalog_webhook.mail_message_subtype_webhook_event'
+        # mt_comment sends mail
+        # subtype = "mail.mt_comment"
+        message_vals = repository._convert_webhook_to_odoo(data)
 
         try:
-            body = DEFAULT_MESSAGE.format(object_kind, user_name, user_email, project_name)
-            repository.message_post(body=body, message_type='comment')
+
+            body = self.env['ir.qweb']._render('catalog_webhook.webhook_event_message', {
+                'values': message_vals,
+                'repository': repository,
+                'event': event,
+            })
+            repository.sudo().message_post(body = body, subtype_xmlid=subtype) # Message from Odoo Bot
+
         except Exception as error:
             _logger.error(error)
             if use_new_cursor:
@@ -95,7 +112,7 @@ class CatalogWebhook(models.Model):
 
 
     def _run_postprocess_thread(self, data):
-        _logger.error(data)
+        # _logger.error(data)
         with api.Environment.manage():
             new_cr = self.pool.cursor()
             self = self.with_env(self.env(cr=new_cr))

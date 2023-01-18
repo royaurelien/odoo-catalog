@@ -123,7 +123,17 @@ class GitOrganization(models.Model):
     def _gitlab_date_to_datetime(self, curr_date):
         # ISO8601
         # 2022-01-20T10:36:21.680
-        return datetime.fromisoformat(curr_date.replace('Z', '+00:00')).replace(tzinfo=None)
+        # 2022-11-04T18:13:11.000+00:00
+        curr_date = curr_date.replace('Z', '+00:00')
+
+        if '+' in curr_date:
+            return datetime.fromisoformat(curr_date).replace(tzinfo=None)
+        # 2015-05-17 18:08:09 UTC
+        elif 'UTC' in curr_date:
+            return datetime.strptime(curr_date, '%Y-%m-%d %H:%M:%S %Z').replace(tzinfo=None)
+        else:
+            _logger.error(curr_date)
+            raise ValueError(curr_date)
 
 
     def _convert_gitlab_to_odoo(self, item, **kwargs):

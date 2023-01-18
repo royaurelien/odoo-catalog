@@ -23,14 +23,14 @@ class WebhookController(Controller):
 
 		# Parse json data not in params key
 		data = request.jsonrequest
-		user_name = data.get('user_name', 'Unknown user')
-		user_email = data.get('user_email', '')
-		project_name = data.get('project', {}).get('name', 'project')
+		# user_name = data.get('user_name', 'Unknown user')
+		# user_email = data.get('user_email', '')
+		# project_name = data.get('project', {}).get('name', 'project')
 
 		received_token = request.httprequest.headers.get('X-Gitlab-Token')
 		received_event = request.httprequest.headers.get('X-Gitlab-Event')
 
-		# _logger.info(data)
+		# _logger.error(received_event)
 		# _logger.debug(request)
 
 		if not received_token or received_token not in tokens:
@@ -38,6 +38,7 @@ class WebhookController(Controller):
 			return {"status": "error"}
 
 		webhook = request.env['catalog.webhook'].sudo()._get_by_id(id)
+
 		if not webhook:
 			_logger.error("No webhook.")
 			return {"status": "error"}
@@ -48,7 +49,7 @@ class WebhookController(Controller):
 			_logger.error("Received event missing or unknown.")
 			return {"status": "error"}
 
-		webhook.action_postprocess_thread(data)
+		webhook.action_postprocess_thread(dict(received_event=received_event, **data))
 
 
 		# database = request.env['saas.database'].sudo().search(domain, limit=1)

@@ -14,4 +14,3 @@ class CatalogWebhookEvent(models.Model):
 
 
     service = fields.Selection(selection_add=[('gitlab', 'Gitlab')])
-

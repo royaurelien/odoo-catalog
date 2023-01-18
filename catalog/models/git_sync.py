@@ -443,7 +443,7 @@ class GitSync(models.AbstractModel):
         items = self._get_items_for_odoo()
         end = time.time() - start
 
-        _logger.warning(f"Execution time: {end}")
+        _logger.warning(f"Execution time: {end}, {len(items)} items")
 
         # try:
         #     items = [item for item in items if item.name not in excludes]
@@ -470,6 +470,8 @@ class GitSync(models.AbstractModel):
 
         # Apply rules and filter
         vals_list = self._apply_rules(vals_list)
+
+        _logger.warning(f"After rules: {len(vals_list)} items")
 
         # Prepare for create or update
         match_field = self._git_field_name

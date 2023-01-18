@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+
+from . import git_sync
 from . import catalog_webhook
 from . import catalog_webhook_event
 from . import catalog_webhook_line

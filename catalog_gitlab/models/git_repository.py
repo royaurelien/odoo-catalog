@@ -80,11 +80,11 @@ class GitRepository(models.Model):
 
     def _get_items_from_gitlab(self):
         gl = self.organization_id._get_gitlab()
-        project = gl.projects.get(self.repo_id)
+        project = gl.projects.get(self.repo_id, lazy=True)
         # `get_all=True` or `iterator=True`
         # commits = project.commits.list(get_all=True, all=True)
         # _logger.warning(commits)
-        branches = project.branches.list(get_all=True)
+        branches = project.branches.list(all=True, get_all=True)
 
         return [branch for branch in branches]
 

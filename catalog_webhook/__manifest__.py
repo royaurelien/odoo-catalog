@@ -20,6 +20,8 @@
         'views/catalog_webhook_event.xml',
         # 'wizard/create_repository.xml',
         'views/menu.xml',
+        'data/event_templates.xml',
+        'data/mail_message_subtype.xml',
     ],
     'installable': True,
     'auto_install':False,
