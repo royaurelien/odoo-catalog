@@ -46,6 +46,8 @@ class GitRepository(models.Model):
         repo = org.get_repo(self.path)
         branches = repo.get_branches()
 
+        branches = [branch for branch in branches]
+
         return branches
 
 

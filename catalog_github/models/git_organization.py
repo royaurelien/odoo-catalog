@@ -22,7 +22,6 @@ class GitOrganization(models.Model):
     service = fields.Selection(selection_add=TYPE)
 
     def _get_github(self):
-
         self.ensure_one()
         org = None
 
@@ -45,6 +44,9 @@ class GitOrganization(models.Model):
         except RateLimitExceededException as error:
             _logger.error(error)
             raise UserError("{}\n{}".format(error.data.get('message'), rate_limit))
+
+        if self.enable_debug:
+            g.enable_console_debug_logging()
 
         return org
 

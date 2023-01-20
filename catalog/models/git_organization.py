@@ -31,14 +31,15 @@ class GitOrganization(models.Model):
     service = fields.Selection([])
     sync_identifier = fields.Char(compute='_compute_identifier', store=True)
 
-    exclude_names = fields.Char(copy=False)
-    is_user = fields.Boolean(default=False)
+    exclude_names = fields.Char(copy=False, string="Exclude")
+    is_user = fields.Boolean(default=False, string="Is User")
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')
     repository_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     branch_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     custom_addons_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
-    force_update = fields.Boolean(default=False)
-    icon = fields.Char(compute='_compute_icon')
+    force_update = fields.Boolean(default=False, string="Force Update")
+    enable_debug = fields.Boolean(default=False, string="Debug mode")
+    icon = fields.Char(compute='_compute_icon', string="Module Icon")
 
 
     @api.depends('service')
