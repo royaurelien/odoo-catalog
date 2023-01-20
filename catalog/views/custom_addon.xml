@@ -63,7 +63,8 @@
                 <separator/>
                 <filter string="Archived" domain="[('active', '=', False)]" name="archived"/>
                 <separator/>
-                <filter name="created_today" string="Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <filter name="created_today" string="Created Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <filter name="updated_today" string="Updated Today" domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
                 <searchpanel>
                     <field name="category_id" string="Categories" enable_counters="1"/>
                     <field name="partner_id" select="multi" string="Partners" icon="fa-users" enable_counters="1"/>

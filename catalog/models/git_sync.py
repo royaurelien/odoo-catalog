@@ -443,8 +443,6 @@ class GitSync(models.AbstractModel):
         items = self._get_items_for_odoo()
         end = time.time() - start
 
-        _logger.warning(f"Execution time: {end}, {len(items)} items")
-
         # try:
         #     items = [item for item in items if item.name not in excludes]
         # except AttributeError:
@@ -452,6 +450,8 @@ class GitSync(models.AbstractModel):
 
         # Prepare values, aka convert Git(hub/lab) values to Odoo values
         vals_list = [self._convert_to_odoo(item) for item in items]
+
+        _logger.warning(f"Execution time: {end}, {len(vals_list)} items")
 
         # << No values, end of treatment >>
         if not vals_list:
