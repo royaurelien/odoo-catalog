@@ -37,7 +37,7 @@ class CatalogWebhook(models.Model):
         relation="git_webhook_event_rel",
         column1="webhook_id",
         column2="event_id",
-        tracking=True,
+        # tracking=True,
     )
 
     line_ids = fields.One2many('catalog.webhook.line', inverse_name='webhook_id')

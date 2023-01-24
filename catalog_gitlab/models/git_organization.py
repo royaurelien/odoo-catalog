@@ -33,7 +33,7 @@ class GitOrganization(models.Model):
         return [{'name': item.name, 'namespace_id':item.id} for item in gl.groups.list()]
 
 
-    def _create_repository_from_gitlab(self, vals):
+    def _create_repository_from_gitlab(self, vals, **kwargs):
         self.ensure_one()
         gl = self._get_gitlab()
 
@@ -48,26 +48,29 @@ class GitOrganization(models.Model):
                 'default_branch': branch_name,
             })
 
-        # _logger.warning(values)
+        _logger.error(values)
 
         try:
             project = gl.projects.create(values)
         except gitlab.GitlabCreateError as error:
-            _logger.warning(error)
+            _logger.error(error)
+            project = False
+        except Exception as error:
+            _logger.error(error)
             project = False
 
         # _logger.warning(project)
 
         if project:
             repository_vals = self._convert_gitlab_to_odoo(project)
-            # _logger.error(repository_vals)
+            _logger.error(repository_vals)
             repository = self.env['git.repository'].create(repository_vals)
 
             return repository
             # return False
             # self.write({'repository_ids': [(0, False, self._convert_gitlab_to_odoo(project))]})
 
-        return True
+        return False
 
 
     def _prepare_gitlab(self):

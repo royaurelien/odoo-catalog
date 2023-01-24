@@ -57,11 +57,11 @@ class CreateRepository(models.TransientModel):
         if self.branch_create and self.branch_name:
             vals['branch_name'] = self.branch_name
 
-        repository = self.organization_id._create_repository_from_gitlab(vals)
+        repository = self.organization_id._create_repository_from_odoo(vals)
 
         if repository:
             if self.second_branch_create and self.second_branch_name:
-                repository._create_branch_from_gitlab({'branch': self.second_branch_name, 'ref': self.branch_name})
+                repository._create_branch_from_odoo({'branch': self.second_branch_name, 'ref': self.branch_name})
             repository.action_sync()
 
             return self.organization_id.action_view_git_repository(res_id=repository.id)

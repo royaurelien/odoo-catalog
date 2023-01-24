@@ -46,7 +46,10 @@ class GitOrganization(models.Model):
             raise UserError("{}\n{}".format(error.data.get('message'), rate_limit))
 
         if self.enable_debug:
-            g.enable_console_debug_logging()
+            try:
+                g.enable_console_debug_logging()
+            except Exception as error:
+                _logger.error(error)
 
         return org
 
