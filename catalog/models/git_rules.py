@@ -15,6 +15,7 @@ _logger = logging.getLogger(__name__)
 
 #     automation_id = fields.Many2one('base.automation', 'Automated Action', required=True, ondelete='restrict')
 
+
 class GitRules(models.Model):
     _name = "git.rules"
     _description = "Git Rules"
@@ -23,23 +24,28 @@ class GitRules(models.Model):
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
     trigger = fields.Selection([])
-    is_global = fields.Boolean(compute='_compute_global', store=True)
-    model = fields.Selection([('git.organization', 'Organization'),
-                               ('git.organization', 'Repository'),
-                               ('git.repository', 'Branch'),
-                               ('git.branch', 'Custom Addons')], required=True)
-    action = fields.Selection([('update', 'Update'),
-                               ('ignore', 'Ignore')], required=True)
+    is_global = fields.Boolean(compute="_compute_global", store=True)
+    model = fields.Selection(
+        [
+            ("git.organization", "Organization"),
+            ("git.organization", "Repository"),
+            ("git.repository", "Branch"),
+            ("git.branch", "Custom Addons"),
+        ],
+        required=True,
+    )
+    action = fields.Selection(
+        [("update", "Update"), ("ignore", "Ignore")], required=True
+    )
     condition = fields.Char()
     code = fields.Char()
-    organization_ids = fields.Many2many(comodel_name='git.organization')
+    organization_ids = fields.Many2many(comodel_name="git.organization")
 
-    tag_ids = fields.Many2many(comodel_name='custom.addon.tags')
-    partner_id = fields.Many2one(comodel_name='res.partner')
-    user_id = fields.Many2one(comodel_name='res.users')
+    tag_ids = fields.Many2many(comodel_name="custom.addon.tags")
+    partner_id = fields.Many2one(comodel_name="res.partner")
+    user_id = fields.Many2one(comodel_name="res.users")
 
-
-    @api.depends('organization_ids')
+    @api.depends("organization_ids")
     def _compute_global(self):
         for record in self:
             record.is_global = not bool(len(record.organization_ids))

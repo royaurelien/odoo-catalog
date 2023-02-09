@@ -8,9 +8,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
-
 class CatalogWebhookEvent(models.Model):
-    _inherit = 'catalog.webhook.event'
+    _inherit = "catalog.webhook.event"
 
-
-    service = fields.Selection(selection_add=[('gitlab', 'Gitlab')])
+    service = fields.Selection(selection_add=[("gitlab", "Gitlab")])

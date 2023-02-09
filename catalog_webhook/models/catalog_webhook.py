@@ -92,7 +92,6 @@ class CatalogWebhook(models.Model):
         message_vals = repository._convert_webhook_to_odoo(data)
 
         try:
-
             body = self.env["ir.qweb"]._render(
                 "catalog_webhook.webhook_event_message",
                 {

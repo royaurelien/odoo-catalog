@@ -11,8 +11,7 @@ _logger = logging.getLogger(__name__)
 
 
 class CustomAddon(models.Model):
-    _inherit = 'custom.addon'
-
+    _inherit = "custom.addon"
 
     def action_add_to_selection(self):
-        return self.env['custom.addon.selection']._add_to_selection(self.ids)
+        return self.env["custom.addon.selection"]._add_to_selection(self.ids)

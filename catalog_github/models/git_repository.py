@@ -10,8 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class GitRepository(models.Model):
-    _inherit = 'git.repository'
-
+    _inherit = "git.repository"
 
     def _get_commits_from_github(self, **kwargs):
         self.ensure_one()
@@ -26,18 +25,19 @@ class GitRepository(models.Model):
             commit = item.commit
             committer = commit.committer
 
-            vals_list.append({
-                'name': commit.message,
-                'author': committer.name,
-                'email': committer.email,
-                'commit_id': item.sha,
-                'commit_url': item.html_url,
-                'commit_date': committer.date,
-            })
+            vals_list.append(
+                {
+                    "name": commit.message,
+                    "author": committer.name,
+                    "email": committer.email,
+                    "commit_id": item.sha,
+                    "commit_url": item.html_url,
+                    "commit_date": committer.date,
+                }
+            )
 
             # _logger.warning(committer.date)
         return vals_list
-
 
     def _get_items_from_github(self):
         self.ensure_one()
@@ -50,28 +50,26 @@ class GitRepository(models.Model):
 
         return branches
 
-
     def _convert_github_to_odoo(self, item, **kwargs):
         vals = {
-            'repository_id': self.id,
-            'name': item.name,
+            "repository_id": self.id,
+            "name": item.name,
         }
 
         if item.commit:
             commit = item.commit.commit
-            vals.update({
-                'last_commit_date': commit.author.date,
-                'last_commit_message': commit.message,
-                'last_commit_author': commit.author.email,
-                'last_commit_short_id': commit.sha,
-                'last_commit_url': commit.html_url,
-            })
+            vals.update(
+                {
+                    "last_commit_date": commit.author.date,
+                    "last_commit_message": commit.message,
+                    "last_commit_author": commit.author.email,
+                    "last_commit_short_id": commit.sha,
+                    "last_commit_url": commit.html_url,
+                }
+            )
 
         if self.url:
-           url = os.path.join(self.url, 'tree', item.name)
-           vals['url'] = url
+            url = os.path.join(self.url, "tree", item.name)
+            vals["url"] = url
 
         return vals
-
-
-

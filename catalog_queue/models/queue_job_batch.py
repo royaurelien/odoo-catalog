@@ -8,9 +8,9 @@ _logger = logging.getLogger(__name__)
 
 MESSAGE_SYNC = "Synchronization completed : {}"
 
+
 class QueueJobBatch(models.Model):
     _inherit = "queue.job.batch"
-
 
     def custom_check_state(self):
         self.ensure_one()
@@ -20,4 +20,3 @@ class QueueJobBatch(models.Model):
             self.user_id.notify_success(MESSAGE_SYNC.format(self.name))
 
         return res
-

@@ -9,13 +9,13 @@ _logger = logging.getLogger(__name__)
 
 
 class GitCommitItems(models.TransientModel):
-    _name = 'git.commit.items'
-    _description = 'Git Commit Items'
+    _name = "git.commit.items"
+    _description = "Git Commit Items"
 
     _transient_max_hours = 1
 
-    branch_id = fields.Many2one('git.branch')
-    repository_id = fields.Many2one('git.repository')
+    branch_id = fields.Many2one("git.branch")
+    repository_id = fields.Many2one("git.repository")
 
     name = fields.Char()
     author = fields.Char()
@@ -24,7 +24,6 @@ class GitCommitItems(models.TransientModel):
     commit_id = fields.Char()
     commit_url = fields.Char()
     commit_date = fields.Datetime()
-
 
     def action_open_url(self):
         self.ensure_one()
