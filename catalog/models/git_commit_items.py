@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api, _
 
-from datetime import datetime
 import logging
-from random import randint
+
+from odoo import models, fields
 
 _logger = logging.getLogger(__name__)
 

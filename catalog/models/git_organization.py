@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
 
 import logging
-from random import randint
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -32,12 +31,12 @@ class GitOrganization(models.Model):
     sync_identifier = fields.Char(compute='_compute_identifier', store=True)
 
     exclude_names = fields.Char(copy=False, string="Exclude")
-    is_user = fields.Boolean(default=False, string="Is User")
+    is_user = fields.Boolean(default=False)
     repository_ids = fields.One2many(comodel_name='git.repository', inverse_name='organization_id')
     repository_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     branch_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
     custom_addons_count = fields.Integer(compute='_compute_repository', compute_sudo=True, store=False)
-    force_update = fields.Boolean(default=False, string="Force Update")
+    force_update = fields.Boolean(default=False)
     enable_debug = fields.Boolean(default=False, string="Debug mode")
     icon = fields.Char(compute='_compute_icon', string="Module Icon")
 
@@ -45,8 +44,7 @@ class GitOrganization(models.Model):
     @api.depends('service')
     def _compute_icon(self):
         for record in self:
-            path = "/catalog_%s/static/src/img/logo.png" % record.service
-            record.icon = path
+            record.icon = f"/catalog_{record.service}/static/src/img/logo.png"
 
 
     @api.depends('service', 'auth_method', 'auth_id')

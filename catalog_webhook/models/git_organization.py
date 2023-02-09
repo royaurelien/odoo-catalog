@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class GitOrganization(models.Model):
-    _inherit = 'git.organization'
+    _inherit = "git.organization"
 
     webhook_enable = fields.Boolean(default=False, string="Webhook")
     webhook_token = fields.Char(string="Webhook token", index=True)
@@ -19,7 +19,7 @@ class GitOrganization(models.Model):
     def _generate_token(self):
         return str(uuid4())
 
-    @api.onchange('webhook_enable')
+    @api.onchange("webhook_enable")
     def _onchange_webhook(self):
         if self.webhook_enable:
             self.webhook_token = self._generate_token()
@@ -28,5 +28,7 @@ class GitOrganization(models.Model):
 
     @api.model
     def _get_tokens(self):
-        records = self.search([('webhook_enable', '=', True), ('webhook_token', '!=', False)])
-        return records.mapped('webhook_token')
+        records = self.search(
+            [("webhook_enable", "=", True), ("webhook_token", "!=", False)]
+        )
+        return records.mapped("webhook_token")

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-
 import logging
-from random import randint
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -44,4 +42,4 @@ class GitRules(models.Model):
     @api.depends('organization_ids')
     def _compute_global(self):
         for record in self:
-            record.is_global = True if not len(record.organization_ids) else False
+            record.is_global = not bool(len(record.organization_ids))

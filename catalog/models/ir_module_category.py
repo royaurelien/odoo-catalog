@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
+
+from odoo import models, fields
 
 
 class IrModuleCategory(models.Model):

@@ -3,12 +3,10 @@
 from collections import OrderedDict
 from datetime import datetime
 import logging
-# from random import randint
 import re
-# from multiprocessing import synchronize
 import time
 
-from odoo import models, fields, api, registry, _
+from odoo import models, fields, api, _
 from odoo.tools import safe_eval
 from odoo.tools.misc import get_lang
 from odoo.exceptions import UserError, ValidationError
@@ -34,7 +32,7 @@ class GitSync(models.AbstractModel):
     _git_type_rel = ""
     _git_parent_field = False
 
-    last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
+    last_sync_date = fields.Datetime(readonly=True)
     service = fields.Selection([])
     sync_identifier = fields.Char(index=True)
     name = fields.Char(required=True)
@@ -52,7 +50,7 @@ class GitSync(models.AbstractModel):
         def apply(vals):
             tags = [(4, tag.id) for tag in records]
             if tags:
-                x = vals.setdefault('tag_ids', [])
+                vals.setdefault('tag_ids', [])
                 vals['tag_ids'] += tags
             return vals
         return list(map(apply, vals_list))
@@ -142,20 +140,23 @@ class GitSync(models.AbstractModel):
         return list(map(apply, vals_list))
 
 
-    def _update_list_of_vals(self, vals_list, vals):
-        def apply(x):
-            x.update(vals)
-            return x
+    def _update_list_of_vals(self, vals_list, values):
+        def apply(vals):
+            vals.update(values)
+            return vals
         return list(map(apply, vals_list))
 
+
     def _check_major_version(self, vals_list, regex=REGEX_MAJOR_VERSION):
-        def apply(x):
-            x['major'] = bool(regex.match(x.get('name', False)))
-            return x
+        def apply(vals):
+            vals['major'] = bool(regex.match(vals.get('name', False)))
+            return vals
         return list(map(apply, vals_list))
+
 
     def _get_service(self, name):
         pass
+
 
     def __get_method(self, name, value, default_value, *args, **kwargs):
         method = name.format(value)
@@ -168,30 +169,34 @@ class GitSync(models.AbstractModel):
         if not hasattr(self, method):
             if raise_if_not_exists:
                 raise NotImplementedError(f"Method not implemented for {self._description} on {self.service}.")
-            else:
-                _logger.error(f"No method '{method}' found for {self._name}")
-                return default_value
+
+            _logger.error("No method '%s' found for %s", method, self._name)
+            return default_value
 
         try:
             res = getattr(self, method)(*args, **kwargs)
         except Exception as error:
             _logger.error(error)
             res = default_value
-        finally:
-            return res
+
+        return res
 
 
     def _convert_to_odoo(self, item, **kwargs):
         return self.__get_method("_convert_{}_to_odoo", self.service, {}, item, **kwargs)
 
-    def _get_item_for_odoo(self, service=None, **kwargs):
+
+    def _get_item_for_odoo(self, **kwargs):
         return self.__get_method("_get_item_from_{}", self.service, {}, **kwargs)
 
-    def _get_items_for_odoo(self, service=None, **kwargs):
+
+    def _get_items_for_odoo(self, **kwargs):
         return self.__get_method("_get_items_from_{}", self.service, {}, **kwargs)
 
-    def _get_commits_for_odoo(self, service=None, **kwargs):
+
+    def _get_commits_for_odoo(self, **kwargs):
         return self.__get_method("_get_commits_from_{}", self.service, {}, **kwargs)
+
 
     def _get_rules(self):
         rules = self.env['git.rules'].search([('model', '=', self._name)])
@@ -205,8 +210,10 @@ class GitSync(models.AbstractModel):
 
         return dict_rules
 
+
     def _get_excludes(self):
         return [name.strip() for name in self.exclude_names.split(",") if name] if self.exclude_names else []
+
 
     def _get_eval_context(self):
         """ Prepare the context used when evaluating python code
@@ -220,6 +227,7 @@ class GitSync(models.AbstractModel):
             'user': self.env.user,
             'env': self.env,
         }
+
 
     def _apply_rule(self, rule, vals_list, context={}):
         def apply(vals):
@@ -244,6 +252,7 @@ class GitSync(models.AbstractModel):
 
         # return list(map(apply, vals_list))
         return list(filter(bool, map(apply, vals_list)))
+
 
     def _apply_rules(self, vals_list):
         self.ensure_one()
@@ -275,25 +284,30 @@ class GitSync(models.AbstractModel):
 
         return items
 
+
     # @api.model
     def action_toggle_sync(self):
         for record in self:
             record.write({'is_synchronized': not record.is_synchronized})
+
 
     @api.model
     def _get_sync_delay(self):
         delay = self.env["ir.config_parameter"].sudo().get_param('catalog.sync_delay')
         return int(delay) if delay else 0
 
+
     @api.model
     def _get_major_version_regex(self):
         regex = self.env["ir.config_parameter"].sudo().get_param('catalog.odoo_major_version')
         return re.compile(regex)
 
+
     @api.model
     def _get_icon_search(self):
         res = self.env["ir.config_parameter"].sudo().get_param('catalog.enable_icon_search')
         return bool(res) or False
+
 
     @api.model
     def _get_test_mode(self):
@@ -317,6 +331,7 @@ class GitSync(models.AbstractModel):
 
         return "/".join(map(lambda x: x.lower(), items))
 
+
     @api.model
     def _get_categories(self):
         """
@@ -336,13 +351,14 @@ class GitSync(models.AbstractModel):
         #     categories.update({item['name'].lower():item['id'] for item in records})
 
         for lang in languages:
-            records = self.env['ir.module.category'].with_context({'lang': lang}).search([])
+            records = self.env['ir.module.category'].with_context(**{'lang': lang}).search([])
             categories.update({self._format_category(record):record.id for record in records})
 
         categories = OrderedDict(sorted(categories.items()))
         # _logger.warning(list(categories.keys()))
 
         return categories
+
 
     @api.model
     def _prepare_sync_values(self, kwargs={}):
@@ -365,12 +381,14 @@ class GitSync(models.AbstractModel):
     def _group_records_by_identidier(self, values):
 
         identifiers = list(set(self.mapped('sync_identifier')))
-        records_by_sync = [self.filtered(lambda rec: rec.sync_identifier == id) for id in identifiers]
+        # records_by_sync = [self.filtered(lambda rec: rec.sync_identifier == id) for id in identifiers]
+        records_by_sync = [self.filtered_domain(['sync_identifier', '=', id]) for id in identifiers]
+
         result = []
 
         for records in records_by_sync:
             records = records.sorted()
-            prev_count = len(records)
+            # prev_count = len(records)
 
             # records = records._filter_on_delay(values['sync_delay'])
             # _logger.warning("Filter items on delay: {}/{}".format(len(records), prev_count))
@@ -391,7 +409,8 @@ class GitSync(models.AbstractModel):
             vals_list = self._get_commits_for_odoo(raise_if_not_exists=True)
         except NotImplementedError as error:
             raise UserError(error)
-        except:
+        except Exception as error:
+            _logger.error(error)
             vals_list = []
 
         # _logger.error(f"{self._name}: {self.id} / {len(vals_list)}")
@@ -399,6 +418,7 @@ class GitSync(models.AbstractModel):
 
         self.write({'commit_ids': [(5, False, False)] + [(0, False, vals) for vals in vals_list]})
         return True
+
 
     @api.model
     def _action_sync(self, ids=[], **kwargs):
@@ -441,7 +461,8 @@ class GitSync(models.AbstractModel):
         # Get items from specific methods
         start = time.time()
         items = self._get_items_for_odoo()
-        end = time.time() - start
+        end = time.time()
+        end -= start
 
         # try:
         #     items = [item for item in items if item.name not in excludes]
@@ -451,7 +472,7 @@ class GitSync(models.AbstractModel):
         # Prepare values, aka convert Git(hub/lab) values to Odoo values
         vals_list = [self._convert_to_odoo(item) for item in items]
 
-        _logger.warning(f"Execution time: {end}, {len(vals_list)} items")
+        _logger.warning("Execution time: %s, %s items", end, len(vals_list))
 
         # << No values, end of treatment >>
         if not vals_list:
@@ -471,7 +492,7 @@ class GitSync(models.AbstractModel):
         # Apply rules and filter
         vals_list = self._apply_rules(vals_list)
 
-        _logger.warning(f"After rules: {len(vals_list)} items")
+        _logger.warning("After rules: %s items", len(vals_list))
 
         # Prepare for create or update
         match_field = self._git_field_name
@@ -500,12 +521,8 @@ class GitSync(models.AbstractModel):
 
         to_create = [(0, False, vals) for vals in vals_list if vals[match_field] not in object_ids]
 
-        sync_message = "Synchronize {} '{}': {} {} found (updated: {}, created: {})".format(self._name,
-                                                                                self.name,
-                                                                                len(vals_list),
-                                                                                model_name,
-                                                                                len(to_update),
-                                                                                len(to_create))
+
+        sync_message = f"Synchronize {self._name} '{self.name}': {len(vals_list)} {model_name} found (updated: {len(to_update)}, created: {len(to_create)})"
 
 
         self.message_post(body=sync_message, message_type='notification')

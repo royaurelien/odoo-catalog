@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api, _
 
 import logging
+
+from odoo import models, fields, _
 
 _logger = logging.getLogger(__name__)
 

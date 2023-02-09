@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-
 import logging
 import os
-from random import randint
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -42,7 +40,7 @@ class CustomAddon(models.Model):
     user_id = fields.Many2one(comodel_name='res.users')
     category_id = fields.Many2one(comodel_name='ir.module.category')
     category = fields.Char(string="Category (original)")
-    last_sync_date = fields.Datetime(string="Last Sync Date", readonly=True)
+    last_sync_date = fields.Datetime(readonly=True)
 
     tag_ids = fields.Many2many('custom.addon.tags', string='Tags')
 
@@ -64,7 +62,7 @@ class CustomAddon(models.Model):
         default=_get_default_favorite_user_ids,
         string='Members')
     is_favorite = fields.Boolean(compute='_compute_is_favorite', inverse='_inverse_is_favorite', string='Show Project on dashboard')
-    
+
 
     @api.depends('branch_ids')
     def _compute_versions(self):
@@ -106,7 +104,7 @@ class CustomAddon(models.Model):
         for record in self:
             record.branch_count = len(record.branch_ids)
             record.repository_count = len(record.branch_ids.mapped('repository_id'))
-            record.is_many_used = True if record.repository_count > 1 else False
+            record.is_many_used = record.repository_count > 1
             record.color = 1 if record.is_many_used else 0
 
 
@@ -125,7 +123,7 @@ class CustomAddon(models.Model):
 
     def action_open_url(self):
         self.ensure_one()
-        action = super(CustomAddon, self).action_open_url()
+        action = super().action_open_url()
         res_id = self.env.context.get('branch_id')
 
         if res_id:
@@ -138,5 +136,3 @@ class CustomAddon(models.Model):
             action['url'] = None
 
         return action
-
-

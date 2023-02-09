@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api, _
 
 from datetime import datetime
 import logging
-from random import randint
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -98,11 +97,11 @@ class GitBranch(models.Model):
                 record.git_clone_command = False
                 continue
 
-            record.git_clone_command = "{} --branch {} --single-branch".format(command, record.name)
+            record.git_clone_command = f"{command} --branch {record.name} --single-branch"
 
 
     @api.depends('custom_addon_ids')
-    def _compute_custom_addon(self, context=None):
+    def _compute_custom_addon(self):
         for record in self:
             record.custom_addon_count = len(record.custom_addon_ids)
 
@@ -119,20 +118,11 @@ class GitBranch(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        res_ids = super(GitBranch, self).create(vals_list)
+        res_ids = super().create(vals_list)
         names = res_ids.filtered(lambda x: x.major).mapped('name')
+
         # FIXME : res of search_or_create not used ?
         versions = self.env['custom.addon.version'].search_or_create(names)
+        _logger.debug(versions)
 
         return res_ids
-
-
-    # def _track_subtype(self, init_values):
-    # # init_values contains the modified fields' values before the changes
-    # #
-    # # the applied values can be accessed on the record as they are already
-    # # in cache
-    # self.ensure_one()
-    # if 'state' in init_values and self.state == 'confirmed':
-    #     return self.env.ref('my_module.mt_state_change')
-    # return super(BusinessTrip, self)._track_subtype(init_values)

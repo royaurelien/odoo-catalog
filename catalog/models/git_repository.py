@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-
 import logging
-from random import randint
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -26,7 +24,7 @@ class GitRepository(models.Model):
     _git_parent_field = 'organization_id'
 
     path = fields.Char(required=True)
-    subfolder = fields.Char(string="Subfolder")
+    subfolder = fields.Char()
     description = fields.Char()
     repo_id = fields.Integer(string="Repository ID")
     http_git_url = fields.Char(string="HTTP Url")
@@ -85,10 +83,7 @@ class GitRepository(models.Model):
 
     @api.depends('commit_ids')
     def _compute_commit(self):
-        Commit = self.env['git.commit.items']
         for record in self:
-            # records = Commit.search(['&', ('repository_id', '=', record.id), ('branch_id', '=', False)])
-            # record.commit_ids = records
             record.commit_count = len(record.commit_ids)
 
 
@@ -168,10 +163,9 @@ class GitRepository(models.Model):
     def action_ignore(self):
         for organization_id in self.mapped('organization_id'):
             records = self.filtered(lambda rec: rec.organization_id == organization_id)
-            excludes = list(set(organization_id._get_excludes() + records.mapped('path')))
+            excludes = organization_id._get_excludes()
+            excludes = list(set(excludes + records.mapped('path')))
             organization_id.update({'exclude_names': ", ".join(excludes)})
             records.update({'is_synchronized': False})
 
         return True
-
-
