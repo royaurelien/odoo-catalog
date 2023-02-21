@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-import logging
-from uuid import uuid4
 
-from odoo import models, fields, api, _
+import logging
+
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 

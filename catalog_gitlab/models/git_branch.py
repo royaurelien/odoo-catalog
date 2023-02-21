@@ -4,7 +4,7 @@ import gitlab
 import logging
 import os
 
-from odoo import models, fields, api
+from odoo import models
 
 MANIFEST_NAMES = ["__manifest__.py", "__openerp__.py"]
 
@@ -18,8 +18,8 @@ class GitBranch(models.Model):
     def _get_commits_from_gitlab(self, **kwargs):
         self.ensure_one()
 
-        gl = self.repository_id.organization_id._get_gitlab()
-        project = gl.projects.get(self.repository_id.repo_id)
+        conn = self.repository_id.organization_id._get_gitlab()
+        project = conn.projects.get(self.repository_id.repo_id)
         max_count = 100
 
         # commits = project.commits.list(ref_name=self.name, since='2023-01-10T00:00:00Z', all=True)
@@ -52,8 +52,8 @@ class GitBranch(models.Model):
     def _get_items_from_gitlab(self):
         self.ensure_one()
 
-        gl = self.repository_id.organization_id._get_gitlab()
-        project = gl.projects.get(self.repository_id.repo_id)
+        conn = self.repository_id.organization_id._get_gitlab()
+        project = conn.projects.get(self.repository_id.repo_id)
 
         test, limit = self._get_test_mode()
         count = 0
@@ -64,8 +64,8 @@ class GitBranch(models.Model):
         items = project.repository_tree(ref=self.name, get_all=True)
         for item in items:
             if item["name"] == "requirements.txt":
-                f = project.files.get(file_path=item["path"], ref=self.name)
-                python_modules = f.decode().splitlines()
+                content = project.files.get(file_path=item["path"], ref=self.name)
+                python_modules = content.decode().splitlines()
                 python_modules = (
                     ", ".join([e.decode() for e in python_modules])
                     if python_modules
@@ -76,11 +76,11 @@ class GitBranch(models.Model):
             elif item["type"] == "tree":
                 for filename in MANIFEST_NAMES:
                     try:
-                        f = project.files.get(
+                        content = project.files.get(
                             file_path=os.path.join(item["path"], filename),
                             ref=self.name,
                         )
-                        manifest = eval(f.decode())
+                        manifest = eval(content.decode())
                         manifest["technical_name"] = item["path"]
                         # _logger.warning(item['path'])
 

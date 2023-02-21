@@ -2,7 +2,7 @@
 
 import logging
 
-from odoo import api, fields, models
+from odoo import models
 
 _logger = logging.getLogger(__name__)
 
@@ -13,6 +13,9 @@ class QueueJobBatch(models.Model):
     _inherit = "queue.job.batch"
 
     def custom_check_state(self):
+        """
+        Custom checker to notify user after jobs done
+        """
         self.ensure_one()
         res = super().check_state()
 

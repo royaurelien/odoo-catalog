@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-from odoo.tools import datetime
 
-from datetime import datetime
-from github import Github
 import logging
 import re
-import os
+
+from odoo import models
 
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 
@@ -21,8 +17,8 @@ class GitRepository(models.Model):
     def _create_branch_from_gitlab(self, vals, **kwargs):
         self.ensure_one()
 
-        gl = self.organization_id._get_gitlab()
-        project = gl.projects.get(self.repo_id, lazy=True)
+        gitlab = self.organization_id._get_gitlab()
+        project = gitlab.projects.get(self.repo_id, lazy=True)
 
         branch = project.branches.create(vals)
 
@@ -57,8 +53,8 @@ class GitRepository(models.Model):
         """
         self.ensure_one()
 
-        gl = self.organization_id._get_gitlab()
-        project = gl.projects.get(self.repo_id, lazy=True)
+        gitlab = self.organization_id._get_gitlab()
+        project = gitlab.projects.get(self.repo_id, lazy=True)
         max_count = 100
         commits = project.commits.list(page=1, per_page=max_count, with_stats=True)
 
@@ -85,8 +81,8 @@ class GitRepository(models.Model):
         return vals_list
 
     def _get_items_from_gitlab(self):
-        gl = self.organization_id._get_gitlab()
-        project = gl.projects.get(self.repo_id, lazy=True)
+        gitlab = self.organization_id._get_gitlab()
+        project = gitlab.projects.get(self.repo_id, lazy=True)
         # `get_all=True` or `iterator=True`
         # commits = project.commits.list(get_all=True, all=True)
         # _logger.warning(commits)

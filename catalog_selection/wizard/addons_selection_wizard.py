@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models, _
-from odoo.tools.float_utils import float_compare
+from odoo import fields, models
 
 
 class AddonsSelectionWizard(models.TransientModel):
@@ -12,7 +11,9 @@ class AddonsSelectionWizard(models.TransientModel):
     custom_addon_ids = fields.Many2many("custom.addon")
 
     def validate(self):
-        # list(map(lambda x: (4, x), self.custom_addon_ids.ids))
+        """
+        Add selected custom addons to current selection
+        """
         self.selection_id.write(
             {"custom_addon_ids": [(4, rec.id) for rec in self.custom_addon_ids]}
         )

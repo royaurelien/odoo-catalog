@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-from odoo.tools import datetime
 
 from datetime import datetime
-import gitlab
 import logging
 import re
-import os
+
+import gitlab
+
+from odoo import models, fields, api
+
+# from odoo.tools import datetime
 
 
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -34,14 +35,14 @@ class GitOrganization(models.Model):
 
     def _get_namespaces_from_gitlab(self):
         self.ensure_one()
-        gl = self._get_gitlab()
+        conn = self._get_gitlab()
         return [
-            {"name": item.name, "namespace_id": item.id} for item in gl.groups.list()
+            {"name": item.name, "namespace_id": item.id} for item in conn.groups.list()
         ]
 
     def _create_repository_from_gitlab(self, vals, **kwargs):
         self.ensure_one()
-        gl = self._get_gitlab()
+        conn = self._get_gitlab()
 
         branch_name = vals.get("branch_name", False)
         keys = ["name", "description", "visibility", "namespace_id", "path"]
@@ -59,7 +60,7 @@ class GitOrganization(models.Model):
         _logger.error(values)
 
         try:
-            project = gl.projects.create(values)
+            project = conn.projects.create(values)
         except gitlab.GitlabCreateError as error:
             _logger.error(error)
             project = False
@@ -95,15 +96,15 @@ class GitOrganization(models.Model):
 
     def _get_gitlab(self):
         self.ensure_one()
-        gl = gitlab.Gitlab(**self._prepare_gitlab())
+        conn = gitlab.Gitlab(**self._prepare_gitlab())
 
         if self.gitlab_option_pre_auth:
-            gl.auth()
+            conn.auth()
 
         if self.gitlab_option_enable_debug:
-            gl.enable_debug()
+            conn.enable_debug()
 
-        return gl
+        return conn
 
     def _filter_from_gitlab(self, projects):
         excludes = self._get_excludes()
@@ -115,7 +116,7 @@ class GitOrganization(models.Model):
 
     def _get_items_from_gitlab(self, **kwargs):
         self.ensure_one()
-        gl = self._get_gitlab()
+        conn = self._get_gitlab()
 
         if self.gitlab_option_limit_visibility:
             vals = {"visibility": self.gitlab_option_visibility}
@@ -125,7 +126,7 @@ class GitOrganization(models.Model):
                 "order_by": "last_activity_at",
             }
 
-        projects = gl.projects.list(**vals)
+        projects = conn.projects.list(**vals)
 
         return self._filter_from_gitlab(projects)
         # return [repo for repo in projects]
@@ -139,13 +140,13 @@ class GitOrganization(models.Model):
         if "+" in curr_date:
             return datetime.fromisoformat(curr_date).replace(tzinfo=None)
         # 2015-05-17 18:08:09 UTC
-        elif "UTC" in curr_date:
+        if "UTC" in curr_date:
             return datetime.strptime(curr_date, "%Y-%m-%d %H:%M:%S %Z").replace(
                 tzinfo=None
             )
-        else:
-            _logger.error(curr_date)
-            raise ValueError(curr_date)
+
+        _logger.error(curr_date)
+        raise ValueError(curr_date)
 
     def _convert_gitlab_to_odoo(self, item, **kwargs):
         search_contributors = kwargs.get("contributors", False)

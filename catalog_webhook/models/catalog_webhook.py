@@ -50,7 +50,7 @@ class CatalogWebhook(models.Model):
         base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url")
         base_url = base_url.replace("http://localhost:8069", "https://test.com")
         for record in self:
-            record.webhook_url = "{}/webhook/catalog/{}".format(base_url, record.uuid)
+            record.webhook_url = f"{base_url}/webhook/catalog/{record.uuid}"
 
     @api.depends("repository_id")
     def _compute_event_ids(self):
@@ -141,7 +141,7 @@ class CatalogWebhook(models.Model):
         token = self.repository_id.organization_id.webhook_token
 
         if not token:
-            raise ValidationError("No token provided.")
+            raise ValidationError(_("No token provided."))
 
         vals = self._get_event_values()
         vals.update(

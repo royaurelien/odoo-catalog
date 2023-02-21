@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from collections import ChainMap, OrderedDict
+# from collections import ChainMap, OrderedDict
 import logging
 
 # from multiprocessing import synchronize
 
-from odoo import models, fields, api, _
-from odoo.addons.queue_job.delay import group, chain
+from odoo import models, api
+
+# from odoo.addons.queue_job.delay import group, chain
 
 
 _logger = logging.getLogger(__name__)
@@ -21,8 +22,11 @@ class GitSync(models.AbstractModel):
 
     @api.model
     def action_sync_with_delay(self, ids=[], **kwargs):
+        """
+        Asynchronious sync
+        """
         values = self._prepare_sync_values(kwargs)
-        result = []
+        # result = []
         # values['cron_mode'] = True
         all_records = self.browse(ids)
         # batch = self.env['queue.job.batch'].get_new_batch(all_records._get_batch_name())
@@ -37,7 +41,7 @@ class GitSync(models.AbstractModel):
 
         # return True
 
-        message = f"{self._description} synchronization in progress: {sum(map(lambda items: len(items), chunk_ids))} item(s)"
+        message = f"{self._description} synchronization in progress: {sum(map(len, chunk_ids))} item(s)"
 
         for current_ids in chunk_ids:
             # records = all_records.browse(current_ids)

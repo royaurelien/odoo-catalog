@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import json
 
-from odoo import models, fields, api, registry, SUPERUSER_ID
-from odoo.http import Controller, request, route, Response
+from odoo.http import Controller, request, route
 
 _logger = logging.getLogger(__name__)
 
@@ -20,6 +18,9 @@ class WebhookController(Controller):
         csrf=False,
     )
     def catalog_public_webhook(self, id, **kwargs):
+        """
+        Public url for Gitlab webhook
+        """
         tokens = request.env["git.organization"].sudo()._get_tokens()
 
         if not tokens:

@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
+#!/bin/python3
 
-import ast
-import base64
-from datetime import datetime
-from github import Github, GithubException
+
 import logging
-import re
 import os
-from multiprocessing import synchronize
 
-from odoo import models, fields, api
-from odoo.tools import datetime
+from github import GithubException
+
+from odoo import models
+
+from catalog_github.utils import prepare_commit
 
 
 MANIFEST_NAMES = ["__manifest__.py", "__openerp__.py"]
@@ -31,29 +30,13 @@ class GitBranch(models.Model):
         vals_list = []
 
         for item in repo.get_commits(self.name)[:max_count]:
-            commit = item.commit
-            committer = commit.committer
-            # stats = item.stats
-
-            vals_list.append(
-                {
-                    "name": commit.message,
-                    "author": committer.name,
-                    "email": committer.email,
-                    "commit_id": item.sha,
-                    "commit_url": item.html_url,
-                    "commit_date": committer.date,
-                    "repository_id": False,
-                    # 'stats': "+{o.additions}/-{o.deletions}/{o.total}".format(o=stats),
-                }
-            )
+            vals_list.append(prepare_commit(item))
 
         return vals_list
 
     def _get_items_from_github(self):
         self.ensure_one()
         org = self.organization_id._get_github()
-        # org = g.get_organization(self.organization_id.name)
         repo = org.get_repo(self.path)
         branch = repo.get_branch(self.name)
         icon_search = self._get_icon_search()
@@ -125,12 +108,12 @@ class GitBranch(models.Model):
             if test and count >= limit:
                 break
 
-            elif file_content.name == "requirements.txt":
+            if file_content.name == "requirements.txt":
                 try:
-                    f = repo.get_contents(
+                    content = repo.get_contents(
                         os.path.join(file_content.path, "requirements.txt")
                     )
-                    python_modules = f.decode().splitlines()
+                    python_modules = content.decode().splitlines()
                     python_modules = (
                         ", ".join([e.decode() for e in python_modules])
                         if python_modules

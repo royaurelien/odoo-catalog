@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import re
 import os
 
-from odoo import models, fields, api
+from odoo import models
+
+from catalog_github.utils import prepare_commit
 
 _logger = logging.getLogger(__name__)
 
@@ -22,21 +23,8 @@ class GitRepository(models.Model):
         max_count = 100
 
         for item in repo.get_commits()[:max_count]:
-            commit = item.commit
-            committer = commit.committer
+            vals_list.append(prepare_commit(item))
 
-            vals_list.append(
-                {
-                    "name": commit.message,
-                    "author": committer.name,
-                    "email": committer.email,
-                    "commit_id": item.sha,
-                    "commit_url": item.html_url,
-                    "commit_date": committer.date,
-                }
-            )
-
-            # _logger.warning(committer.date)
         return vals_list
 
     def _get_items_from_github(self):

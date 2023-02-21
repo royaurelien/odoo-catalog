@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
 import logging
-from uuid import uuid4
 from functools import reduce
 
-from odoo import models, fields, api, _
+from odoo import models
 
 _logger = logging.getLogger(__name__)
 
 
 def deep_get(dictionary, keys, default=None, func=None):
+    """
+    Deep get method for nested dict
+    """
     value = reduce(
         lambda d, key: d.get(key, default) if isinstance(d, dict) else default,
         keys.split("."),
@@ -19,8 +20,8 @@ def deep_get(dictionary, keys, default=None, func=None):
     if value and func:
         try:
             value = func(value)
-        except:
-            pass
+        except Exception as error:
+            _logger.error(error)
     return value
 
 

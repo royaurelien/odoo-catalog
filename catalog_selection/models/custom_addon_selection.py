@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api, _
 
 import logging
-import os
-from random import randint
+
+
+from odoo import models, fields, api, _
 
 _logger = logging.getLogger(__name__)
 
@@ -39,6 +38,9 @@ class CustomAddonSelection(models.Model):
 
     @api.depends("custom_addon_ids")
     def _compute_custom_addon(self, context=None):
+        if context:
+            pass
+
         for record in self:
             record.custom_addon_count = len(record.custom_addon_ids)
 

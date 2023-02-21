@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from multiprocessing import synchronize
-from odoo import models, fields, api
-from odoo.tools import datetime
-from odoo.exceptions import ValidationError, UserError
+import logging
+import re
 
-from datetime import datetime
 from github import (
     Github,
-    GithubException,
     RateLimitExceededException,
     UnknownObjectException,
     BadCredentialsException,
 )
-import logging
-import re
-import os
+
+from odoo import models, fields, _
+from odoo.exceptions import UserError
+
 
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 TYPE = [("github", "Github")]
@@ -33,11 +30,11 @@ class GitOrganization(models.Model):
         org = None
 
         try:
-            g = Github(self.auth_id.token)
-            limit = g.get_rate_limit()
+            conn = Github(self.auth_id.token)
+            limit = conn.get_rate_limit()
         except BadCredentialsException as error:
             _logger.error(error)
-            raise UserError("Bad Credentials")
+            raise UserError(_("Bad Credentials"))
 
         rate_limit = "Remaining {o.remaining}/{o.limit}, Reset at {o.reset}.".format(
             o=limit.core
@@ -46,20 +43,22 @@ class GitOrganization(models.Model):
 
         try:
             org = (
-                g.get_user(self.name) if self.is_user else g.get_organization(self.name)
+                conn.get_user(self.name)
+                if self.is_user
+                else conn.get_organization(self.name)
             )
         except UnknownObjectException as error:
             _logger.error(error)
-            raise UserError("{}\n{}".format(error.data.get("message"), rate_limit))
+            raise UserError(f"{error.data.get('message')}\n{rate_limit}")
         except RateLimitExceededException as error:
             _logger.error(error)
-            raise UserError("{}\n{}".format(error.data.get("message"), rate_limit))
+            raise UserError(f"{error.data.get('message')}\n{rate_limit}")
 
-        if self.enable_debug:
-            try:
-                g.enable_console_debug_logging()
-            except Exception as error:
-                _logger.error(error)
+        # if self.enable_debug:
+        #     try:
+        #         conn.enable_console_debug_logging()
+        #     except Exception as error:
+        #         _logger.error(error)
 
         return org
 
