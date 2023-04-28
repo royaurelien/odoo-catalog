@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-#!/bin/python3
-
-
 import logging
 import os
 
@@ -9,8 +5,7 @@ from github import GithubException
 
 from odoo import models
 
-from catalog_github.utils import prepare_commit
-
+from ..utils import prepare_commit
 
 MANIFEST_NAMES = ["__manifest__.py", "__openerp__.py"]
 
@@ -41,7 +36,7 @@ class GitBranch(models.Model):
         branch = repo.get_branch(self.name)
         icon_search = self._get_icon_search()
         test, limit = self._get_test_mode()
-        test = True
+        # test = True
         count = 0
 
         requirements = False

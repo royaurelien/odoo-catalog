@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from . import git_sync
 from . import git_mixin
 from . import git_commit_items

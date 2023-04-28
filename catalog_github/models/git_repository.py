@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import os
 
 from odoo import models
 
-from catalog_github.utils import prepare_commit
+from ..utils import prepare_commit
 
 _logger = logging.getLogger(__name__)
 

@@ -1,12 +1,6 @@
-# -*- coding: utf-8 -*-
-
-
-import logging
 from random import randint
 
-from odoo import models, fields
-
-_logger = logging.getLogger(__name__)
+from odoo import fields, models
 
 
 class CustomAddonTags(models.Model):

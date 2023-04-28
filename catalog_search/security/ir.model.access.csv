@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_custom_addon_selection,access_custom_addon_selection,model_custom_addon_selection,catalog.group_user,1,1,1,1
-manager_custom_addon_selection,manager_custom_addon_selection,model_custom_addon_selection,catalog.group_manager,1,1,1,1
-access_addons_selection_wizard,access_addons_selection_wizard,model_addons_selection_wizard,catalog.group_user,1,1,1,1

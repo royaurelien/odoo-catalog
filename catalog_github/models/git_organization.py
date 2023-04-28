@@ -1,18 +1,15 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import re
 
 from github import (
+    BadCredentialsException,
     Github,
     RateLimitExceededException,
     UnknownObjectException,
-    BadCredentialsException,
 )
 
-from odoo import models, fields, _
+from odoo import _, fields, models
 from odoo.exceptions import UserError
-
 
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 TYPE = [("github", "Github")]

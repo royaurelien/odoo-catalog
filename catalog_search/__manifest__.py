@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Catalog - Advanced Search",
     "summary": """Search method for the modules catalog""",
@@ -6,7 +5,7 @@
     "author": "Aurelien ROY",
     "website": "https://odoo.com",
     "category": "Technical",
-    "version": "14.0.0.1.0",
+    "version": "14.0.1.0.0",
     "depends": [
         "base",
         "catalog",

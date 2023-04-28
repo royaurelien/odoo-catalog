@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Catalog",
     "summary": """Catalog of modules""",
@@ -6,7 +5,7 @@
     "author": "Aurelien ROY",
     "website": "https://odoo.com",
     "category": "Productivity",
-    "version": "14.0.1.0.1",
+    "version": "14.0.1.0.0",
     "depends": [
         "base",
         "mail",

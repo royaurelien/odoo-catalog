@@ -1,16 +1,13 @@
-# -*- coding: utf-8 -*-
-
-from collections import OrderedDict
-from datetime import datetime
 import logging
 import re
 import time
+from collections import OrderedDict
+from datetime import datetime
 
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import safe_eval
 from odoo.tools.misc import get_lang
-from odoo.exceptions import UserError, ValidationError
-
 
 _logger = logging.getLogger(__name__)
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -392,9 +389,10 @@ class GitSync(models.AbstractModel):
 
     def _group_records_by_identidier(self, values):
         identifiers = list(set(self.mapped("sync_identifier")))
+
         # records_by_sync = [self.filtered(lambda rec: rec.sync_identifier == id) for id in identifiers]
         records_by_sync = [
-            self.filtered_domain(["sync_identifier", "=", id]) for id in identifiers
+            self.filtered_domain([("sync_identifier", "=", id)]) for id in identifiers
         ]
 
         result = []

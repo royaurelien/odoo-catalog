@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Catalog - Github Connector",
     "summary": """Github connector for the modules catalog""",

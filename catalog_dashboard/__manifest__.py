@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Catalog - Dashboard",
     "summary": """Dashboard view for the modules catalog""",

@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-
-
-from datetime import datetime
 import logging
 import re
+from datetime import datetime
 
 import gitlab
 
-from odoo import models, fields, api
-
-# from odoo.tools import datetime
+from odoo import fields, models
 
 
 REGEX_MAJOR_VERSION = re.compile("^(0|[1-9]\d*)\.(0|[1-9]\d*)$")
@@ -108,6 +103,7 @@ class GitOrganization(models.Model):
 
     def _filter_from_gitlab(self, projects):
         excludes = self._get_excludes()
+
         return [
             project
             for path, project in zip(list(map(lambda x: x.name, projects)), projects)

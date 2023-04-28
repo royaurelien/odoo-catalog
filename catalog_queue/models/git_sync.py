@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-
 # from collections import ChainMap, OrderedDict
 import logging
 
+from odoo import api, models
+
 # from multiprocessing import synchronize
 
-from odoo import models, api
 
 # from odoo.addons.queue_job.delay import group, chain
 

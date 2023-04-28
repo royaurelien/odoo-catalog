@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-
-import logging
 from uuid import uuid4
 
-from odoo import models, fields, api
-
-_logger = logging.getLogger(__name__)
+from odoo import api, fields, models
 
 
 class GitOrganization(models.Model):

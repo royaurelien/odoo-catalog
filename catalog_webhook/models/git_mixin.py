@@ -1,12 +1,6 @@
-# -*- coding: utf-8 -*-
-
-import logging
-
 from odoo import models
 from odoo.addons.catalog.models.git_mixin import XML_ACTIONS
 
-
-_logger = logging.getLogger(__name__)
 
 XML_ACTIONS.update(
     {

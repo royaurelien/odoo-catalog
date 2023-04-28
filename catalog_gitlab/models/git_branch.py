@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-
-import gitlab
 import logging
 import os
+
+import gitlab
 
 from odoo import models
 

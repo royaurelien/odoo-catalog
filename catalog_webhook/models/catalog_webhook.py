@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import threading
 
-from odoo import models, fields, api, registry, _
+from odoo import _, api, fields, models, registry
 from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
 DEFAULT_MESSAGE = "<strong>{}</strong>: {} ({}), on {}"
+
+# pylint: disable=missing-function-docstring
 
 
 class CatalogWebhook(models.Model):
@@ -77,22 +77,23 @@ class CatalogWebhook(models.Model):
 
     def _action_post_message(self, data, use_new_cursor=False):
         if use_new_cursor:
+            # pylint: disable=invalid-name
             cr = registry(self._cr.dbname).cursor()
-            self = self.with_env(self.env(cr=cr))
+            new_self = self.with_env(self.env(cr=cr))
 
         # working
         received_event = data.pop("received_event")
-        repository = self.repository_id
-        event = self._get_event_by_http_code(received_event)
+        repository = new_self.repository_id
+        event = new_self._get_event_by_http_code(received_event)
 
-        # subtype = self.env.ref('catalog_webhook.mail_message_subtype_webhook_event')
+        # subtype = new_self.env.ref('catalog_webhook.mail_message_subtype_webhook_event')
         subtype = "catalog_webhook.mail_message_subtype_webhook_event"
         # mt_comment sends mail
         # subtype = "mail.mt_comment"
         message_vals = repository._convert_webhook_to_odoo(data)
 
         try:
-            body = self.env["ir.qweb"]._render(
+            body = new_self.env["ir.qweb"]._render(
                 "catalog_webhook.webhook_event_message",
                 {
                     "values": message_vals,
@@ -112,6 +113,7 @@ class CatalogWebhook(models.Model):
                 raise
 
         if use_new_cursor:
+            # pylint: disable=invalid-commit
             cr.commit()
             cr.close()
 
@@ -119,16 +121,17 @@ class CatalogWebhook(models.Model):
         # _logger.error(data)
         with api.Environment.manage():
             new_cr = self.pool.cursor()
-            self = self.with_env(self.env(cr=new_cr))
+            new_self = self.with_env(self.env(cr=new_cr))
 
-            if self.action == "post":
-                self._action_post_message(data, use_new_cursor=self._cr.dbname)
+            if new_self.action == "post":
+                new_self._action_post_message(data, use_new_cursor=self._cr.dbname)
 
         new_cr.close()
 
         return {}
 
     def action_postprocess_thread(self, data):
+        """Run post-processing action with thread"""
         threaded_calculation = threading.Thread(
             target=self._run_postprocess_thread, kwargs=dict(data=data)
         )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Custom Authentication Management",
     "summary": """Custom authentication management""",

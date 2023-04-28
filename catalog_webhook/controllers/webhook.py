@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 
 from odoo.http import Controller, request, route
@@ -11,13 +9,13 @@ NEW_COMMIT_MESSAGE = "{} ({}) just pushed new commits on {}."
 
 class WebhookController(Controller):
     @route(
-        "/webhook/catalog/<string:id>",
+        "/webhook/catalog/<string:webhook_id>",
         type="json",
         auth="public",
         website=True,
         csrf=False,
     )
-    def catalog_public_webhook(self, id, **kwargs):
+    def catalog_public_webhook(self, webhook_id, **kwargs):
         """
         Public url for Gitlab webhook
         """
@@ -42,7 +40,7 @@ class WebhookController(Controller):
             _logger.error("Received token missing or not matching.")
             return {"status": "error"}
 
-        webhook = request.env["catalog.webhook"].sudo()._get_by_id(id)
+        webhook = request.env["catalog.webhook"].sudo()._get_by_id(webhook_id)
 
         if not webhook:
             _logger.error("No webhook.")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 {
     "name": "Catalog - Gitlab Connector",
     "summary": """Gitlab connector for the modules catalog""",
