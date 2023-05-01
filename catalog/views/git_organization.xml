@@ -144,7 +144,7 @@
                                     <field name="exclude_names" nolabel="1"/>
                                 </group>
                                 <group name="other_settings" string="Other Settings">
-                                    <field name="enable_debug" nolabel="boolean_toggle"/>
+                                    <field name="enable_debug" widget="boolean_toggle"/>
                                 </group>
                             </group>
                         </page>

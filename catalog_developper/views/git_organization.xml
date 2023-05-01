@@ -21,12 +21,14 @@
               <page name="developper" string="Developper Settings" groups="catalog.group_developper">
                 <group>
                   <group string="Settings">
-                      <field name="allow_repository_create"/>
-                      <field name="allow_branch_create"/>
+                      <field name="allow_repository_create" widget="boolean_toggle"/>
+                      <field name="allow_branch_create" widget="boolean_toggle"/>
                       <field name="namespace_ids" widget="many2many_tags"/>
                   </group>
                   <group string="Workflow">
-                      <field name="default_namespace_id" domain="[('organization_id', '=', id)]" string="Default namespace (ID)" attrs="{'required': [('allow_branch_create', '=', True)]}"/>
+                      <field name="default_namespace_id" domain="[('organization_id', '=', id)]"
+                        string="Default namespace (ID)" attrs="{'required': [('allow_branch_create', '=', True)]}"
+                        options="{'no_create': True}"/>
                       <field name="workflow" string="Workflow" attrs="{'required': [('allow_branch_create', '=', True)]}"/>
                       <field name="default_visibility" string="Default visibility" attrs="{'required': [('allow_repository_create', '=', True)]}"/>
                   </group>

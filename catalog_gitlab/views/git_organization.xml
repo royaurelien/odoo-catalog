@@ -6,7 +6,7 @@
         <field name="model">git.organization</field>
         <field name="inherit_id" ref="catalog.view_git_organization_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='other_settings']" position="inside">
+            <xpath expr="//group[@name='other_settings']" position="after">
               <group name="gitlab" string="Gitlab" attrs="{'invisible': [('service', '!=', 'gitlab')]}">
                 <field name="gitlab_option_pre_auth" widget="boolean_toggle"/>
                 <field name="gitlab_option_enable_debug" widget="boolean_toggle"/>
