@@ -63,8 +63,6 @@ class GitOrganization(models.Model):
             _logger.error(error)
             project = False
 
-        # _logger.warning(project)
-
         if project:
             repository_vals = self._convert_gitlab_to_odoo(project)
             _logger.error(repository_vals)
@@ -106,7 +104,7 @@ class GitOrganization(models.Model):
 
         return [
             project
-            for path, project in zip(list(map(lambda x: x.name, projects)), projects)
+            for path, project in zip(list(map(lambda x: x.path, projects)), projects)
             if path not in excludes
         ]
 
@@ -125,7 +123,6 @@ class GitOrganization(models.Model):
         projects = conn.projects.list(**vals)
 
         return self._filter_from_gitlab(projects)
-        # return [repo for repo in projects]
 
     def _gitlab_date_to_datetime(self, curr_date):
         # ISO8601
@@ -181,7 +178,6 @@ class GitOrganization(models.Model):
                     else (4, record.id, False)
                 )
 
-            # _logger.warning(vals_list)
             vals["contributor_ids"] = vals_list
 
         return vals

@@ -15,7 +15,7 @@
     <record id="view_git_contributor_form" model="ir.ui.view">
         <field name="model">git.contributor</field>
         <field name="arch" type="xml">
-            <form>
+            <form create="0" edit="0" duplicate="0">
                 <sheet>
                     <div class="oe_title">
                         <h1>

@@ -16,15 +16,32 @@ class GitRepository(models.Model):
 
         gitlab = self.organization_id._get_gitlab()
         project = gitlab.projects.get(self.repo_id, lazy=True)
+        version, _ = gitlab.version()
+        major_version = int(version.split(".")[0])
+        force_create = kwargs.get("force_create", False)
+
+        vals_list = []
+
+        if force_create and major_version < 14:
+            branch = project.branches.create(
+                {
+                    "branch": vals["ref"],
+                    "ref": "master",
+                }
+            )
+            if branch:
+                vals_list.append(self._convert_gitlab_to_odoo(branch))
+
+                project.default_branch = branch.name
+                project.save()
 
         branch = project.branches.create(vals)
 
-        # _logger.error(branch)
-
         if branch:
-            self.write(
-                {"branch_ids": [(0, False, self._convert_gitlab_to_odoo(branch))]}
-            )
+            vals_list.append(self._convert_gitlab_to_odoo(branch))
+
+        if vals_list:
+            self.write({"branch_ids": [(0, False, vals) for vals in vals_list]})
 
         return True
 

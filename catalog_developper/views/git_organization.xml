@@ -12,7 +12,7 @@
                         attrs="{'invisible': [('allow_repository_create', '=', False)]}"
                         groups="catalog.group_developper"
                         string="Create Repository"/>
-                <button name="action_update_repository"
+                <button name="action_update"
                         type="object"
                         groups="catalog.group_developper"
                         string="Update"/>

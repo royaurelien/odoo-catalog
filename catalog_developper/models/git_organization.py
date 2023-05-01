@@ -28,16 +28,14 @@ class GitOrganization(models.Model):
         string="Namespaces",
     )
 
-    def action_update_repository(self):
-        vals_list = self._get_namespaces_from_gitlab()
-        # _logger.error(vals_list)
-        to_create = []
+    def action_update(self):
+        vals_list = self._get_namespaces_for_odoo()
 
-        for item in vals_list:
-            if item["namespace_id"] not in self.namespace_ids.mapped("namespace_id"):
-                to_create.append(item)
+        namespace_ids = self.namespace_ids.mapped("namespace_id")
+        to_create = list(
+            filter(lambda item: item["namespace_id"] not in namespace_ids, vals_list)
+        )
 
-        # _logger.error(to_create)
         if to_create:
             self.write({"namespace_ids": [(0, False, vals) for vals in to_create]})
 
@@ -50,7 +48,6 @@ class GitOrganization(models.Model):
             "branch_create": self.allow_branch_create,
             "visibility": self.default_visibility,
             "namespace_id": self.default_namespace_id.id,
-            # 'namespace': self.default_namespace,
         }
 
         wizard = self.env["catalog.create.repository"].create(vals)

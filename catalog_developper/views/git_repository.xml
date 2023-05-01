@@ -1,0 +1,24 @@
+<odoo>
+  <data>
+
+    <record id="view_git_repository_form" model="ir.ui.view">
+        <field name="name">view.git.repository.form.inherited</field>
+        <field name="model">git.repository</field>
+        <field name="inherit_id" ref="catalog.view_git_repository_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+              <field name="allow_branch_create" invisible="1"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_create_branch"
+                        type="object"
+                        attrs="{'invisible': [('allow_branch_create', '=', False)]}"
+                        groups="catalog.group_developper"
+                        string="Create Branch"/>
+            </xpath>
+
+        </field>
+    </record>
+
+  </data>
+</odoo>

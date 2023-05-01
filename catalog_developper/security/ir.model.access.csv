@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_catalog_create_repository,access_catalog_create_repository,model_catalog_create_repository,catalog.group_user,1,1,1,1
+access_catalog_create_branch,access_catalog_create_branch,model_catalog_create_branch,catalog.group_user,1,1,1,1
 access_git_namespace,access_git_namespace,model_git_namespace,catalog.group_user,1,1,0,0
 manager_git_namespace,manager_git_namespace,model_git_namespace,catalog.group_manager,1,1,1,1

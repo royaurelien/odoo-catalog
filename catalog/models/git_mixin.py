@@ -61,8 +61,8 @@ class GitMixin(models.AbstractModel):
     def action_view_git_repository(self, **kwargs):
         return self._action_view("git_repository", **kwargs)
 
-    def action_view_git_branch(self):
-        return self._action_view("git_branch")
+    def action_view_git_branch(self, **kwargs):
+        return self._action_view("git_branch", **kwargs)
 
     def action_view_git_organization(self):
         return self._action_view("git_organization")

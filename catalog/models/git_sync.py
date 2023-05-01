@@ -198,6 +198,9 @@ class GitSync(models.AbstractModel):
     def _get_commits_for_odoo(self, **kwargs):
         return self.__get_method("_get_commits_from_{}", self.service, {}, **kwargs)
 
+    def _get_namespaces_for_odoo(self, **kwargs):
+        return self.__get_method("_get_namespaces_from_{}", self.service, {}, **kwargs)
+
     def _get_rules(self):
         rules = self.env["git.rules"].search([("model", "=", self._name)])
         filtered_rules = rules.filtered(lambda rec: rec.is_global)
@@ -216,8 +219,9 @@ class GitSync(models.AbstractModel):
         return dict_rules
 
     def _get_excludes(self):
+        """Get excludes repositories from organization."""
         return (
-            [name.strip() for name in self.exclude_names.split(",") if name]
+            list(map(str.strip, self.exclude_names.split(",")))
             if self.exclude_names
             else []
         )

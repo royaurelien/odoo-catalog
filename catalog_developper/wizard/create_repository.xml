@@ -10,7 +10,7 @@
                         <field name="organization_id" string="Organization"/>
                         <field name="name" string="Name" required="1"/>
                         <field name="path" string="Path"/>
-                        <field name="namespace_id" string="Namespace"/>
+                        <field name="namespace_id" string="Namespace" domain="[('organization_id', '=', organization_id)]" options="{'no_create': True}"/>
                         <field name="description" string="Description"/>
                     </group>
                     <group>
@@ -18,8 +18,10 @@
                         <field name="branch_create" widget="boolean_toggle" string="Create branch"/>
                         <field name="second_branch_create" widget="boolean_toggle" string="Create second branch"/>
                         <field name="odoo_version" string="Odoo"/>
-                        <field name="branch_name" string="Branch name"/>
-                        <field name="second_branch_name" string="Second Branch name"/>
+                        <field name="branch_name" string="Branch name"
+                            attrs="{'invisible': [('branch_create', '=', False)]}"/>
+                        <field name="second_branch_name" string="Second Branch name"
+                            attrs="{'invisible': [('second_branch_create', '=', False)]}"/>
                     </group>
                 </group>
                 <footer>

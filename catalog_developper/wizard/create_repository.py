@@ -61,7 +61,8 @@ class CreateRepository(models.TransientModel):
         if repository:
             if self.second_branch_create and self.second_branch_name:
                 repository._create_branch_from_odoo(
-                    {"branch": self.second_branch_name, "ref": self.branch_name}
+                    {"branch": self.second_branch_name, "ref": self.branch_name},
+                    force_create=True,
                 )
             repository.action_sync()
 

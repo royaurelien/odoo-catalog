@@ -12,10 +12,11 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        # 'views/custom_addon_selection.xml',
         "views/git_organization.xml",
+        "views/git_repository.xml",
+        "views/menu.xml",
         "wizard/create_repository.xml",
-        # 'views/menu.xml',
+        "wizard/create_branch.xml",
     ],
     "installable": True,
     "auto_install": False,
