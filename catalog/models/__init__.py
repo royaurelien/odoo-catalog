@@ -1,12 +1,3 @@
-from . import git_sync
-from . import git_mixin
-from . import git_commit_items
-from . import git_contributor
-from . import ir_module_category
-from . import custom_addon
-from . import custom_addon_tags
-from . import custom_addon_version
-from . import git_organization
-from . import git_repository
-from . import git_branch
-from . import git_rules
+# from . import git_mixin
+from . import catalog_template
+from . import catalog_entry

@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_catalog_webhook,access_catalog_webhook,model_catalog_webhook,catalog.group_user,1,1,0,0
-manager_catalog_webhook,manager_catalog_webhook,model_catalog_webhook,catalog.group_manager,1,1,1,1
-access_catalog_webhook_event,access_catalog_webhook_event,model_catalog_webhook_event,catalog.group_user,1,0,0,0
-manager_catalog_webhook_event,manager_catalog_webhook_event,model_catalog_webhook_event,catalog.group_manager,1,1,1,1
-access_catalog_webhook_line,access_catalog_webhook_line,model_catalog_webhook_line,catalog.group_user,1,0,0,0
-manager_catalog_webhook_line,manager_catalog_webhook_line,model_catalog_webhook_line,catalog.group_manager,1,1,1,1

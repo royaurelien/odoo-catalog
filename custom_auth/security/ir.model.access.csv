@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-manage_custom_auth,manager_custom_auth,model_custom_auth,custom_auth.group_auth_manager,1,1,1,1

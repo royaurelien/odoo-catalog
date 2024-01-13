@@ -1,23 +1,20 @@
 <odoo>
-  <data>
-
-
     <!-- actions opening views on models -->
 
-    <record model="ir.actions.act_window" id="catalog.action_view_addons">
-      <field name="name">Custom Addons</field>
-      <field name="res_model">custom.addon</field>
-      <field name="view_mode">kanban,tree,form,graph</field>
+    <record model="ir.actions.act_window" id="catalog.action_view_templates">
+      <field name="name">Catalog Templates</field>
+      <field name="res_model">catalog.template</field>
+      <field name="view_mode">tree,form</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
-          No addons to display
+          No templates to display
         </p><p>
           If you haven't already done so, synchronize a branch to get addons.
         </p>
       </field>
     </record>
 
-    <record model="ir.actions.act_window" id="catalog.action_view_commits">
+    <!-- <record model="ir.actions.act_window" id="catalog.action_view_commits">
       <field name="name">Commits</field>
       <field name="res_model">git.commit.items</field>
       <field name="view_mode">tree,form</field>
@@ -78,17 +75,17 @@
           If you haven't already done so, synchronize a repository to retrieve its branches.
         </p>
       </field>
-    </record>
+    </record> -->
 
-    <record model="ir.actions.act_window" id="catalog.action_view_tags">
+    <!-- <record model="ir.actions.act_window" id="catalog.action_view_tags">
       <field name="name">Git Tags</field>
-      <field name="res_model">custom.addon.tags</field>
+      <field name="res_model">catalog.template.tags</field>
       <field name="view_mode">tree,form</field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_version">
       <field name="name">Versions</field>
-      <field name="res_model">custom.addon.version</field>
+      <field name="res_model">catalog.template.version</field>
       <field name="view_mode">tree,form</field>
     </record>
 
@@ -96,112 +93,38 @@
       <field name="name">Git Rules</field>
       <field name="res_model">git.rules</field>
       <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- server action to the one above -->
-
-    <record model="ir.actions.server" id="action_server_sync_repositories">
-      <field name="name">Repositories Sync.</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
-      <field name="model_id" ref="model_git_organization"/>
-      <field name="binding_model_id" ref="model_git_organization"/>
-      <field name="state">action</field>
-      <field name="state">code</field>
-      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
-    </record>
-
-    <record model="ir.actions.server" id="action_server_sync_branches">
-      <field name="name">Branches Sync.</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
-      <field name="model_id" ref="model_git_repository"/>
-      <field name="binding_model_id" ref="model_git_repository"/>
-      <field name="state">action</field>
-      <field name="state">code</field>
-      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
-    </record>
-
-    <record model="ir.actions.server" id="action_server_sync_addons">
-      <field name="name">Addons Sync.</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
-      <field name="model_id" ref="model_git_branch"/>
-      <field name="binding_model_id" ref="model_git_branch"/>
-      <field name="state">action</field>
-      <field name="state">code</field>
-      <field name="code">model.action_sync_with_delay(records.ids, force_update=False)</field>
-    </record>
-
-    <record model="ir.actions.server" id="action_server_toggle_sync_repositories">
-      <field name="name">Toggle sync.</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_user'))]"/>
-      <field name="model_id" ref="model_git_organization"/>
-      <field name="binding_model_id" ref="model_git_organization"/>
-      <field name="state">action</field>
-      <field name="state">code</field>
-      <field name="code">records.action_toggle_sync()</field>
-    </record>
-
-    <record model="ir.actions.server" id="action_server_toggle_sync_branches">
-      <field name="name">Toggle sync.</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_user'))]"/>
-      <field name="model_id" ref="model_git_repository"/>
-      <field name="binding_model_id" ref="model_git_repository"/>
-      <field name="state">action</field>
-      <field name="state">code</field>
-      <field name="code">records.action_toggle_sync()</field>
-    </record>
-
-    <record model="ir.actions.server" id="action_server_toggle_sync_addons">
-      <field name="name">Toggle sync.</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_user'))]"/>
-      <field name="model_id" ref="model_git_branch"/>
-      <field name="binding_model_id" ref="model_git_branch"/>
-      <field name="state">action</field>
-      <field name="state">code</field>
-      <field name="code">records.action_toggle_sync()</field>
-    </record>
-
-    <record model="ir.actions.server" id="action_server_ignore_repositories">
-      <field name="name">Ignore Repositories</field>
-      <field name="groups_id" eval="[(4, ref('catalog.group_manager'))]"/>
-      <field name="model_id" ref="model_git_repository"/>
-      <field name="binding_model_id" ref="model_git_repository"/>
-      <field name="state">code</field>
-      <field name="code">
-        records.action_ignore()
-      </field>
-    </record>
-
+    </record> -->
 
     <!-- Top menu item -->
 
     <menuitem
-        id="menu_custom_addons_root"
+        id="menu_catalog_root"
         name="Catalog"
         groups="catalog.group_user"
         web_icon="fa fa-search,#FFFFFF,#0088aaff"
         sequence="75"/>
 
-    <!-- menu categories -->
+    <!-- Categories -->
 
-    <menuitem name="Addons" id="menu_custom_addons"
-              parent="menu_custom_addons_root"
+    <menuitem name="Templates" id="menu_catalog_template"
+              parent="menu_catalog_root"
               sequence="10"
-              action="catalog.action_view_addons"/>
+              action="catalog.action_view_templates"/>
 
     <menuitem name="Configuration" id="menu_custom_addons_config"
               groups="catalog.group_manager"
               sequence="90"
-              parent="menu_custom_addons_root"/>
+              parent="menu_catalog_root"/>
 
     <menuitem name="Data" id="menu_custom_addons_data"
               sequence="20"
-              parent="menu_custom_addons_root"/>
+              parent="menu_catalog_root"/>
 
     <!-- actions -->
 
 
 
-    <menuitem name="Organizations" id="menu_organization"
+    <!-- <menuitem name="Organizations" id="menu_organization"
               parent="menu_custom_addons_data"
               sequence="10"
               action="catalog.action_view_organization"/>
@@ -235,7 +158,6 @@
               parent="menu_custom_addons_config"
               groups="catalog.group_manager"
               sequence="99"
-              action="custom_auth.action_view_custom_auth"/>
+              action="custom_auth.action_view_custom_auth"/> -->
 
-  </data>
 </odoo>
