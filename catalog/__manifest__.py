@@ -5,7 +5,7 @@
     "author": "Aurelien ROY",
     "website": "https://odoo.com",
     "category": "Productivity",
-    "version": "14.0.1.0.0",
+    "version": "16.0.1.0.0",
     "depends": [
         "base",
         "mail",
