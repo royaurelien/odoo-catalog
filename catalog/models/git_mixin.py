@@ -1,6 +1,5 @@
 from odoo import fields, models
 
-
 XML_ACTIONS = {
     "custom_addons": "catalog.action_view_addons",
     "git_branch": "catalog.action_view_branch",

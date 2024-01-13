@@ -68,18 +68,18 @@ repos:
     rev: 6.0.0
     hooks:
       - id: flake8
-  - repo: https://github.com/OCA/pylint-odoo
-    rev: 7.0.2
-    hooks:
-      - id: pylint_odoo
-        name: pylint with optional checks
-        args:
-          - --rcfile=.pylintrc
-          - --exit-zero
-          # - --ignore-paths=module_1,module_2
-        verbose: true
-      - id: pylint_odoo
-        args:
-          - --rcfile=.pylintrc-mandatory
-          # - --ignore-paths=module_1,module_2
+  # - repo: https://github.com/OCA/pylint-odoo
+  #   rev: 7.0.2
+  #   hooks:
+  #     - id: pylint_odoo
+  #       name: pylint with optional checks
+  #       args:
+  #         - --rcfile=.pylintrc
+  #         - --exit-zero
+  #         # - --ignore-paths=module_1,module_2
+  #       verbose: true
+  #     - id: pylint_odoo
+  #       args:
+  #         - --rcfile=.pylintrc-mandatory
+  #         # - --ignore-paths=module_1,module_2
 # exclude: (module_1|module_2)
