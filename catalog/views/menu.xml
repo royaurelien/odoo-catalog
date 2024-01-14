@@ -14,86 +14,18 @@
       </field>
     </record>
 
-    <!-- <record model="ir.actions.act_window" id="catalog.action_view_commits">
-      <field name="name">Commits</field>
-      <field name="res_model">git.commit.items</field>
+    <record model="ir.actions.act_window" id="catalog.action_view_entries">
+      <field name="name">Catalog Entries</field>
+      <field name="res_model">catalog.entry</field>
       <field name="view_mode">tree,form</field>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_neutral_face">
-          No commits to display
-        </p><p>
-          Use the button to fetch commits on the project or branch.
-        </p><p>
-          Note that the commits are kept for one hour.
-        </p>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="catalog.action_view_contributor">
-      <field name="name">Contributor</field>
-      <field name="res_model">git.contributor</field>
-      <field name="view_mode">tree,form</field>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_neutral_face">
-          No contributor to display
-        </p>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="catalog.action_view_organization">
-      <field name="name">Git Organization</field>
-      <field name="res_model">git.organization</field>
-      <field name="view_mode">kanban,tree,form,graph</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
-          No organization to display
-        </p>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="catalog.action_view_repository">
-      <field name="name">Git Repository</field>
-      <field name="res_model">git.repository</field>
-      <field name="view_mode">kanban,tree,form,graph</field>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_smiling_face">
-          No repository to display
+          No entries to display
         </p><p>
-          Note that the easiest way to add a git repository is to do it directly from the organization.
+          If you haven't already done so, synchronize a branch to get addons.
         </p>
       </field>
     </record>
-
-    <record model="ir.actions.act_window" id="catalog.action_view_branch">
-      <field name="name">Git Branch</field>
-      <field name="res_model">git.branch</field>
-      <field name="view_mode">kanban,tree,form,graph</field>
-      <field name="help" type="html">
-        <p class="o_view_nocontent_smiling_face">
-          No branch to display
-        </p><p>
-          If you haven't already done so, synchronize a repository to retrieve its branches.
-        </p>
-      </field>
-    </record> -->
-
-    <!-- <record model="ir.actions.act_window" id="catalog.action_view_tags">
-      <field name="name">Git Tags</field>
-      <field name="res_model">catalog.template.tags</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <record model="ir.actions.act_window" id="catalog.action_view_version">
-      <field name="name">Versions</field>
-      <field name="res_model">catalog.template.version</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <record model="ir.actions.act_window" id="catalog.action_view_rules">
-      <field name="name">Git Rules</field>
-      <field name="res_model">git.rules</field>
-      <field name="view_mode">tree,form</field>
-    </record> -->
 
     <!-- Top menu item -->
 
@@ -110,6 +42,11 @@
               parent="menu_catalog_root"
               sequence="10"
               action="catalog.action_view_templates"/>
+
+    <menuitem name="Entries" id="menu_catalog_entry"
+              parent="menu_catalog_root"
+              sequence="10"
+              action="catalog.action_view_entries"/>
 
     <menuitem name="Configuration" id="menu_custom_addons_config"
               groups="catalog.group_manager"

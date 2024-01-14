@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_catalog_entry_tree" model="ir.ui.view">
+        <field name="name">catalog.entry.common.tree</field>
+        <field name="model">catalog.entry</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="catalog.view_catalog_template_tree"/>
+        <field name="arch" type="xml">
+            <tree position="attributes">
+                <attribute name="string">Product Entry</attribute>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_catalog_entry_form" model="ir.ui.view">
+        <field name="name">catalog.entry.common.form</field>
+        <field name="model">catalog.entry</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="catalog.view_catalog_template_form"/>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="string">Product Entry</attribute>
+                <!-- <attribute name="duplicate">false</attribute> -->
+            </form>
+            <xpath expr="//field[@name='branch']" position="after">
+                <!-- <field name="catalog_tmpl_id" readonly="1" groups="base.group_no_one"/> -->
+                <field name="version"/>
+                <field name="license"/>
+                <field name="author"/>
+                <field name="website"/>
+                <field name="category"/>
+            </xpath>
+            <xpath expr="//page[@name='entries']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='entry_variant_id']" position="replace">
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

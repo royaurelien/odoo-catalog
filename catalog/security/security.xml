@@ -2,28 +2,28 @@
 <odoo>
     <data>
 
-        <record model="ir.module.category" id="module_category_custom_addons">
-            <field name="name">Custom Addons</field>
+        <record model="ir.module.category" id="module_category_catalog">
+            <field name="name">Catalog</field>
             <field name="sequence">99</field>
             <field name="visible" eval="1" />
         </record>
 
         <record id="catalog.group_user" model="res.groups">
             <field name="name">User</field>
-            <field name="category_id" ref="module_category_custom_addons"/>
+            <field name="category_id" ref="module_category_catalog"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <record id="catalog.group_developper" model="res.groups">
             <field name="name">Developper</field>
-            <field name="category_id" ref="module_category_custom_addons"/>
+            <field name="category_id" ref="module_category_catalog"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
         <record id="catalog.group_manager" model="res.groups">
             <field name="name">Manager</field>
-            <field name="category_id" ref="module_category_custom_addons"/>
-            <field name="implied_ids" eval="[(4, ref('catalog.group_user')), (4, ref('catalog.group_developper')), (4, ref('custom_auth.group_auth_manager'))]"/>
+            <field name="category_id" ref="module_category_catalog"/>
+            <field name="implied_ids" eval="[(4, ref('catalog.group_user')), (4, ref('catalog.group_developper'))]"/>
             <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
 
