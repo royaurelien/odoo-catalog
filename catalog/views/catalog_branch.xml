@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_catalog_branch_tree" model="ir.ui.view">
+        <field name="name">catalog.branch.tree</field>
+        <field name="model">catalog.branch</field>
+        <field name="arch" type="xml">
+            <tree editable="top" create="1">
+                <field name="name" />
+                <field name="path" />
+                <field name="repository_id" widget="many2one"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

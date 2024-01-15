@@ -10,6 +10,7 @@ class CatalogTemplate(models.Model):
     _name = "catalog.template"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Catalog Template"
+    _order = "name, id"
 
     name = fields.Char(
         index="trigram",
@@ -57,6 +58,18 @@ class CatalogTemplate(models.Model):
         store=True,
     )
 
+    version_ids = fields.Many2many(
+        comodel_name="catalog.version",
+        string="Versions",
+        compute="_compute_versions",
+        compute_sudo=True,
+        store=True,
+    )
+    icon_image = fields.Binary(
+        string="Icon",
+        compute="_compute_icon",
+        # related="entry_variant_id.icon_image",
+    )
     _sql_constraints = [
         (
             "technical_name_uniq",
@@ -64,6 +77,16 @@ class CatalogTemplate(models.Model):
             "Technical name already exists !",
         ),
     ]
+
+    @api.depends("entry_variant_ids", "entry_variant_ids.version_id")
+    def _compute_versions(self):
+        for record in self:
+            if not record.entry_variant_ids:
+                record.version_ids = False
+                continue
+
+            ids = list(set(record.entry_variant_ids.version_id.ids))
+            record.version_ids = [fields.Command.set(ids)]
 
     @api.depends("entry_variant_ids")
     def _compute_entry_variant_id(self):
@@ -77,6 +100,10 @@ class CatalogTemplate(models.Model):
 
     def _compute_is_entry_variant(self):
         self.is_entry_variant = False
+
+    @api.depends("entry_variant_ids.icon_image")
+    def _compute_icon(self):
+        self._compute_template_field_from_variant_field("icon_image")
 
     @api.depends("entry_variant_ids.branch")
     def _compute_branch(self):
@@ -192,7 +219,7 @@ class CatalogTemplate(models.Model):
 
     def _get_related_fields_variant_template(self):
         """Return a list of fields present on template and variants models and that are related"""
-        return ["branch", "manifest"]
+        return ["branch", "manifest", "icon_image"]
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -226,3 +253,13 @@ class CatalogTemplate(models.Model):
                 {"active": vals.get("active")}
             )
         return res
+
+    def action_view_branches(self):
+        self.ensure_one()
+
+        return {}
+
+    def action_view_repositories(self):
+        self.ensure_one()
+
+        return {}

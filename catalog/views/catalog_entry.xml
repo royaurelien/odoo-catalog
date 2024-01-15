@@ -1,6 +1,69 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
+    <record id="view_catalog_entry_search" model="ir.ui.view">
+        <field name="model">catalog.entry</field>
+        <field name="arch" type="xml">
+            <search>
+                <field
+                    name="name"
+                    string="Name or technical name"
+                    filter_domain="['|', ('name', 'ilike', self), ('technical_name', 'ilike', self)]"
+                />
+                <field
+                    name="summary"
+                    string="Summary or description"
+                    filter_domain="['|', ('summary', 'ilike', self), ('description', 'ilike', self)]"
+                />
+                <field
+                    name="branch_id"
+                    string="Branch"
+                    filter_domain="[('branch_id', 'ilike', self)]"
+                />
+                <field
+                    name="author_ids"
+                    string="Authors"
+                    filter_domain="[('author_ids', 'ilike', self)]"
+                />
+                <field name="category"/>
+                <group expand="1" string="Group By">
+                    <filter
+                        string="Branch"
+                        name="branch"
+                        context="{'group_by' : 'branch_id'}"
+                    />
+                    <filter
+                        string="Repository"
+                        name="repository"
+                        context="{'group_by' : 'repository_id'}"
+                    />
+                    <filter
+                        string="Category"
+                        name="category"
+                        context="{'group_by' : 'category'}"
+                    />
+                </group>
+                <separator/>
+                <!-- <filter name="my_favorites" string="My Favorites" domain="[('favorite_user_ids', 'in', uid)]"/> -->
+                <separator/>
+                <!-- <filter name="applications" string="Applications" domain="[['application', '=', True]]"/> -->
+                <filter name="depends" string="Depends" domain="[['depends', '!=', False]]"/>
+
+                <!-- <filter name="officials" string="Officials" domain='["|", ["author", "=", "Odoo S.A."], ["author", "=", "Odoo"]]'/> -->
+                <separator/>
+                <filter string="Archived" domain="[('active', '=', False)]" name="archived"/>
+                <separator/>
+                <filter name="created_today" string="Created Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <filter name="updated_today" string="Updated Today" domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <searchpanel>
+                    <field name="repository_id" string="Repository" enable_counters="1"/>
+                    <!-- <field name="partner_id" select="multi" string="Partners" icon="fa-users" enable_counters="1"/> -->
+                    <!-- <field name="tag_ids" select="multi" icon="fa-tag" enable_counters="1"/> -->
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
     <record id="view_catalog_entry_tree" model="ir.ui.view">
         <field name="name">catalog.entry.common.tree</field>
         <field name="model">catalog.entry</field>
@@ -10,6 +73,17 @@
             <tree position="attributes">
                 <attribute name="string">Product Entry</attribute>
             </tree>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="version_id"  optional="show"/>
+                <field name="version"  optional="hide"/>
+                <field name="category"  optional="show"/>
+                <field name="author_ids" widget="many2many_tags"  optional="show"/>
+                <field name="website" widget="url"  optional="show"/>
+                <field name="path"  optional="hide"/>
+                <field name="repository_id" widget="many2one"  optional="hide"/>
+                <field name="branch_id" widget="many2one"  optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='version_ids']" position="replace"></xpath>
         </field>
     </record>
 
@@ -23,18 +97,46 @@
                 <attribute name="string">Product Entry</attribute>
                 <!-- <attribute name="duplicate">false</attribute> -->
             </form>
-            <xpath expr="//field[@name='branch']" position="after">
-                <!-- <field name="catalog_tmpl_id" readonly="1" groups="base.group_no_one"/> -->
-                <field name="version"/>
+            <xpath expr="//field[@name='entry_variant_id']" position="replace">
+                <field name="summary"/>
+                <field name="description"/>
+                <field name="category_id" widget="many2one"/>
                 <field name="license"/>
-                <field name="author"/>
-                <field name="website"/>
-                <field name="category"/>
+                <field name="depends"/>
+            </xpath>
+            <xpath expr="//field[@name='branch']" position="replace">
+                <field name="version_id" widget="many2one"/>
+                <field name="version"/>
+
+                <field name="author_ids" widget="many2many_tags"/>
+                <field name="website" widget="url"/>
+
             </xpath>
             <xpath expr="//page[@name='entries']" position="replace">
+                <page name="description" string="Description">
+                    <field name="web_description" nolabel="1" widget="html"/>
+                </page>
+                <page name="technical" string="Technical">
+                    <group>
+                        <group string="Data">
+                            <field name="has_data"/>
+                            <field name="has_views"/>
+                            <field name="has_security"/>
+                            <field name="data" nolabel="1"/>
+                        </group>
+                        <group string="Source">
+                            <field name="organization"/>
+                            <field name="repository"/>
+                            <field name="repository_id" widget="many2one"/>
+                            <field name="branch"/>
+                            <field name="branch_id"/>
+                            <field name="path"/>
+                            <field name="uuid"/>
+                        </group>
+                    </group>
+                </page>
             </xpath>
-            <xpath expr="//field[@name='entry_variant_id']" position="replace">
-            </xpath>
+            <!-- <xpath expr="//field[@name='entry_variant_id']" position="replace"></xpath> -->
         </field>
     </record>
 

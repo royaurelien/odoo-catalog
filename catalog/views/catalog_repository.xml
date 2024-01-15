@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_catalog_repository_tree" model="ir.ui.view">
+        <field name="name">catalog.repository.tree</field>
+        <field name="model">catalog.repository</field>
+        <field name="arch" type="xml">
+            <tree editable="top" create="1">
+                <field name="name" />
+                <field name="path" />
+            </tree>
+        </field>
+    </record>
+
+</odoo>

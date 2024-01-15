@@ -4,7 +4,7 @@
     <record model="ir.actions.act_window" id="catalog.action_view_templates">
       <field name="name">Catalog Templates</field>
       <field name="res_model">catalog.template</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
           No templates to display
@@ -27,6 +27,23 @@
       </field>
     </record>
 
+    <record model="ir.actions.act_window" id="catalog.action_view_authors">
+      <field name="name">Catalog Authors</field>
+      <field name="res_model">catalog.author</field>
+      <field name="view_mode">tree</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_repositories">
+      <field name="name">Catalog Repositories</field>
+      <field name="res_model">catalog.repository</field>
+      <field name="view_mode">tree</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_branches">
+      <field name="name">Catalog Branches</field>
+      <field name="res_model">catalog.branch</field>
+      <field name="view_mode">tree</field>
+    </record>
     <!-- Top menu item -->
 
     <menuitem
@@ -38,6 +55,17 @@
 
     <!-- Categories -->
 
+    <menuitem name="Data" id="menu_custom_addons_data"
+              sequence="20"
+              parent="menu_catalog_root"/>
+
+    <menuitem name="Configuration" id="menu_custom_addons_config"
+              groups="catalog.group_manager"
+              sequence="90"
+              parent="menu_catalog_root"/>
+
+    <!-- actions -->
+
     <menuitem name="Templates" id="menu_catalog_template"
               parent="menu_catalog_root"
               sequence="10"
@@ -45,56 +73,22 @@
 
     <menuitem name="Entries" id="menu_catalog_entry"
               parent="menu_catalog_root"
-              sequence="10"
+              sequence="20"
               action="catalog.action_view_entries"/>
 
-    <menuitem name="Configuration" id="menu_custom_addons_config"
-              groups="catalog.group_manager"
-              sequence="90"
-              parent="menu_catalog_root"/>
-
-    <menuitem name="Data" id="menu_custom_addons_data"
+    <menuitem name="Authors" id="menu_catalog_author"
+              parent="menu_catalog_root"
               sequence="20"
-              parent="menu_catalog_root"/>
+              action="catalog.action_view_authors"/>
 
-    <!-- actions -->
-
-
-
-    <!-- <menuitem name="Organizations" id="menu_organization"
-              parent="menu_custom_addons_data"
-              sequence="10"
-              action="catalog.action_view_organization"/>
-
-    <menuitem name="Repositories" id="catalog.menu_repository"
-              parent="menu_custom_addons_data"
-              sequence="20"
-              action="catalog.action_view_repository"/>
-
-    <menuitem name="Branches" id="catalog.menu_branch"
-              parent="menu_custom_addons_data"
+    <menuitem name="Repositories" id="menu_catalog_repository"
+              parent="menu_catalog_root"
               sequence="30"
-              action="catalog.action_view_branch"/>
+              action="catalog.action_view_repositories"/>
 
-    <menuitem name="Tags" id="catalog.menu_tags"
-              parent="menu_custom_addons_config"
-              sequence="10"
-              action="catalog.action_view_tags"/>
-
-    <menuitem name="Versions" id="catalog.menu_version"
-              parent="menu_custom_addons_config"
-              sequence="10"
-              action="catalog.action_view_version"/>
-
-    <menuitem name="Rules" id="catalog.menu_rules"
-              parent="menu_custom_addons_config"
-              sequence="20"
-              action="catalog.action_view_rules"/>
-
-    <menuitem name="Authentications" id="catalog.menu_auth"
-              parent="menu_custom_addons_config"
-              groups="catalog.group_manager"
-              sequence="99"
-              action="custom_auth.action_view_custom_auth"/> -->
+    <menuitem name="Branches" id="menu_catalog_branch"
+              parent="menu_catalog_root"
+              sequence="40"
+              action="catalog.action_view_branches"/>
 
 </odoo>
