@@ -69,11 +69,17 @@ class CatalogEntry(models.Model):
         comodel_name="catalog.author",
         string="Authors",
     )
-    repository_id = fields.Many2one(
-        comodel_name="catalog.repository",
-    )
+
     branch_id = fields.Many2one(
         comodel_name="catalog.branch",
+    )
+    repository_id = fields.Many2one(
+        related="branch_id.repository_id",
+        store=True,
+    )
+    organization_id = fields.Many2one(
+        related="branch_id.repository_id.organization_id",
+        store=True,
     )
     category_id = fields.Many2one(
         comodel_name="catalog.category",
@@ -154,19 +160,18 @@ class CatalogEntry(models.Model):
         authors = self.env["catalog.author"].search_or_create(names)
 
         # Search or create all repositories
-        paths = [vals["repository"] for vals in vals_list]
-        repositories = self.env["catalog.repository"].search_or_create(paths)
+        # paths = [vals["repository"] for vals in vals_list]
+        # repositories = self.env["catalog.repository"].search_or_create(paths)
 
-        # Search or create all repositories
+        # Search or create all branches
         paths = [vals["branch"] for vals in vals_list]
         branches = self.env["catalog.branch"].search_or_create(paths)
-        branches.merge_with_repositories(repositories)
 
         # Search or create all needed versions
         names = [vals["major_version"] for vals in vals_list]
         versions = self.env["catalog.version"].search_or_create(names)
 
-        # Search or create all needed versions
+        # Search or create categories
         names = [vals["category"] for vals in vals_list]
         categories = self.env["catalog.category"].search_or_create(names)
 
@@ -187,9 +192,9 @@ class CatalogEntry(models.Model):
                 if current_authors:
                     vals["author_ids"] = [fields.Command.set(current_authors.ids)]
 
-            if vals.get("repository"):
-                res = repositories.filtered_domain([("path", "=", vals["repository"])])
-                vals["repository_id"] = res.id if res else False
+            # if vals.get("repository"):
+            #     res = repositories.filtered_domain([("path", "=", vals["repository"])])
+            #     vals["repository_id"] = res.id if res else False
 
             if vals.get("branch"):
                 res = branches.filtered_domain([("path", "=", vals["branch"])])

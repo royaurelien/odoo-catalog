@@ -22,6 +22,9 @@ class CatalogOrganization(models.Model):
         comodel_name="catalog.repository",
         inverse_name="organization_id",
     )
+    repository_count = fields.Integer(
+        compute="_compute_repository",
+    )
 
     _sql_constraints = [
         (
@@ -31,9 +34,15 @@ class CatalogOrganization(models.Model):
         ),
     ]
 
+    @api.depends("repository_ids")
+    def _compute_repository(self):
+        for record in self:
+            record.repository_count = len(record.repository_ids)
+
     def _prepare_vals(self, name):
         return {
             "name": name,
+            "path": name,
         }
 
     # @api.model
@@ -57,7 +66,7 @@ class CatalogOrganization(models.Model):
             record = self.create(self._prepare_vals(name))
 
         if repository not in record.repository_ids.mapped("name"):
-            path = "/".join(name, repository)
+            path = "/".join([name, repository])
             vals = record.repository_ids._prepare_vals(path)
             record.repository_ids = [fields.Command.create(vals)]
 

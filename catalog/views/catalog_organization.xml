@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <record id="view_catalog_repository_tree" model="ir.ui.view">
-        <field name="name">catalog.repository.tree</field>
-        <field name="model">catalog.repository</field>
+    <record id="view_catalog_organization_tree" model="ir.ui.view">
+        <field name="name">catalog.organization.tree</field>
+        <field name="model">catalog.organization</field>
         <field name="arch" type="xml">
             <tree editable="top" create="1">
                 <field name="name" />
                 <field name="path" />
-                <field name="branch_count" sum="Branches"/>
+                <field name="repository_count" sum="Repositories"/>
             </tree>
         </field>
     </record>

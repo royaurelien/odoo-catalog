@@ -18,12 +18,19 @@ class CatalogBranch(models.Model):
         required=True,
         index=True,
     )
+    entry_ids = fields.One2many(
+        comodel_name="catalog.entry",
+        inverse_name="branch_id",
+    )
     repository_id = fields.Many2one(
         comodel_name="catalog.repository",
         ondelete="cascade",
     )
     organization_id = fields.Many2one(
         related="repository_id.organization_id",
+    )
+    entry_count = fields.Integer(
+        compute="_compute_entry",
     )
 
     _sql_constraints = [
@@ -34,12 +41,17 @@ class CatalogBranch(models.Model):
         ),
     ]
 
+    @api.depends("entry_ids")
+    def _compute_entry(self):
+        for record in self:
+            record.entry_count = len(record.entry_ids)
+
     def _prepare_vals(self, path):
         org, repo, name = path.split("/")
         vals = {
             "name": name,
             "path": path,
-            "repository_id": "/".join(org, repo),
+            "repository_id": "/".join([org, repo]),
         }
 
         return vals

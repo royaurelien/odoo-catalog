@@ -9,6 +9,7 @@
                 <field name="name" />
                 <field name="path" />
                 <field name="repository_id" widget="many2one"/>
+                <field name="entry_count" sum="Entries"/>
             </tree>
         </field>
     </record>

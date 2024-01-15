@@ -33,6 +33,12 @@
       <field name="view_mode">tree</field>
     </record>
 
+    <record model="ir.actions.act_window" id="catalog.action_view_organizations">
+      <field name="name">Catalog Organization</field>
+      <field name="res_model">catalog.organization</field>
+      <field name="view_mode">tree</field>
+    </record>
+
     <record model="ir.actions.act_window" id="catalog.action_view_repositories">
       <field name="name">Catalog Repositories</field>
       <field name="res_model">catalog.repository</field>
@@ -80,6 +86,11 @@
               parent="menu_catalog_root"
               sequence="20"
               action="catalog.action_view_authors"/>
+
+    <menuitem name="Organizations" id="menu_catalog_organization"
+              parent="menu_catalog_root"
+              sequence="25"
+              action="catalog.action_view_organizations"/>
 
     <menuitem name="Repositories" id="menu_catalog_repository"
               parent="menu_catalog_root"

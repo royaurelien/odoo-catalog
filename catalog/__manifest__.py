@@ -18,6 +18,7 @@
         "views/catalog_entry.xml",
         "views/catalog_author.xml",
         "views/catalog_repository.xml",
+        "views/catalog_organization.xml",
         "views/catalog_branch.xml",
         "views/catalog_version.xml",
     ],

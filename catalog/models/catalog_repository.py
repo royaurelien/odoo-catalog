@@ -1,6 +1,6 @@
 import logging
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -25,6 +25,9 @@ class CatalogRepository(models.Model):
         comodel_name="catalog.branch",
         inverse_name="repository_id",
     )
+    branch_count = fields.Integer(
+        compute="_compute_branch",
+    )
 
     _sql_constraints = [
         (
@@ -33,6 +36,11 @@ class CatalogRepository(models.Model):
             "Path already exists !",
         ),
     ]
+
+    @api.depends("branch_ids")
+    def _compute_branch(self):
+        for record in self:
+            record.branch_count = len(record.branch_ids)
 
     def _prepare_vals(self, path):
         vals = {
