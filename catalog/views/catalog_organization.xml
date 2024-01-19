@@ -5,7 +5,7 @@
         <field name="name">catalog.organization.tree</field>
         <field name="model">catalog.organization</field>
         <field name="arch" type="xml">
-            <tree editable="top" create="1">
+            <tree create="0" delete="1">
                 <field name="name" />
                 <field name="path" />
                 <field name="repository_count" sum="Repositories"/>

@@ -81,3 +81,14 @@ class CatalogOrganization(models.Model):
 
     def get_mapping(self):
         return {res.path: res.id for res in self.repository_ids}
+
+    @api.model
+    def get_or_create(self, name_or_path):
+        record = self.search(
+            ["|", ("name", "=", name_or_path), ("path", "=", name_or_path)], limit=1
+        )
+
+        if not record:
+            record = self.create(self._prepare_vals(name_or_path))
+
+        return record

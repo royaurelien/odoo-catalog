@@ -1,13 +1,13 @@
 <odoo>
     <!-- actions opening views on models -->
 
-    <record model="ir.actions.act_window" id="catalog.action_view_templates">
-      <field name="name">Catalog Templates</field>
-      <field name="res_model">catalog.template</field>
+    <record model="ir.actions.act_window" id="catalog.action_view_modules">
+      <field name="name">Catalog Modules</field>
+      <field name="res_model">catalog.module</field>
       <field name="view_mode">kanban,tree,form</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
-          No templates to display
+          No modules to display
         </p><p>
           If you haven't already done so, synchronize a branch to get addons.
         </p>
@@ -72,10 +72,10 @@
 
     <!-- actions -->
 
-    <menuitem name="Templates" id="menu_catalog_template"
+    <menuitem name="Modules" id="menu_catalog_template"
               parent="menu_catalog_root"
               sequence="10"
-              action="catalog.action_view_templates"/>
+              action="catalog.action_view_modules"/>
 
     <menuitem name="Entries" id="menu_catalog_entry"
               parent="menu_catalog_root"

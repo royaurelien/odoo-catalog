@@ -76,7 +76,7 @@
         <field name="name">catalog.entry.common.tree</field>
         <field name="model">catalog.entry</field>
         <field name="mode">primary</field>
-        <field name="inherit_id" ref="catalog.view_catalog_template_tree"/>
+        <field name="inherit_id" ref="catalog.view_catalog_module_tree"/>
         <field name="arch" type="xml">
             <tree position="attributes">
                 <attribute name="string">Product Entry</attribute>
@@ -99,20 +99,22 @@
         <field name="name">catalog.entry.common.form</field>
         <field name="model">catalog.entry</field>
         <field name="mode">primary</field>
-        <field name="inherit_id" ref="catalog.view_catalog_template_form"/>
+        <field name="inherit_id" ref="catalog.view_catalog_module_form"/>
         <field name="arch" type="xml">
             <form position="attributes">
                 <attribute name="string">Product Entry</attribute>
                 <!-- <attribute name="duplicate">false</attribute> -->
             </form>
-            <xpath expr="//field[@name='entry_variant_id']" position="replace">
+            <xpath expr="//button[@name='action_view_entries']" position="replace"></xpath>
+            <xpath expr="//field[@name='entry_id']" position="replace">
                 <field name="summary"/>
                 <field name="description"/>
                 <field name="category_id" widget="many2one"/>
                 <field name="license"/>
                 <field name="depends"/>
+                <field name="module_url" invisible="1"/>
             </xpath>
-            <xpath expr="//field[@name='branch']" position="replace">
+            <xpath expr="//field[@name='path']" position="after">
                 <field name="version_id" widget="many2one"/>
                 <field name="version"/>
 
@@ -121,16 +123,18 @@
 
             </xpath>
             <xpath expr="//page[@name='entries']" position="replace">
-                <page name="description" string="Description">
-                    <field name="web_description" nolabel="1" widget="html"/>
-                </page>
                 <page name="technical" string="Technical">
                     <group>
                         <group string="Data">
                             <field name="has_data"/>
                             <field name="has_views"/>
                             <field name="has_security"/>
-                            <field name="data" nolabel="1"/>
+                        </group>
+                        <group string="Urls" groups="base.group_no_one">
+                            <field name="module_url" widget="url"/>
+                            <field name="manifest_url" widget="url"/>
+                            <field name="index_url" widget="url"/>
+                            <field name="icon_url" widget="url"/>
                         </group>
                         <group string="Source">
                             <field name="organization"/>
@@ -138,13 +142,25 @@
                             <field name="repository_id" widget="many2one"/>
                             <field name="branch"/>
                             <field name="branch_id"/>
-                            <field name="path"/>
                             <field name="uuid"/>
                         </group>
                     </group>
                 </page>
+                <page name="data" string="Data">
+                    <field name="data" nolabel="1"/>
+                </page>
             </xpath>
-            <!-- <xpath expr="//field[@name='entry_variant_id']" position="replace"></xpath> -->
+            <xpath expr="//header" position="inside">
+                <button
+                    name="action_view_on_github"
+                    type="object"
+                    class="oe_highlight"
+                    icon="fa-github"
+                    string="View"
+                    invisible="not module_url"
+                    data-hotkey="o"
+                />
+            </xpath>
         </field>
     </record>
 

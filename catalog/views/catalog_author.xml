@@ -5,8 +5,8 @@
         <field name="name">catalog.author.tree</field>
         <field name="model">catalog.author</field>
         <field name="arch" type="xml">
-            <tree editable="top" create="1">
-                <field name="name" />
+            <tree create="0" delete="1">
+                <field name="name"/>
             </tree>
         </field>
     </record>

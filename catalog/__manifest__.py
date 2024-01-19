@@ -14,7 +14,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "views/menu.xml",
-        "views/catalog_template.xml",
+        "views/catalog_module.xml",
         "views/catalog_entry.xml",
         "views/catalog_author.xml",
         "views/catalog_repository.xml",

@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class CatalogEntry(models.Model):
     _name = "catalog.entry"
     _inherit = ["mail.thread", "mail.activity.mixin"]
-    _inherits = {"catalog.template": "catalog_tmpl_id"}
+    _inherits = {"catalog.module": "catalog_module_id"}
     _description = "Catalog Entry"
     _order = "name, id"
 
@@ -19,16 +19,16 @@ class CatalogEntry(models.Model):
         default=True,
         help="If unchecked, it will allow you to hide the entry without removing it.",
     )
-    catalog_tmpl_id = fields.Many2one(
-        "catalog.template",
+    catalog_module_id = fields.Many2one(
+        "catalog.module",
         "Catalog Template",
         auto_join=True,
         index=True,
         ondelete="cascade",
         required=True,
     )
-    is_entry_variant = fields.Boolean(
-        compute="_compute_is_entry_variant",
+    is_entry = fields.Boolean(
+        compute="_compute_is_entry",
     )
 
     branch = fields.Char(
@@ -91,13 +91,10 @@ class CatalogEntry(models.Model):
         string="Icon",
     )
     web_description = fields.Html()
-
-    # application = fields.Boolean(default=False)
-    # depends = fields.Char()
-
-    # url = fields.Char()
-
-    # author = fields.Char()
+    manifest_url = fields.Char()
+    index_url = fields.Char()
+    icon_url = fields.Char()
+    module_url = fields.Char()
 
     _sql_constraints = [
         (
@@ -107,35 +104,13 @@ class CatalogEntry(models.Model):
         ),
     ]
 
-    # def _get_manifest_fields(self):
-    #     return ["version", "license", "author", "website", "category"]
-
-    # def _get_manifest_values(self):
-    #     self.ensure_one()
-    #     manifest = {}
-    #     fields = self._get_manifest_fields()
-
-    #     if self.manifest:
-    #         try:
-    #             vals = json.loads(self.manifest)
-    #             manifest = vals.get("manifest", {})
-    #         except Exception:
-    #             pass
-    #     return {field: manifest.get(field, "") for field in fields}
-
-    # @api.depends("manifest")
-    # def _compute_manifest(self):
-    #     for record in self:
-    #         vals = record._get_manifest_values()
-    #         record.write(vals)
-
-    def _compute_is_entry_variant(self):
-        self.is_entry_variant = True
+    def _compute_is_entry(self):
+        self.is_entry = True
 
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
-            self.catalog_tmpl_id._sanitize_vals(vals)
+        # for vals in vals_list:
+        #     self.catalog_module_id._sanitize_vals(vals)
         entries = super(
             CatalogEntry, self.with_context(create_catalog_entry=False)
         ).create(vals_list)
@@ -144,20 +119,25 @@ class CatalogEntry(models.Model):
         return entries
 
     def write(self, values):
-        self.catalog_tmpl_id._sanitize_vals(values)
-        res = super().write(values)
-        if "product_template_attribute_value_ids" in values:
-            # `_get_variant_id_for_combination` depends on `product_template_attribute_value_ids`
-            self.env.registry.clear_cache()
-        elif "active" in values:
+        # self.catalog_module_id._sanitize_vals(values)
+        res = super(CatalogEntry, self.with_context(create_catalog_entry=False)).write(
+            values
+        )
+        if "active" in values:
             # `_get_first_possible_variant_id` depends on variants active state
             self.env.registry.clear_cache()
         return res
 
     def _ext_prepare_vals_list(self, vals_list):
         # Search or create all authors
-        names = list(set(itertools.chain(*[vals["authors"] for vals in vals_list])))
-        authors = self.env["catalog.author"].search_or_create(names)
+        names = list(
+            set(
+                itertools.chain(
+                    *[vals["authors"] for vals in vals_list if "author" in vals]
+                )
+            )
+        )
+        authors = self.env["catalog.author"].search_or_create(names) if names else False
 
         # Search or create all repositories
         # paths = [vals["repository"] for vals in vals_list]
@@ -172,10 +152,12 @@ class CatalogEntry(models.Model):
         versions = self.env["catalog.version"].search_or_create(names)
 
         # Search or create categories
-        names = [vals["category"] for vals in vals_list]
-        categories = self.env["catalog.category"].search_or_create(names)
+        names = [vals["category"] for vals in vals_list if "category" in vals]
+        categories = (
+            self.env["catalog.category"].search_or_create(names) if names else False
+        )
 
-        exclude = ["authors", "major_version", "index", "icon"]
+        exclude = ["authors", "major_version", "index", "icon", "branch_name"]
         new_vals_list = []
 
         for vals in vals_list:
@@ -185,7 +167,7 @@ class CatalogEntry(models.Model):
             if "depends" in vals:
                 vals["depends"] = ", ".join(vals.get("depends", []))
 
-            if vals.get("authors"):
+            if authors and vals.get("authors"):
                 current_authors = authors.filtered_domain(
                     [("name", "in", vals["authors"])]
                 )
@@ -204,7 +186,7 @@ class CatalogEntry(models.Model):
                 res = versions.filtered_domain([("name", "=", vals["major_version"])])
                 vals["version_id"] = res.id if res else False
 
-            if vals.get("category"):
+            if categories and vals.get("category"):
                 res = categories.filtered_domain([("name", "=", vals["category"])])
                 vals["category_id"] = res.id if res else False
 
@@ -221,53 +203,58 @@ class CatalogEntry(models.Model):
 
     @api.model_create_multi
     def update_or_create(self, vals_list):
-        for vals in vals_list:
-            self.catalog_tmpl_id._sanitize_vals(vals)
+        # for vals in vals_list:
+        #     self.catalog_module_id._sanitize_vals(vals)
 
         entries = self
         vals_list = self._ext_prepare_vals_list(vals_list)
 
-        vals_by_uuid = {vals["uuid"]: vals for vals in vals_list}
-        all_uuid = set(vals_by_uuid.keys())
-        data = self.search_read(
-            [("uuid", "in", list(all_uuid))], ["id", "uuid"], load=""
-        )
-
-        _logger.error(data)
-
-        # dict([(item[0], item[1]) for item in data])
-        # dict([(item[1], item[0]) for item in data])
+        mapping = {vals["uuid"]: vals for vals in vals_list}
+        uuids = set(mapping.keys())
+        data = self.search_read([("uuid", "in", list(uuids))], ["id", "uuid"], load="")
 
         to_update = {item["uuid"]: item["id"] for item in data}
         to_update_inverse = {str(item["id"]): item["uuid"] for item in data}
 
-        uuid_to_create = all_uuid - set(to_update.keys())
+        uuid_to_create = uuids - set(to_update.keys())
         to_create = {
             vals["technical_name"]: vals
-            for uuid, vals in vals_by_uuid.items()
+            for uuid, vals in mapping.items()
             if uuid in uuid_to_create
         }
 
         if to_update:
             records = self.browse(to_update.values())
+
             for record in records:
                 uuid = to_update_inverse.get(str(record.id))
-                record.write(vals_by_uuid.get(uuid))
+                vals = mapping.get(uuid)
+                # _logger.warning("Record to update: %s, %s", record.name, vals.keys())
+                record.write(vals)
                 entries |= record
 
         if to_create:
             data = self.search_read(
                 [("technical_name", "in", list(to_create.keys()))],
-                ["technical_name", "catalog_tmpl_id"],
+                ["technical_name", "catalog_module_id"],
                 load="",
             )
-            data = {item["technical_name"]: item["catalog_tmpl_id"] for item in data}
+            data = {item["technical_name"]: item["catalog_module_id"] for item in data}
 
             for name in to_create.keys():
-                catalog_tmpl_id = data.get(name)
-                if catalog_tmpl_id:
-                    to_create[name].update({"catalog_tmpl_id": catalog_tmpl_id})
+                catalog_module_id = data.get(name)
+                if catalog_module_id:
+                    to_create[name].update({"catalog_module_id": catalog_module_id})
 
             entries |= self.create(to_create.values())
 
         return entries
+
+    def action_view_on_github(self):
+        self.ensure_one()
+
+        return {
+            "type": "ir.actions.act_url",
+            "url": self.module_url,
+            "target": "new",
+        }

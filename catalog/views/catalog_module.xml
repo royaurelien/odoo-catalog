@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="view_catalog_template_search" model="ir.ui.view">
-        <field name="name">catalog.template.search</field>
-        <field name="model">catalog.template</field>
+    <record id="view_catalog_module_search" model="ir.ui.view">
+        <field name="name">catalog.module.search</field>
+        <field name="model">catalog.module</field>
         <field name="arch" type="xml">
             <search>
                 <field
@@ -64,13 +64,13 @@
         </field>
     </record>
 
-    <record id="view_catalog_template_tree" model="ir.ui.view">
-        <field name="name">catalog.template.common.tree</field>
-        <field name="model">catalog.template</field>
+    <record id="view_catalog_module_tree" model="ir.ui.view">
+        <field name="name">catalog.module.common.tree</field>
+        <field name="model">catalog.module</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree create="0" delete="1">
                 <field name="name" />
-                <field name="branch" optional="hide"/>
+                <field name="path" optional="hide"/>
                 <field
                     name="version_ids"
                     widget="many2many_tags"
@@ -80,15 +80,18 @@
         </field>
     </record>
 
-    <record id="view_catalog_template_form" model="ir.ui.view">
-        <field name="name">catalog.template.common.form</field>
-        <field name="model">catalog.template</field>
+    <record id="view_catalog_module_form" model="ir.ui.view">
+        <field name="name">catalog.module.common.form</field>
+        <field name="model">catalog.module</field>
         <field name="arch" type="xml">
             <form>
                 <header>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_entries" icon="fa-users">
+                            <field string="Entries" name="entry_count" widget="statinfo"/>
+                        </button>
                     </div>
                     <field name="icon_image" widget="image" class="oe_avatar" readonly="1"/>
                     <div class="oe_title">
@@ -102,19 +105,18 @@
                     <separator/>
                     <group>
                         <group col="2">
-                            <field name="entry_variant_id" string="Main Entry"/>
+                            <field name="entry_id" string="Main Entry"/>
                         </group>
                         <group col="2">
-                            <field name="branch"/>
-                            <!-- <field name="create_date" widget="datetime" groups="base.group_no_one"/> -->
-                            <!-- <field name="write_date" widget="datetime" groups="base.group_no_one"/> -->
-                            <!-- <field name="create_uid" widget="many2many_avatar" groups="base.group_no_one"/> -->
+                            <field name="path"/>
                         </group>
                     </group>
                     <notebook>
+                        <page name="description" string="Description">
+                            <field name="web_description" nolabel="1" widget="html"/>
+                        </page>
                         <page name="entries" string="Entries">
-                            <!-- <field name="web_description" nolabel="1" readonly="1" widget="html"/> -->
-                            <field name="entry_variant_ids" nolabel="1"/>
+                            <field name="entry_ids" nolabel="1"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -127,9 +129,9 @@
         </field>
     </record>
 
-    <record id="view_catalog_template_kanban" model="ir.ui.view">
-        <field name="name">catalog.template.kanban</field>
-        <field name="model">catalog.template</field>
+    <record id="view_catalog_module_kanban" model="ir.ui.view">
+        <field name="name">catalog.module.kanban</field>
+        <field name="model">catalog.module</field>
         <field name="arch" type="xml">
             <kanban group_create="0" group_delete="0" group_edit="0"
                     quick_create="0" records_draggable="0" sample="0"
@@ -166,7 +168,7 @@
                                 <a name="action_view_repositories" type="object" role="menuitem" class="dropdown-item">View repositories</a>
                             </div>
                         </div>
-                        <img t-if="record.icon_image.raw_value" t-att-src="kanban_image('catalog.template', 'icon_image', record.id.raw_value)"  class="oe_module_icon" alt="Icon"/>
+                        <img t-if="record.icon_image.raw_value" t-att-src="kanban_image('catalog.module', 'icon_image', record.id.raw_value)"  class="oe_module_icon" alt="Icon"/>
                         <img t-else="" src="/base/static/description/icon.png" class="oe_module_icon" alt="Icon"/>
                         <div class="oe_module_desc" t-att-title="record.name.value">
                           <h4 class="o_kanban_record_title">

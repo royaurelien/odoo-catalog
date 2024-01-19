@@ -18,6 +18,7 @@ class CatalogBranch(models.Model):
         required=True,
         index=True,
     )
+    html_url = fields.Char()
     entry_ids = fields.One2many(
         comodel_name="catalog.entry",
         inverse_name="branch_id",
@@ -56,6 +57,16 @@ class CatalogBranch(models.Model):
 
         return vals
 
+    def _get_fields(self):
+        return [
+            "name",
+            "path",
+            "html_url",
+            "entry_ids",
+            "repository_id",
+            "organization_id",
+        ]
+
     @api.model
     def search_or_create(self, paths):
         Organization = self.env["catalog.organization"]
@@ -79,5 +90,37 @@ class CatalogBranch(models.Model):
                 vals_list.append(vals)
 
             records |= self.create(vals_list)
+
+        return records
+
+    def _sanitize_vals(self, vals):
+        if "repository" in vals:
+            parts = vals["path"].split("/")
+            path = "/".join(parts[0:2])
+            res = self.env["catalog.repository"].get_or_create(path)
+            vals["repository_id"] = res.id
+
+        vals = {k: v for k, v in vals.items() if k in self._get_fields()}
+
+        return vals
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        vals_list = list(map(self._sanitize_vals, vals_list))
+        repositories = super().create(vals_list)
+
+        return repositories
+
+    @api.model_create_multi
+    def update_or_create(self, vals_list):
+        mapping = {vals["path"]: vals for vals in vals_list}
+        paths = list(mapping.keys())
+        records = self.search([("path", "in", paths)])
+        current_paths = records.mapped("path")
+
+        to_create = [mapping.get(path) for path in paths if path not in current_paths]
+
+        if to_create:
+            records |= self.create(to_create)
 
         return records
