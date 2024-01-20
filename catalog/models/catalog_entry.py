@@ -1,6 +1,8 @@
 import base64
 import itertools
 import logging
+from itertools import groupby
+from operator import itemgetter
 
 from odoo import api, fields, models
 
@@ -129,6 +131,9 @@ class CatalogEntry(models.Model):
         return res
 
     def _ext_prepare_vals_list(self, vals_list):
+        def get_values(items, key):
+            return list(set(map(itemgetter(key), items)))
+
         # Search or create all authors
         names = list(
             set(
@@ -144,20 +149,27 @@ class CatalogEntry(models.Model):
         # repositories = self.env["catalog.repository"].search_or_create(paths)
 
         # Search or create all branches
-        paths = [vals["branch"] for vals in vals_list]
+        paths = get_values(vals_list, "branch")
         branches = self.env["catalog.branch"].search_or_create(paths)
 
         # Search or create all needed versions
-        names = [vals["major_version"] for vals in vals_list]
+        names = get_values(vals_list, "major_version")
         versions = self.env["catalog.version"].search_or_create(names)
 
         # Search or create categories
-        names = [vals["category"] for vals in vals_list if "category" in vals]
+        names = get_values(vals_list, "category")
         categories = (
             self.env["catalog.category"].search_or_create(names) if names else False
         )
 
-        exclude = ["authors", "major_version", "index", "icon", "branch_name"]
+        exclude = [
+            "authors",
+            "major_version",
+            "index",
+            "icon",
+            "branch_name",
+            "addons_path",
+        ]
         new_vals_list = []
 
         for vals in vals_list:
@@ -173,10 +185,6 @@ class CatalogEntry(models.Model):
                 )
                 if current_authors:
                     vals["author_ids"] = [fields.Command.set(current_authors.ids)]
-
-            # if vals.get("repository"):
-            #     res = repositories.filtered_domain([("path", "=", vals["repository"])])
-            #     vals["repository_id"] = res.id if res else False
 
             if vals.get("branch"):
                 res = branches.filtered_domain([("path", "=", vals["branch"])])
@@ -203,8 +211,14 @@ class CatalogEntry(models.Model):
 
     @api.model_create_multi
     def update_or_create(self, vals_list):
-        # for vals in vals_list:
-        #     self.catalog_module_id._sanitize_vals(vals)
+        _logger.warning("Update or Create - received: %s", len(vals_list))
+
+        def set_parent(items, parent):
+            def apply(item):
+                item["catalog_module_id"] = parent
+                return item
+
+            return list(map(apply, items))
 
         entries = self
         vals_list = self._ext_prepare_vals_list(vals_list)
@@ -217,11 +231,14 @@ class CatalogEntry(models.Model):
         to_update_inverse = {str(item["id"]): item["uuid"] for item in data}
 
         uuid_to_create = uuids - set(to_update.keys())
+        to_create = [vals for uuid, vals in mapping.items() if uuid in uuid_to_create]
+        to_create = sorted(to_create, key=itemgetter("technical_name"))
         to_create = {
-            vals["technical_name"]: vals
-            for uuid, vals in mapping.items()
-            if uuid in uuid_to_create
+            i: list(g) for i, g in groupby(to_create, key=itemgetter("technical_name"))
         }
+
+        _logger.warning("Update or Create [update]: %s", len(to_update))
+        _logger.warning("Update or Create [create]: %s", len(uuid_to_create))
 
         if to_update:
             records = self.browse(to_update.values())
@@ -229,24 +246,41 @@ class CatalogEntry(models.Model):
             for record in records:
                 uuid = to_update_inverse.get(str(record.id))
                 vals = mapping.get(uuid)
-                # _logger.warning("Record to update: %s, %s", record.name, vals.keys())
                 record.write(vals)
                 entries |= record
 
         if to_create:
-            data = self.search_read(
+            new_vals_list = []
+            # Search for existing parents (catalog.module)
+            # Technically, records on the current model with the catalog.defined module ID
+            parents = self.search_read(
                 [("technical_name", "in", list(to_create.keys()))],
                 ["technical_name", "catalog_module_id"],
                 load="",
             )
-            data = {item["technical_name"]: item["catalog_module_id"] for item in data}
+            # Create mapping by technical name
+            parents = {
+                item["technical_name"]: item["catalog_module_id"] for item in parents
+            }
 
-            for name in to_create.keys():
-                catalog_module_id = data.get(name)
+            for technical_name, vals_list in to_create.items():
+                # Try to obtain the parent and associate it with the children (to avoid creating a duplicate parent)
+                catalog_module_id = parents.get(technical_name)
                 if catalog_module_id:
-                    to_create[name].update({"catalog_module_id": catalog_module_id})
+                    new_vals_list += set_parent(vals_list, catalog_module_id)
+                # if this is not the case, create a parent with the values of the first child
+                else:
+                    new_record = self.create(vals_list[0])
+                    entries |= new_record
 
-            entries |= self.create(to_create.values())
+                    # ...and associate it with his siblings
+                    if len(vals_list) > 1:
+                        new_vals_list += set_parent(
+                            vals_list[1:], new_record.catalog_module_id.id
+                        )
+
+            # Finally, create all the other
+            entries |= self.create(new_vals_list)
 
         return entries
 

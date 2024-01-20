@@ -231,7 +231,6 @@ class CatalogTemplate(models.Model):
 
     def write(self, vals):
         self._sanitize_vals(vals)
-        _logger.error("Write module")
 
         res = super().write(vals)
         if self._context.get("create_catalog_entry", True) or (
