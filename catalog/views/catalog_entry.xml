@@ -92,6 +92,8 @@
                 <field name="branch_id" widget="many2one"  optional="hide"/>
             </xpath>
             <xpath expr="//field[@name='version_ids']" position="replace"></xpath>
+            <xpath expr="//field[@name='entry_count']" position="replace"></xpath>
+            <xpath expr="//button[@name='action_view_entries']" position="replace"></xpath>
         </field>
     </record>
 

@@ -11,6 +11,13 @@
                 <field name="repository_id" widget="many2one"/>
                 <field name="html_url" widget="url" optional="show"/>
                 <field name="entry_count" sum="Entries"/>
+                <button
+                    name="action_view_entries"
+                    type="object"
+                    icon="fa-folder-open"
+                    title="View entries"
+                    aria-label="View entries"
+                />
             </tree>
         </field>
     </record>

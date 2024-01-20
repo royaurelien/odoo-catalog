@@ -26,6 +26,7 @@
                     filter_domain="[('author_ids', 'ilike', self)]"
                 /> -->
                 <!-- <field name="category"/> -->
+                <filter string="My Favorites" name="my_favorites_filter" domain="[('favorite_user_ids', 'in', uid)]"/>
                 <group expand="1" string="Group By">
                     <!-- <filter
                         string="Branch"
@@ -75,6 +76,15 @@
                     name="version_ids"
                     widget="many2many_tags"
                     options="{'color_field': 'color', 'no_create_edit': True}"
+                    optional="show"
+                />
+                <field name="entry_count"/>
+                <button
+                    name="action_view_entries"
+                    type="object"
+                    icon="fa-folder-open"
+                    title="View entries"
+                    aria-label="View entries"
                 />
             </tree>
         </field>
@@ -95,8 +105,9 @@
                     </div>
                     <field name="icon_image" widget="image" class="oe_avatar" readonly="1"/>
                     <div class="oe_title">
-                        <h1>
-                            <field name="name"/>
+                        <h1 class="d-flex flex-row">
+                            <field name="is_favorite" nolabel="1" widget="boolean_favorite" class="me-2"/>
+                            <field name="name" options="{'line_breaks': False}" widget="text" class="o_text_overflow"/>
                         </h1>
                         <h3>
                             <field name="technical_name"/>
@@ -146,6 +157,7 @@
                 <!-- <field name="url"/> -->
                 <!-- <field name="is_many_used"/> -->
                 <field name="version_ids"/>
+                <field name="favorite_user_ids"/>
                 <!-- <field name="branch_ids"/> -->
                 <!-- <field name="branch_count"/> -->
                 <!-- <field name="repository_count"/> -->

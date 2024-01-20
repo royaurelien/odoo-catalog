@@ -92,3 +92,9 @@ class CatalogOrganization(models.Model):
             record = self.create(self._prepare_vals(name_or_path))
 
         return record
+
+    def action_view_repositories(self):  # pylint: disable=C0116
+        action = self.env.ref("catalog.action_view_repositories").read()[0]
+        action["domain"] = [("id", "in", self.repository_ids.ids)]
+
+        return action

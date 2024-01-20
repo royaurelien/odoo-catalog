@@ -9,6 +9,13 @@
                 <field name="name" />
                 <field name="path" />
                 <field name="repository_count" sum="Repositories"/>
+                <button
+                    name="action_view_repositories"
+                    type="object"
+                    icon="fa-folder-open"
+                    title="View repositories"
+                    aria-label="View repositories"
+                />
             </tree>
         </field>
     </record>

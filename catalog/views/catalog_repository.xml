@@ -15,6 +15,13 @@
                 <field name="pushed_at" widget="datetime" optional="show"/>
                 <field name="organization_id" widget="many2one" optional="hide"/>
                 <field name="branch_count" sum="Branches"/>
+                <button
+                    name="action_view_branches"
+                    type="object"
+                    icon="fa-folder-open"
+                    title="View branches"
+                    aria-label="View branches"
+                />
             </tree>
         </field>
     </record>

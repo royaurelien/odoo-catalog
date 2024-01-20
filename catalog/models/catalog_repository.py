@@ -149,3 +149,9 @@ class CatalogRepository(models.Model):
     #         records |= self.create(to_create)
 
     #     return records
+
+    def action_view_branches(self):  # pylint: disable=C0116
+        action = self.env.ref("catalog.action_view_branches").read()[0]
+        action["domain"] = [("id", "in", self.branch_ids.ids)]
+
+        return action

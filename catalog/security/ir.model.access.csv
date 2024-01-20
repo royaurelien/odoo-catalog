@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_catalog_entry,access_catalog_entry,model_catalog_entry,catalog.group_user,1,1,1,0
+access_catalog_entry,access_catalog_entry,model_catalog_entry,catalog.group_user,1,1,0,0
 access_catalog_entry_manager,access_catalog_entry_manager,model_catalog_entry,catalog.group_manager,1,1,1,1
-access_catalog_module,access_catalog_module,model_catalog_module,catalog.group_user,1,1,1,0
+access_catalog_module,access_catalog_module,model_catalog_module,catalog.group_user,1,1,0,0
 access_catalog_module_manager,access_catalog_module_manager,model_catalog_module,catalog.group_manager,1,1,1,1
 access_catalog_author,access_catalog_author,model_catalog_author,catalog.group_user,1,1,1,0
 access_catalog_author_manager,access_catalog_author_manager,model_catalog_author,catalog.group_manager,1,1,1,1

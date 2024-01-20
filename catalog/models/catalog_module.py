@@ -12,6 +12,9 @@ class CatalogTemplate(models.Model):
     _description = "Catalog Template"
     _order = "name, id"
 
+    def _get_default_favorite_user_ids(self):
+        return [(6, 0, [self.env.uid])]
+
     name = fields.Char(
         index="trigram",
         required=True,
@@ -38,7 +41,7 @@ class CatalogTemplate(models.Model):
         compute="_compute_entry_id",
     )
     entry_count = fields.Integer(
-        string="# Entry Variants",
+        string="# Entries",
         compute="_compute_entry_count",
     )
     is_entry = fields.Boolean(
@@ -47,7 +50,7 @@ class CatalogTemplate(models.Model):
 
     path = fields.Char(
         compute="_compute_path",
-        inverse="_set_path",
+        # inverse="_set_path",
         store=True,
     )
 
@@ -68,6 +71,21 @@ class CatalogTemplate(models.Model):
         string="Icon",
         compute="_compute_icon",
         # related="entry_id.icon_image",
+    )
+    favorite_user_ids = fields.Many2many(
+        "res.users",
+        "module_favorite_user_rel",
+        "catalog_module_id",
+        "user_id",
+        default=_get_default_favorite_user_ids,
+        string="Favorites",
+    )
+    is_favorite = fields.Boolean(
+        compute="_compute_is_favorite",
+        inverse="_inverse_is_favorite",
+        search="_search_is_favorite",
+        compute_sudo=True,
+        string="Show Module on Dashboard",
     )
     _sql_constraints = [
         (
@@ -161,6 +179,37 @@ class CatalogTemplate(models.Model):
                 if len(archived_variants) == 1:
                     archived_variants[fname] = module[fname]
 
+    @api.model
+    def _search_is_favorite(self, operator, value):
+        if operator not in ["=", "!="] or not isinstance(value, bool):
+            raise NotImplementedError(_("Operation not supported"))
+        return [
+            (
+                "favorite_user_ids",
+                "in" if (operator == "=") == value else "not in",
+                self.env.uid,
+            )
+        ]
+
+    def _compute_is_favorite(self):
+        for record in self:
+            record.is_favorite = self.env.user in record.favorite_user_ids
+
+    def _inverse_is_favorite(self):
+        favorite_records = not_fav_records = self.env["catalog.module"].sudo()
+        for record in self:
+            if self.env.user in record.favorite_user_ids:
+                favorite_records |= record
+            else:
+                not_fav_records |= record
+
+        # Project User has no write access for record.
+        not_fav_records.write({"favorite_user_ids": [(4, self.env.uid)]})
+        favorite_records.write({"favorite_user_ids": [(3, self.env.uid)]})
+
+    def _get_default_favorite_user_ids(self):
+        return [(6, 0, [self.env.uid])]
+
     def _prepare_variant_values(self, combination=None):
         self.ensure_one()
         return {
@@ -233,7 +282,7 @@ class CatalogTemplate(models.Model):
         self._sanitize_vals(vals)
 
         res = super().write(vals)
-        if self._context.get("create_catalog_entry", True) or (
+        if self._context.get("create_catalog_entry", False) or (
             vals.get("active") and len(self.entry_ids) == 0
         ):
             self._create_variant_ids()
