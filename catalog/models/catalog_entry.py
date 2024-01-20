@@ -139,27 +139,6 @@ class CatalogEntry(models.Model):
             record.depend_count = len(depends)
             record.depend_count_total = len(names)
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        # for vals in vals_list:
-        #     self.catalog_module_id._sanitize_vals(vals)
-        entries = super(
-            CatalogEntry, self.with_context(create_catalog_entry=False)
-        ).create(vals_list)
-        # `_get_variant_id_for_combination` depends on existing variants
-        self.env.registry.clear_cache()
-        return entries
-
-    def write(self, values):
-        # self.catalog_module_id._sanitize_vals(values)
-        res = super(CatalogEntry, self.with_context(create_catalog_entry=False)).write(
-            values
-        )
-        if "active" in values:
-            # `_get_first_possible_variant_id` depends on variants active state
-            self.env.registry.clear_cache()
-        return res
-
     def _ext_prepare_vals_list(self, vals_list):
         def get_values(items, key):
             try:
@@ -316,6 +295,27 @@ class CatalogEntry(models.Model):
             entries |= self.create(new_vals_list)
 
         return entries
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # for vals in vals_list:
+        #     self.catalog_module_id._sanitize_vals(vals)
+        entries = super(
+            CatalogEntry, self.with_context(create_catalog_entry=False)
+        ).create(vals_list)
+        # `_get_variant_id_for_combination` depends on existing variants
+        self.env.registry.clear_cache()
+        return entries
+
+    def write(self, values):
+        # self.catalog_module_id._sanitize_vals(values)
+        res = super(CatalogEntry, self.with_context(create_catalog_entry=False)).write(
+            values
+        )
+        if "active" in values:
+            # `_get_first_possible_variant_id` depends on variants active state
+            self.env.registry.clear_cache()
+        return res
 
     def action_view_on_github(self):
         self.ensure_one()

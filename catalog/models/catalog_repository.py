@@ -34,6 +34,7 @@ class CatalogRepository(models.Model):
 
     organization_id = fields.Many2one(
         comodel_name="catalog.organization",
+        ondelete="cascade",
     )
     branch_ids = fields.One2many(
         comodel_name="catalog.branch",

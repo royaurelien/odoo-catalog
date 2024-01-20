@@ -33,6 +33,11 @@
                         context="{'group_by' : 'category_id'}"
                     />
                     <filter
+                        string="Version"
+                        name="version"
+                        context="{'group_by' : 'version_id'}"
+                    />
+                    <filter
                         string="Branch"
                         name="branch"
                         context="{'group_by' : 'branch_id'}"
@@ -87,7 +92,6 @@
                 <field name="category"  optional="show"/>
                 <field name="author_ids" widget="many2many_tags"  optional="show"/>
                 <field name="website" widget="url"  optional="show"/>
-                <field name="path"  optional="hide"/>
                 <field name="repository_id" widget="many2one"  optional="hide"/>
                 <field name="branch_id" widget="many2one"  optional="hide"/>
             </xpath>

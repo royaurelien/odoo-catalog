@@ -50,7 +50,7 @@ class CatalogTemplate(models.Model):
 
     path = fields.Char(
         compute="_compute_path",
-        # inverse="_set_path",
+        inverse="_set_path",
         store=True,
     )
 
@@ -159,7 +159,8 @@ class CatalogTemplate(models.Model):
                     fname, default=default
                 )
             else:
-                module[fname] = default
+                # module[fname] = default
+                module[fname] = module.entry_id[fname]
 
     def _set_entry_variant_field(self, fname):
         """Propagate the value of the given field from the templates to their unique variant.
@@ -206,9 +207,6 @@ class CatalogTemplate(models.Model):
         # Project User has no write access for record.
         not_fav_records.write({"favorite_user_ids": [(4, self.env.uid)]})
         favorite_records.write({"favorite_user_ids": [(3, self.env.uid)]})
-
-    def _get_default_favorite_user_ids(self):
-        return [(6, 0, [self.env.uid])]
 
     def _prepare_variant_values(self, combination=None):
         self.ensure_one()
