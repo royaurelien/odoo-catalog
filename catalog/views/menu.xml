@@ -2,7 +2,7 @@
     <!-- actions opening views on models -->
 
     <record model="ir.actions.act_window" id="catalog.action_view_modules">
-      <field name="name">Catalog Modules</field>
+      <field name="name">Modules</field>
       <field name="res_model">catalog.module</field>
       <field name="view_mode">kanban,tree,form</field>
       <field name="help" type="html">
@@ -15,7 +15,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_entries">
-      <field name="name">Catalog Entries</field>
+      <field name="name">Entries</field>
       <field name="res_model">catalog.entry</field>
       <field name="view_mode">tree,form</field>
       <field name="help" type="html">
@@ -28,25 +28,25 @@
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_authors">
-      <field name="name">Catalog Authors</field>
+      <field name="name">Authors</field>
       <field name="res_model">catalog.author</field>
       <field name="view_mode">tree</field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_organizations">
-      <field name="name">Catalog Organization</field>
+      <field name="name">Organizations</field>
       <field name="res_model">catalog.organization</field>
       <field name="view_mode">tree</field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_repositories">
-      <field name="name">Catalog Repositories</field>
+      <field name="name">Repositories</field>
       <field name="res_model">catalog.repository</field>
       <field name="view_mode">tree</field>
     </record>
 
     <record model="ir.actions.act_window" id="catalog.action_view_branches">
-      <field name="name">Catalog Branches</field>
+      <field name="name">Branches</field>
       <field name="res_model">catalog.branch</field>
       <field name="view_mode">tree</field>
     </record>
