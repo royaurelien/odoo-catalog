@@ -162,13 +162,19 @@
             </xpath>
             <xpath expr="//header" position="inside">
                 <button
-                    name="action_view_on_github"
+                    name="action_view_module"
                     type="object"
                     class="oe_highlight"
+                    string="Module"
+                    data-hotkey="m"
+                />
+                <button
+                    name="action_view_on_github"
+                    type="object"
                     icon="fa-github"
                     string="View"
                     invisible="not module_url"
-                    data-hotkey="o"
+                    data-hotkey="v"
                 />
             </xpath>
         </field>

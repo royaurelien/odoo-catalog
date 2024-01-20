@@ -331,3 +331,11 @@ class CatalogEntry(models.Model):
         action["domain"] = [("id", "in", self.depend_ids.ids)]
 
         return action
+
+    def action_view_module(self):  # pylint: disable=C0116
+        action = self.env.ref("catalog.action_view_modules").read()[0]
+        # action["domain"] = [("id", "=", self.catalog_module_id.id)]
+        action["res_id"] = self.catalog_module_id.id
+        action["views"] = [(False, "form")]
+
+        return action
