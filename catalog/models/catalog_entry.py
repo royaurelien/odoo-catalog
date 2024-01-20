@@ -98,6 +98,20 @@ class CatalogEntry(models.Model):
     icon_url = fields.Char()
     module_url = fields.Char()
 
+    depend_ids = fields.One2many(
+        comodel_name="catalog.module",
+        compute="_compute_depends",
+        string="Depends",
+    )
+    depend_count = fields.Integer(
+        compute="_compute_depends",
+        string="# Depends",
+    )
+    depend_count_total = fields.Integer(
+        compute="_compute_depends",
+        string="# Depends (file)",
+    )
+
     _sql_constraints = [
         (
             "uuid_uniq",
@@ -108,6 +122,22 @@ class CatalogEntry(models.Model):
 
     def _compute_is_entry(self):
         self.is_entry = True
+
+    @api.depends("depends")
+    def _compute_depends(self):
+        Module = self.env["catalog.module"]
+        for record in self:
+            if not record.depends:
+                record.depend_ids = False
+                record.depend_count = 0
+                record.depend_count_total = 0
+                continue
+
+            names = list(set(map(str.strip, record.depends.split(","))))
+            depends = Module.search([("technical_name", "in", names)])
+            record.depend_ids = depends
+            record.depend_count = len(depends)
+            record.depend_count_total = len(names)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -132,7 +162,10 @@ class CatalogEntry(models.Model):
 
     def _ext_prepare_vals_list(self, vals_list):
         def get_values(items, key):
-            return list(set(map(itemgetter(key), items)))
+            try:
+                return list(set(map(itemgetter(key), items)))
+            except KeyError:
+                return []
 
         # Search or create all authors
         names = list(
@@ -292,3 +325,9 @@ class CatalogEntry(models.Model):
             "url": self.module_url,
             "target": "new",
         }
+
+    def action_view_modules(self):  # pylint: disable=C0116
+        action = self.env.ref("catalog.action_view_modules").read()[0]
+        action["domain"] = [("id", "in", self.depend_ids.ids)]
+
+        return action

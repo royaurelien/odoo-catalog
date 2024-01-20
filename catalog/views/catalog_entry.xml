@@ -105,7 +105,17 @@
                 <attribute name="string">Product Entry</attribute>
                 <!-- <attribute name="duplicate">false</attribute> -->
             </form>
-            <xpath expr="//button[@name='action_view_entries']" position="replace"></xpath>
+            <xpath expr="//button[@name='action_view_entries']" position="replace">
+                <button
+                    class="oe_stat_button"
+                    type="object"
+                    name="action_view_modules"
+                    icon="fa-users"
+                    invisible="not depends"
+                >
+                    <field string="Depends" name="depend_count" widget="statinfo"/>
+                </button>
+            </xpath>
             <xpath expr="//field[@name='entry_id']" position="replace">
                 <field name="summary"/>
                 <field name="description"/>
