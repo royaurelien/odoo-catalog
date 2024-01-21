@@ -267,16 +267,13 @@
             <!-- <xpath expr="//field[@name='version_id']" position="replace" /> -->
             <xpath expr="//field[@name='version_ids']" position="replace">
                 <field name="author_ids" />
+                <field name="version_id" />
                 <field name="repository" />
             </xpath>
             <xpath expr="//field[@name='version_ids']" position="replace">
                 <field name="author_ids" widget="many2many_tags" />
-                <field
-                    name="version_ids"
-                    widget="many2many_tags"
-                    options="{'color_field': 'color'}"
-                />
-                <field name="repository" />
+                <field name="version_id" widget="badge" />
+                <span> <field name="repository" /></span>
             </xpath>
             <xpath
                 expr="//img[@t-if='record.icon_image.raw_value']"
