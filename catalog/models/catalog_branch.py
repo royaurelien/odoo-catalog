@@ -19,6 +19,7 @@ class CatalogBranch(models.Model):
         index=True,
     )
     html_url = fields.Char()
+    tree_url = fields.Char()
     entry_ids = fields.One2many(
         comodel_name="catalog.entry",
         inverse_name="branch_id",
@@ -29,10 +30,19 @@ class CatalogBranch(models.Model):
     )
     organization_id = fields.Many2one(
         related="repository_id.organization_id",
+        store=True,
     )
     entry_count = fields.Integer(
         compute="_compute_entry",
     )
+    initialized = fields.Boolean(
+        default=False,
+    )
+
+    last_commit_url = fields.Char(string="Commit Url")
+    last_commit_name = fields.Char(string="Author")
+    last_commit_email = fields.Char(string="Email")
+    last_commit_date = fields.Datetime(string="Last Commit")
 
     _sql_constraints = [
         (
@@ -62,9 +72,15 @@ class CatalogBranch(models.Model):
             "name",
             "path",
             "html_url",
+            "tree_url",
             "entry_ids",
             "repository_id",
             "organization_id",
+            "initialized",
+            "last_commit_url",
+            "last_commit_name",
+            "last_commit_email",
+            "last_commit_date",
         ]
 
     @api.model
@@ -130,3 +146,44 @@ class CatalogBranch(models.Model):
         action["domain"] = [("id", "in", self.entry_ids.ids)]
 
         return action
+
+    @api.model
+    def get_branches(self, **kwargs):
+        limit = kwargs.get("limit", 100)
+        force = kwargs.get("force", False)
+        domain = []
+
+        if not force:
+            domain = [("initialized", "=", False)]
+
+        res = self.search_read(
+            domain,
+            fields=["name", "path"],
+            limit=limit,
+            load="",
+        )
+
+        _logger.info("Get branches - results/limit: %s/%s", len(res), limit)
+
+        return res
+
+    @api.model_create_multi
+    def update_branches(self, vals_list):
+        vals_list = list(map(self._sanitize_vals, vals_list))
+
+        records = self
+        for vals in vals_list:
+            if vals.get("id"):  # != 0
+                record = self.browse(vals["id"])
+            else:
+                record = self.search([("path", "=", vals["path"])])
+
+            if not record:
+                _logger.error("Update branch - Record not found: %s", vals["id"])
+                continue
+
+            vals["initialized"] = True
+            record.write(vals)
+            records |= record
+
+        return records

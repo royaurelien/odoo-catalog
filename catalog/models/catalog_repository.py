@@ -43,6 +43,9 @@ class CatalogRepository(models.Model):
     branch_count = fields.Integer(
         compute="_compute_branch",
     )
+    initialized = fields.Boolean(
+        default=False,
+    )
 
     _sql_constraints = [
         (
@@ -67,6 +70,7 @@ class CatalogRepository(models.Model):
             "pushed_at",
             "organization_id",
             "branch_ids",
+            "initialized",
         ]
 
     @api.depends("branch_ids")
@@ -85,6 +89,8 @@ class CatalogRepository(models.Model):
     def _sanitize_vals(self, vals):
         if "id" in vals:
             vals["ext_id"] = vals.pop("id")
+        if "odoo_id" in vals:
+            vals["id"] = vals.pop("odoo_id")
         if "organization" in vals:
             path = vals.pop("organization")
             res = self.env["catalog.organization"].get_or_create(path)
@@ -156,3 +162,44 @@ class CatalogRepository(models.Model):
         action["domain"] = [("id", "in", self.branch_ids.ids)]
 
         return action
+
+    @api.model
+    def get_repositories(self, **kwargs):
+        limit = kwargs.get("limit", 100)
+        force = kwargs.get("force", False)
+        domain = []
+
+        if not force:
+            domain = [("initialized", "=", False)]
+
+        res = self.search_read(
+            domain,
+            fields=["path"],
+            limit=limit,
+            load="",
+        )
+
+        _logger.info("Get repositories - results/limit: %s/%s", len(res), limit)
+
+        return res
+
+    @api.model_create_multi
+    def update_repositories(self, vals_list):
+        # vals_list = list(map(self._sanitize_vals, vals_list))
+
+        records = self
+        for vals in vals_list:
+            if vals.get("odoo_id"):  # != 0
+                record = self.browse(vals["odoo_id"])
+            else:
+                record = self.search([("path", "=", vals["path"])])
+
+            if not record:
+                _logger.error("Update repository - Record not found: %s", vals["id"])
+                continue
+
+            vals["initialized"] = True
+            record.write(vals)
+            records |= record
+
+        return records

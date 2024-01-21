@@ -52,12 +52,18 @@
                         name="organization"
                         context="{'group_by' : 'organization_id'}"
                     />
+                    <filter
+                        string="Initialized"
+                        name="initialized"
+                        context="{'group_by' : 'initialized'}"
+                    />
                 </group>
                 <separator/>
                 <!-- <filter name="my_favorites" string="My Favorites" domain="[('favorite_user_ids', 'in', uid)]"/> -->
                 <separator/>
                 <!-- <filter name="applications" string="Applications" domain="[['application', '=', True]]"/> -->
                 <filter name="depends" string="Depends" domain="[['depends', '!=', False]]"/>
+                <filter name="initialized_entries" string="Initialized" domain="[['initialized', '=', True]]"/>
 
                 <!-- <filter name="officials" string="Officials" domain='["|", ["author", "=", "Odoo S.A."], ["author", "=", "Odoo"]]'/> -->
                 <separator/>
@@ -86,6 +92,11 @@
             <tree position="attributes">
                 <attribute name="string">Product Entry</attribute>
             </tree>
+            <xpath expr="//field[@name='version_id']" position="replace"></xpath>
+            <xpath expr="//field[@name='version_ids']" position="replace"></xpath>
+            <xpath expr="//field[@name='entry_count']" position="replace"></xpath>
+            <xpath expr="//field[@name='latest_entry_id']" position="replace"></xpath>
+            <xpath expr="//button[@name='action_view_entries']" position="replace"></xpath>
             <xpath expr="//field[@name='name']" position="after">
                 <field name="version_id"  optional="show"/>
                 <field name="version"  optional="hide"/>
@@ -95,9 +106,6 @@
                 <field name="repository_id" widget="many2one"  optional="hide"/>
                 <field name="branch_id" widget="many2one"  optional="hide"/>
             </xpath>
-            <xpath expr="//field[@name='version_ids']" position="replace"></xpath>
-            <xpath expr="//field[@name='entry_count']" position="replace"></xpath>
-            <xpath expr="//button[@name='action_view_entries']" position="replace"></xpath>
         </field>
     </record>
 

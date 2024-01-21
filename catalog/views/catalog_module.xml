@@ -79,6 +79,7 @@
                     optional="show"
                 />
                 <field name="version_id" optional="hide"/>
+                <field name="latest_entry_id" widget="many2one" optional="hide"/>
                 <field name="entry_count"/>
                 <button
                     name="action_view_entries"

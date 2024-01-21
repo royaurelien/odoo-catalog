@@ -111,6 +111,9 @@ class CatalogEntry(models.Model):
         compute="_compute_depends",
         string="# Depends (file)",
     )
+    initialized = fields.Boolean(
+        default=False,
+    )
 
     _sql_constraints = [
         (
@@ -295,6 +298,27 @@ class CatalogEntry(models.Model):
             entries |= self.create(new_vals_list)
 
         return entries
+
+    @api.model_create_multi
+    def update_manifests(self, vals_list):
+        vals_list = self._ext_prepare_vals_list(vals_list)
+
+        records = self
+        for vals in vals_list:
+            if vals.get("id"):  # != 0
+                record = self.browse(vals["id"])
+            else:
+                record = self.search([("uuid", "=", vals["uuid"])])
+
+            if not record:
+                _logger.error("Update manifest - Record not found: %s", vals["id"])
+                continue
+
+            vals["initialized"] = True
+            record.write(vals)
+            records |= record
+
+        return records
 
     @api.model_create_multi
     def create(self, vals_list):

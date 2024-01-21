@@ -74,6 +74,13 @@ class CatalogTemplate(models.Model):
         compute_sudo=True,
         store=True,
     )
+    latest_entry_id = fields.Many2one(
+        comodel_name="catalog.entry",
+        string="Latest Entry",
+        compute="_compute_versions",
+        compute_sudo=True,
+        store=True,
+    )
     # catalog_selection_ids = fields.One2many(
     #     string="Selections",
     #     comodel_name="catalog.seelction",
@@ -129,11 +136,13 @@ class CatalogTemplate(models.Model):
             if not record.entry_ids:
                 record.version_ids = False
                 record.version_id = False
+                record.latest_entry_id = False
                 continue
 
             ids = list(set(record.entry_ids.version_id.ids))
             record.version_ids = [fields.Command.set(ids)]
             record.version_id = record.version_ids.sorted("name")[-1]
+            record.latest_entry_id = record.entry_ids.sorted("version_id")[0]
 
     @api.depends("entry_ids")
     def _compute_entry_id(self):
@@ -344,3 +353,39 @@ class CatalogTemplate(models.Model):
 
     def action_add_to_selection(self):
         return self.env["catalog.selection"]._add_to_selection(self.ids)
+
+    @api.model
+    def get_manifests(self, **kwargs):
+        limit = kwargs.get("limit", 100)
+        force = kwargs.get("force", False)
+        domain = []
+
+        if not force:
+            domain = [("latest_entry_id.initialized", "=", False)]
+
+        entries = self.search_read(
+            domain,
+            fields=["latest_entry_id"],
+            limit=limit,
+            load="",
+        )
+
+        ids = [entry["latest_entry_id"] for entry in entries]
+
+        results = (
+            self.env["catalog.entry"]
+            .browse(ids)
+            .read(["branch_id", "uuid", "manifest_url"])
+        )
+
+        _logger.info("Get manifests - results/limit: %s/%s", len(ids), limit)
+
+        return [
+            {
+                "id": res["id"],
+                "uuid": res["uuid"],
+                "manifest_url": res["manifest_url"],
+                "branch_name": res["branch_id"][1],
+            }
+            for res in results
+        ]
