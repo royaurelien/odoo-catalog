@@ -50,6 +50,12 @@
       <field name="res_model">catalog.branch</field>
       <field name="view_mode">tree</field>
     </record>
+
+    <record model="ir.actions.act_window" id="catalog.action_view_selections">
+      <field name="name">Selection</field>
+      <field name="res_model">catalog.selection</field>
+      <field name="view_mode">tree,form</field>
+    </record>
     <!-- Top menu item -->
 
     <menuitem
@@ -101,5 +107,10 @@
               parent="menu_catalog_root"
               sequence="40"
               action="catalog.action_view_branches"/>
+
+    <menuitem name="Selections" id="menu_catalog_selection"
+              parent="menu_catalog_root"
+              sequence="60"
+              action="catalog.action_view_selections"/>
 
 </odoo>

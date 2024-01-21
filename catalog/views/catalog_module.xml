@@ -97,11 +97,30 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button
+                        name="action_add_to_selection"
+                        type="object"
+                        string="Add to selection"
+                    />
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button class="oe_stat_button" type="object" name="action_view_entries" icon="fa-users">
+                        <button
+                            class="oe_stat_button"
+                            type="object"
+                            name="action_view_entries"
+                            icon="fa-users"
+                        >
                             <field string="Entries" name="entry_count" widget="statinfo"/>
+                        </button>
+                        <button
+                            class="oe_stat_button"
+                            type="object"
+                            name="action_view_selections"
+                            icon="fa-folder"
+                            invisible="not selection_count"
+                        >
+                            <field string="Selections" name="selection_count" widget="statinfo"/>
                         </button>
                     </div>
                     <field name="icon_image" widget="image" class="oe_avatar" readonly="1"/>

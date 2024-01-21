@@ -21,6 +21,8 @@
         "views/catalog_organization.xml",
         "views/catalog_branch.xml",
         "views/catalog_version.xml",
+        "views/catalog_selection.xml",
+        "wizard/add_to_selection.xml",
     ],
     "demo": [],
     "installable": True,

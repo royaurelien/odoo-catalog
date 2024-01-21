@@ -122,6 +122,8 @@
                     <field string="Depends" name="depend_count" widget="statinfo"/>
                 </button>
             </xpath>
+            <xpath expr="//button[@name='action_add_to_selection']" position="replace"></xpath>
+            <xpath expr="//button[@name='action_view_selections']" position="replace"></xpath>
             <xpath expr="//field[@name='entry_id']" position="replace">
                 <field name="summary"/>
                 <field name="description"/>

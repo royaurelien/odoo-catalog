@@ -6,3 +6,4 @@ from . import catalog_branch
 from . import catalog_version
 from . import catalog_category
 from . import catalog_organization
+from . import catalog_selection

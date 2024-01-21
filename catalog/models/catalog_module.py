@@ -74,6 +74,22 @@ class CatalogTemplate(models.Model):
         compute_sudo=True,
         store=True,
     )
+    # catalog_selection_ids = fields.One2many(
+    #     string="Selections",
+    #     comodel_name="catalog.seelction",
+    #     compute="_compute_selections",
+    # )
+    catalog_selection_ids = fields.Many2many(
+        string="Selections",
+        comodel_name="catalog.selection",
+        relation="catalog_module_selection_rel",
+        column2="selection_id",
+        column1="catalog_module_id",
+    )
+    selection_count = fields.Integer(
+        string="# Selections",
+        compute="_compute_selections",
+    )
     icon_image = fields.Binary(
         string="Icon",
         compute="_compute_icon",
@@ -101,6 +117,11 @@ class CatalogTemplate(models.Model):
             "Technical name already exists !",
         ),
     ]
+
+    @api.depends("catalog_selection_ids")
+    def _compute_selections(self):
+        for record in self:
+            record.selection_count = len(record.catalog_selection_ids)
 
     @api.depends("entry_ids", "entry_ids.version_id")
     def _compute_versions(self):
@@ -314,3 +335,12 @@ class CatalogTemplate(models.Model):
         action["domain"] = [("id", "in", self.entry_ids.ids)]
 
         return action
+
+    def action_view_selections(self):  # pylint: disable=C0116
+        action = self.env.ref("catalog.action_view_selections").read()[0]
+        action["domain"] = [("id", "in", self.catalog_selection_ids.ids)]
+
+        return action
+
+    def action_add_to_selection(self):
+        return self.env["catalog.selection"]._add_to_selection(self.ids)

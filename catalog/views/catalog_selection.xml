@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+    <record id="view_catalog_selection_search" model="ir.ui.view">
+        <field name="model">catalog.selection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field
+                    name="name"
+                    string="Name"
+                    filter_domain="[('name', 'ilike', self)]"
+                />
+
+                <group expand="1" string="Group By">
+                    <filter
+                        string="User"
+                        name="user"
+                        context="{'group_by' : 'user_id'}"
+                    />
+                    <separator/>
+                </group>
+                <separator/>
+                <!-- <filter name="major" string="Major Version" domain="[['major','=',True]]"/> -->
+                <filter string="My Selections" name="my_selections" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="active" string="Archived" domain="[['active','=',False]]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_catalog_selection_tree" model="ir.ui.view">
+        <field name="model">catalog.selection</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="catalog_module_count == 0">
+                <field name="name"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <!-- <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="show"/> -->
+                <field name="catalog_module_count" string="# Modules" sum="Sum of Modules" optional="show"/>
+                <field name="create_date" widget="datetime" optional="hide"/>
+                <field name="write_date" widget="datetime" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_catalog_selection_form" model="ir.ui.view">
+        <field name="model">catalog.selection</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+
+                        <button
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-cube"
+                            name="action_view_modules"
+                            invisible="not catalog_module_count"
+                        >
+                            <div class="o_stat_info">
+                                <field name="catalog_module_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> Modules</span>
+                            </div>
+                        </button>
+
+                    </div>
+                    <field name="active" invisible="1" />
+                    <field name="catalog_module_count" invisible="1"/>
+                    <widget
+                        name="web_ribbon"
+                        title="Archived"
+                        bg_color="bg-danger"
+                        invisible="active"
+                    />
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group col="2">
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <!-- <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/> -->
+                        </group>
+                        <group col="2">
+                            <field name="create_date" widget="datetime"/>
+                            <field name="write_date" widget="datetime"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="modules" string="Modules">
+                            <field name="catalog_module_ids"
+                                    context="{'selection_id': id}">
+                                <tree>
+                                    <field name="is_favorite" widget="boolean_favorite" nolabel="1" />
+                                    <field name="name" class="oe_highlight"/>
+                                    <field name="technical_name"/>
+                                    <field name="version_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="note" string="Notes">
+                            <field name="note" widget="html" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+</odoo>
