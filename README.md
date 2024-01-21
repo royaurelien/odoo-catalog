@@ -1,2 +1,2 @@
 
-# Odoo Project
+# Modules catalog

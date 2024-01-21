@@ -85,7 +85,7 @@ class CatalogBranch(models.Model):
 
     @api.model
     def search_or_create(self, paths):
-        Organization = self.env["catalog.organization"]
+        Organization = self.env["catalog.organization"]  # pylint: disable=C0103
 
         records = self.search([("path", "in", paths)])
         current_paths = records.mapped("path")

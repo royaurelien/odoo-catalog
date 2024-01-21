@@ -128,7 +128,7 @@ class CatalogEntry(models.Model):
 
     @api.depends("depends")
     def _compute_depends(self):
-        Module = self.env["catalog.module"]
+        Module = self.env["catalog.module"]  # pylint: disable=C0103
         for record in self:
             if not record.depends:
                 record.depend_ids = False
@@ -195,6 +195,7 @@ class CatalogEntry(models.Model):
                 vals["depends"] = ", ".join(vals.get("depends", []))
 
             if authors and vals.get("authors"):
+                # pylint: disable=E1101
                 current_authors = authors.filtered_domain(
                     [("name", "in", vals["authors"])]
                 )
@@ -210,6 +211,7 @@ class CatalogEntry(models.Model):
                 vals["version_id"] = res.id if res else False
 
             if categories and vals.get("category"):
+                # pylint: disable=E1101
                 res = categories.filtered_domain([("name", "=", vals["category"])])
                 vals["category_id"] = res.id if res else False
 

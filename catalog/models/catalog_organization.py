@@ -59,7 +59,7 @@ class CatalogOrganization(models.Model):
 
     @api.model
     def _create_from_path(self, path):
-        name, repository, branch = path.split("/")
+        name, repository, _ = path.split("/")
         record = self.search([("name", "=", name)])
 
         if not record:

@@ -431,6 +431,8 @@ disable=raw-checker-failed,
         import-error,
         manifest-required-author,
         manifest-deprecated-key,
+        missing-function-docstring,
+        R0801,
 
 
 

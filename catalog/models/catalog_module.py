@@ -146,8 +146,8 @@ class CatalogTemplate(models.Model):
 
     @api.depends("entry_ids")
     def _compute_entry_id(self):
-        for p in self:
-            p.entry_id = p.entry_ids[:1].id
+        for record in self:
+            record.entry_id = record.entry_ids[:1].id
 
     @api.depends("entry_ids.catalog_module_id")
     def _compute_entry_count(self):
@@ -247,7 +247,7 @@ class CatalogTemplate(models.Model):
         not_fav_records.write({"favorite_user_ids": [(4, self.env.uid)]})
         favorite_records.write({"favorite_user_ids": [(3, self.env.uid)]})
 
-    def _prepare_variant_values(self, combination=None):
+    def _prepare_variant_values(self, combination=None):  # pylint: disable=W0613
         self.ensure_one()
         return {
             "catalog_module_id": self.id,
@@ -259,7 +259,7 @@ class CatalogTemplate(models.Model):
         if not self:
             return
         self.env.flush_all()
-        Entry = self.env["catalog.entry"]
+        Entry = self.env["catalog.entry"]  # pylint: disable=C0103
 
         variants_to_create = []
         variants_to_activate = Entry
