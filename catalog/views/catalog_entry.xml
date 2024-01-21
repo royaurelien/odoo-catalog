@@ -38,6 +38,11 @@
                         context="{'group_by' : 'version_id'}"
                     />
                     <filter
+                        string="Authors"
+                        name="authors"
+                        context="{'group_by' : 'author_ids'}"
+                    />
+                    <filter
                         string="Branch"
                         name="branch"
                         context="{'group_by' : 'branch_id'}"
@@ -157,12 +162,15 @@
                     class="oe_stat_button"
                     type="object"
                     name="action_view_modules"
-                    icon="fa-users"
+                    icon="fa-folder"
                     invisible="not depends"
                 >
                     <field string="Depends" name="depend_count" widget="statinfo" />
                 </button>
             </xpath>
+            <!-- <xpath expr="//button[@name='action_view_entries']/field[@name='entry_count']" position="attributes">
+                <attribute name="string">Branch</attribute>
+            </xpath> -->
             <xpath
                 expr="//button[@name='action_add_to_selection']"
                 position="replace"
@@ -221,6 +229,21 @@
                     data-hotkey="m"
                 />
                 <button
+                    name="action_view_branch_entries"
+                    type="object"
+                    string="Branch"
+                />
+                <button
+                    name="action_view_repository_entries"
+                    type="object"
+                    string="Repository"
+                />
+                <!-- <button
+                    name="action_view_organization_entries"
+                    type="object"
+                    string="Organization"
+                /> -->
+                <button
                     name="action_view_on_github"
                     type="object"
                     icon="fa-github"
@@ -228,8 +251,43 @@
                     invisible="not module_url"
                     data-hotkey="v"
                 />
+
+
             </xpath>
         </field>
     </record>
+
+
+    <record id="view_catalog_entry_kanban" model="ir.ui.view">
+        <field name="name">catalog.entry.common.kanban</field>
+        <field name="model">catalog.entry</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="catalog.view_catalog_module_kanban" />
+        <field name="arch" type="xml">
+            <!-- <xpath expr="//field[@name='version_id']" position="replace" /> -->
+            <xpath expr="//field[@name='version_ids']" position="replace">
+                <field name="author_ids" />
+                <field name="repository" />
+            </xpath>
+            <xpath expr="//field[@name='version_ids']" position="replace">
+                <field name="author_ids" widget="many2many_tags" />
+                <field
+                    name="version_ids"
+                    widget="many2many_tags"
+                    options="{'color_field': 'color'}"
+                />
+                <field name="repository" />
+            </xpath>
+            <xpath
+                expr="//img[@t-if='record.icon_image.raw_value']"
+                position="attributes"
+            >
+                <attribute
+                    name="t-att-src"
+                >kanban_image('catalog.entry', 'icon_image', record.id.raw_value)</attribute>
+            </xpath>
+        </field>
+    </record>
+
 
 </odoo>

@@ -23,7 +23,7 @@ class CatalogEntry(models.Model):
     )
     catalog_module_id = fields.Many2one(
         "catalog.module",
-        "Catalog Template",
+        "Catalog Module",
         auto_join=True,
         index=True,
         ondelete="cascade",
@@ -83,6 +83,10 @@ class CatalogEntry(models.Model):
         related="branch_id.repository_id.organization_id",
         store=True,
     )
+    entry_count = fields.Integer(
+        string="# Entries",
+        compute="_compute_entry_count",
+    )
     category_id = fields.Many2one(
         comodel_name="catalog.category",
     )
@@ -125,6 +129,11 @@ class CatalogEntry(models.Model):
 
     def _compute_is_entry(self):
         self.is_entry = True
+
+    @api.depends("branch_id.entry_ids")
+    def _compute_entry_count(self):
+        for record in self:
+            record.entry_count = len(record.branch_id.entry_ids)
 
     @api.depends("depends")
     def _compute_depends(self):
@@ -398,3 +407,20 @@ class CatalogEntry(models.Model):
             records |= record
 
         return records
+
+    def _action_view_entries(self, ids):
+        action = self.env.ref("catalog.action_view_entries").read()[0]
+        action["domain"] = [("id", "in", ids)]
+
+        return action
+
+    def action_view_branch_entries(self):  # pylint: disable=C0116
+        return self._action_view_entries(self.branch_id.entry_ids.ids)
+
+    def action_view_organization_entries(self):  # pylint: disable=C0116
+        ids = self.organization_id.repository_ids.branch_ids.entry_ids.ids
+        return self._action_view_entries(ids)
+
+    def action_view_repository_entries(self):  # pylint: disable=C0116
+        ids = self.repository_id.branch_ids.entry_ids.ids
+        return self._action_view_entries(ids)

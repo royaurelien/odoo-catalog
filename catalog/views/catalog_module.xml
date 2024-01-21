@@ -32,11 +32,11 @@
                     domain="[('favorite_user_ids', 'in', uid)]"
                 />
                 <group expand="1" string="Group By">
-                    <!-- <filter
-                        string="Branch"
-                        name="branch"
-                        context="{'group_by' : 'branch_id'}"
-                    /> -->
+                    <filter
+                        string="Selections"
+                        name="selections"
+                        context="{'group_by' : 'catalog_selection_ids'}"
+                    />
                     <!-- <filter
                         string="Repository"
                         name="repository"
@@ -131,7 +131,7 @@
                             class="oe_stat_button"
                             type="object"
                             name="action_view_entries"
-                            icon="fa-users"
+                            icon="fa-folder"
                         >
                             <field
                                 string="Entries"
@@ -184,7 +184,7 @@
                             <field name="entry_id" string="Main Entry" />
                         </group>
                         <group col="2">
-                            <field name="path" />
+                            <field name="path" readonly="1" />
                         </group>
                     </group>
                     <notebook>
@@ -243,7 +243,7 @@
                     <t t-name="kanban-box">
                       <div class="oe_module_vignette oe_kanban_global_click">
                         <t t-set="installed" t-value="False" />
-                        <div class="o_dropdown_kanban dropdown" tabindex="-1">
+                        <!-- <div class="o_dropdown_kanban dropdown" tabindex="-1">
                             <a
                                     class="dropdown-toggle o-no-caret btn"
                                     data-toggle="dropdown"
@@ -273,7 +273,7 @@
                                         class="dropdown-item"
                                     >View repositories</a>
                             </div>
-                        </div>
+                        </div> -->
                         <img
                                 t-if="record.icon_image.raw_value"
                                 t-att-src="kanban_image('catalog.module', 'icon_image', record.id.raw_value)"

@@ -6,10 +6,10 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-class CatalogTemplate(models.Model):
+class CatalogModule(models.Model):
     _name = "catalog.module"
     _inherit = ["mail.thread", "mail.activity.mixin"]
-    _description = "Catalog Template"
+    _description = "Catalog Module"
     _order = "name, id"
 
     def _get_default_favorite_user_ids(self):
@@ -159,23 +159,23 @@ class CatalogTemplate(models.Model):
 
     @api.depends("entry_ids.icon_image")
     def _compute_icon(self):
-        self._compute_template_field_from_variant_field("icon_image")
+        self._compute_module_field_from_variant_field("icon_image")
 
     @api.depends("entry_ids.path")
     def _compute_path(self):
-        self._compute_template_field_from_variant_field("path")
+        self._compute_module_field_from_variant_field("path")
 
     def _set_path(self):
         self._set_entry_variant_field("path")
 
     @api.depends("entry_ids.web_description")
     def _compute_web_description(self):
-        self._compute_template_field_from_variant_field("web_description")
+        self._compute_module_field_from_variant_field("web_description")
 
     def _set_web_description(self):
         self._set_entry_variant_field("web_description")
 
-    def _compute_template_field_from_variant_field(self, fname, default=False):
+    def _compute_module_field_from_variant_field(self, fname, default=False):
         """Sets the value of the given field based on the module variant values
 
         Equals to entry_ids[fname] if it's a single variant product.
@@ -193,8 +193,8 @@ class CatalogTemplate(models.Model):
                 module[fname] = module.entry_ids[fname]
             elif variant_count == 0 and self.env.context.get("active_test", True):
                 # If the product has no active variants, retry without the active_test
-                template_ctx = module.with_context(active_test=False)
-                template_ctx._compute_template_field_from_variant_field(
+                module_ctx = module.with_context(active_test=False)
+                module_ctx._compute_module_field_from_variant_field(
                     fname, default=default
                 )
             else:
@@ -202,7 +202,7 @@ class CatalogTemplate(models.Model):
                 module[fname] = module.entry_id[fname]
 
     def _set_entry_variant_field(self, fname):
-        """Propagate the value of the given field from the templates to their unique variant.
+        """Propagate the value of the given field from the modules to their unique variant.
 
         Only if it's a single variant product.
         It's used to set fields like barcode, weight, volume..
@@ -283,14 +283,14 @@ class CatalogTemplate(models.Model):
                 )
 
     def _sanitize_vals(self, vals):
-        """Sanitize vales for writing/creating product templates and variants.
+        """Sanitize vales for writing/creating product modules and variants.
 
         Values need to be sanitized to keep values synchronized, and to be able to preprocess the
         vals in extensions of create/write.
         :param vals: create/write values dictionary
         """
 
-    def _get_related_fields_variant_template(self):
+    def _get_related_fields_variant_module(self):
         """Return a list of fields present on module and variants models and that are related"""
         return ["path", "web_description", "icon_image"]
 
@@ -298,20 +298,20 @@ class CatalogTemplate(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             self._sanitize_vals(vals)
-        templates = super().create(vals_list)
+        modules = super().create(vals_list)
         if self._context.get("create_catalog_entry", True):
-            templates._create_variant_ids()
+            modules._create_variant_ids()
 
         # This is needed to set given values to first variant after creation
-        for module, vals in zip(templates, vals_list):
+        for module, vals in zip(modules, vals_list):
             related_vals = {}
-            for field_name in self._get_related_fields_variant_template():
+            for field_name in self._get_related_fields_variant_module():
                 if vals.get(field_name):
                     related_vals[field_name] = vals[field_name]
             if related_vals:
                 module.write(related_vals)
 
-        return templates
+        return modules
 
     def write(self, vals):
         self._sanitize_vals(vals)

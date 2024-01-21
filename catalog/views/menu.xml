@@ -17,7 +17,7 @@
     <record model="ir.actions.act_window" id="catalog.action_view_entries">
       <field name="name">Entries</field>
       <field name="res_model">catalog.entry</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form</field>
       <field name="help" type="html">
         <p class="o_view_nocontent_smiling_face">
           No entries to display
