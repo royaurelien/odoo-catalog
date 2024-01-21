@@ -63,54 +63,82 @@
         name="Catalog"
         groups="catalog.group_user"
         web_icon="fa fa-search,#FFFFFF,#0088aaff"
-        sequence="75"/>
+        sequence="75"
+    />
 
     <!-- Categories -->
 
-    <menuitem name="Data" id="menu_custom_addons_data"
-              sequence="20"
-              parent="menu_catalog_root"/>
+    <menuitem
+        name="Data"
+        id="menu_custom_addons_data"
+        sequence="20"
+        parent="menu_catalog_root"
+    />
 
-    <menuitem name="Configuration" id="menu_custom_addons_config"
-              groups="catalog.group_manager"
-              sequence="90"
-              parent="menu_catalog_root"/>
+    <menuitem
+        name="Configuration"
+        id="menu_custom_addons_config"
+        groups="catalog.group_manager"
+        sequence="90"
+        parent="menu_catalog_root"
+    />
 
     <!-- actions -->
 
-    <menuitem name="Modules" id="menu_catalog_template"
-              parent="menu_catalog_root"
-              sequence="10"
-              action="catalog.action_view_modules"/>
+    <menuitem
+        name="Modules"
+        id="menu_catalog_template"
+        parent="menu_catalog_root"
+        sequence="10"
+        action="catalog.action_view_modules"
+    />
 
-    <menuitem name="Entries" id="menu_catalog_entry"
-              parent="menu_catalog_root"
-              sequence="20"
-              action="catalog.action_view_entries"/>
+    <menuitem
+        name="Entries"
+        id="menu_catalog_entry"
+        parent="menu_catalog_root"
+        sequence="20"
+        action="catalog.action_view_entries"
+    />
 
-    <menuitem name="Authors" id="menu_catalog_author"
-              parent="menu_catalog_root"
-              sequence="20"
-              action="catalog.action_view_authors"/>
+    <menuitem
+        name="Authors"
+        id="menu_catalog_author"
+        parent="menu_catalog_root"
+        sequence="20"
+        action="catalog.action_view_authors"
+    />
 
-    <menuitem name="Organizations" id="menu_catalog_organization"
-              parent="menu_catalog_root"
-              sequence="25"
-              action="catalog.action_view_organizations"/>
+    <menuitem
+        name="Organizations"
+        id="menu_catalog_organization"
+        parent="menu_catalog_root"
+        sequence="25"
+        action="catalog.action_view_organizations"
+    />
 
-    <menuitem name="Repositories" id="menu_catalog_repository"
-              parent="menu_catalog_root"
-              sequence="30"
-              action="catalog.action_view_repositories"/>
+    <menuitem
+        name="Repositories"
+        id="menu_catalog_repository"
+        parent="menu_catalog_root"
+        sequence="30"
+        action="catalog.action_view_repositories"
+    />
 
-    <menuitem name="Branches" id="menu_catalog_branch"
-              parent="menu_catalog_root"
-              sequence="40"
-              action="catalog.action_view_branches"/>
+    <menuitem
+        name="Branches"
+        id="menu_catalog_branch"
+        parent="menu_catalog_root"
+        sequence="40"
+        action="catalog.action_view_branches"
+    />
 
-    <menuitem name="Selections" id="menu_catalog_selection"
-              parent="menu_catalog_root"
-              sequence="60"
-              action="catalog.action_view_selections"/>
+    <menuitem
+        name="Selections"
+        id="menu_catalog_selection"
+        parent="menu_catalog_root"
+        sequence="60"
+        action="catalog.action_view_selections"
+    />
 
 </odoo>

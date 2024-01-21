@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="add_to_selection_view_form" model="ir.ui.view">
         <field name="name">add.to.selection.wizard.form</field>
@@ -6,12 +6,13 @@
         <field name="arch" type="xml">
             <form string="Add to selection">
                 <group>
-                    <field name="selection_id" string="Name"/>
+                    <field name="selection_id" string="Name" />
                     <field
                         name="catalog_module_ids"
                         required="1"
                         invisible="1"
-                        widget="many2many_tags"/>
+                        widget="many2many_tags"
+                    />
                 </group>
                 <footer>
                     <button
@@ -21,11 +22,7 @@
                         class="btn-primary"
                         invisible="not selection_id"
                     />
-                    <button
-                        string="Discard"
-                        special="cancel"
-                        class="btn-secondary"
-                    />
+                    <button string="Discard" special="cancel" class="btn-secondary" />
                 </footer>
             </form>
         </field>

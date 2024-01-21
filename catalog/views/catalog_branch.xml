@@ -21,11 +21,7 @@
                     filter_domain="[('name', 'ilike', self)]"
                 />
                 <group expand="1" string="Group By">
-                    <filter
-                        string="Name"
-                        name="name"
-                        context="{'group_by' : 'name'}"
-                    />
+                    <filter string="Name" name="name" context="{'group_by' : 'name'}" />
                     <filter
                         string="Organization"
                         name="organization"
@@ -57,11 +53,23 @@
                         context="{'group_by' : 'last_commit_email'}"
                     />
                 </group>
-                <separator/>
-                <filter name="initialized_entries" string="Initialized" domain="[['initialized', '=', True]]"/>
-                <separator/>
-                <filter name="created_today" string="Created Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
-                <filter name="updated_today" string="Updated Today" domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <separator />
+                <filter
+                    name="initialized_entries"
+                    string="Initialized"
+                    domain="[['initialized', '=', True]]"
+                />
+                <separator />
+                <filter
+                    name="created_today"
+                    string="Created Today"
+                    domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"
+                />
+                <filter
+                    name="updated_today"
+                    string="Updated Today"
+                    domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]"
+                />
             </search>
         </field>
     </record>
@@ -73,12 +81,12 @@
             <tree create="0" delete="1">
                 <field name="name" />
                 <field name="path" />
-                <field name="repository_id" widget="many2one"/>
-                <field name="last_commit_url" widget="url" optional="show"/>
-                <field name="last_commit_name" optional="show"/>
-                <field name="last_commit_email" optional="show"/>
-                <field name="last_commit_date" widget="datetime" optional="show"/>
-                <field name="entry_count" sum="Entries"/>
+                <field name="repository_id" widget="many2one" />
+                <field name="last_commit_url" widget="url" optional="show" />
+                <field name="last_commit_name" optional="show" />
+                <field name="last_commit_email" optional="show" />
+                <field name="last_commit_date" widget="datetime" optional="show" />
+                <field name="entry_count" sum="Entries" />
                 <button
                     name="action_view_entries"
                     type="object"

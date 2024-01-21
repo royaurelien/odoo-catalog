@@ -27,11 +27,23 @@
                         context="{'group_by' : 'pushed_at'}"
                     />
                 </group>
-                <separator/>
-                <filter name="initialized_entries" string="Initialized" domain="[['initialized', '=', True]]"/>
-                <separator/>
-                <filter name="created_today" string="Created Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
-                <filter name="updated_today" string="Updated Today" domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <separator />
+                <filter
+                    name="initialized_entries"
+                    string="Initialized"
+                    domain="[['initialized', '=', True]]"
+                />
+                <separator />
+                <filter
+                    name="created_today"
+                    string="Created Today"
+                    domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"
+                />
+                <filter
+                    name="updated_today"
+                    string="Updated Today"
+                    domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]"
+                />
             </search>
         </field>
     </record>
@@ -41,16 +53,16 @@
         <field name="model">catalog.repository</field>
         <field name="arch" type="xml">
             <tree create="0" delete="1">
-                <field name="name"/>
-                <field name="description" optional="show"/>
-                <field name="default_branch"/>
-                <field name="path"  optional="hide"/>
-                <field name="visibility"/>
-                <field name="created_at" widget="datetime" optional="show"/>
-                <field name="updated_at" widget="datetime" optional="show"/>
-                <field name="pushed_at" widget="datetime" optional="show"/>
-                <field name="organization_id" widget="many2one" optional="show"/>
-                <field name="branch_count" sum="Branches"/>
+                <field name="name" />
+                <field name="description" optional="show" />
+                <field name="default_branch" />
+                <field name="path" optional="hide" />
+                <field name="visibility" />
+                <field name="created_at" widget="datetime" optional="show" />
+                <field name="updated_at" widget="datetime" optional="show" />
+                <field name="pushed_at" widget="datetime" optional="show" />
+                <field name="organization_id" widget="many2one" optional="show" />
+                <field name="branch_count" sum="Branches" />
                 <button
                     name="action_view_branches"
                     type="object"

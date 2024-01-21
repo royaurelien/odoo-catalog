@@ -26,7 +26,7 @@
         </record>
 
         <record model="git.rules" id="git_rules_branch_major">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Sync. major version</field>
             <field name="action">update</field>
             <field name="condition">bool(major)</field>
@@ -35,25 +35,25 @@
         </record>
 
         <record model="git.rules" id="git_rules_branch_testing">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Testing</field>
             <field name="action">update</field>
             <field name="condition">"test" in name</field>
             <field name="model">git.repository</field>
-            <field name="tag_ids" eval="[(4, ref('catalog.tags_testing'))]"/>
+            <field name="tag_ids" eval="[(4, ref('catalog.tags_testing'))]" />
         </record>
 
         <record model="git.rules" id="git_rules_branch_dev">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Dev</field>
             <field name="action">update</field>
             <field name="condition">"dev" in name</field>
             <field name="model">git.repository</field>
-            <field name="tag_ids" eval="[(4, ref('catalog.tags_dev'))]"/>
+            <field name="tag_ids" eval="[(4, ref('catalog.tags_dev'))]" />
         </record>
 
         <record model="git.rules" id="git_rules_branch_runbot">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Runbot</field>
             <field name="action">ignore</field>
             <field name="condition">"runbot" in name or "ocabot" in name</field>
@@ -61,7 +61,7 @@
         </record>
 
         <record model="git.rules" id="git_rules_branch_saas">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: SaaS</field>
             <field name="action">ignore</field>
             <field name="condition">"saas" in name</field>
@@ -69,7 +69,7 @@
         </record>
 
         <record model="git.rules" id="git_rules_branch_temp">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Temp</field>
             <field name="action">ignore</field>
             <field name="condition">"temp" in name</field>
@@ -77,15 +77,17 @@
         </record>
 
         <record model="git.rules" id="git_rules_branch_older">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Skip older</field>
             <field name="action">ignore</field>
-            <field name="condition"><![CDATA[ bool(major) and (float(name) <= 13.0) ]]></field>
+            <field
+                name="condition"
+            ><![CDATA[ bool(major) and (float(name) <= 13.0) ]]></field>
             <field name="model">git.repository</field>
         </record>
 
         <record model="git.rules" id="git_rules_branch_merge">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Branch: Merge</field>
             <field name="action">ignore</field>
             <field name="condition">"merge" in name</field>
@@ -93,21 +95,21 @@
         </record>
 
         <record model="git.rules" id="git_rules_branch_from_company">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Repository: From company</field>
             <field name="action">update</field>
             <field name="condition">name.startswith(env.company.name.lower())</field>
             <field name="model">git.organization</field>
-            <field name="partner_id" ref="base.main_partner"/>
+            <field name="partner_id" ref="base.main_partner" />
         </record>
 
         <record model="git.rules" id="git_rules_addons_from_company">
-            <field name="active" eval="True"/>
+            <field name="active" eval="True" />
             <field name="name">Addons: From company</field>
             <field name="action">update</field>
             <field name="condition">name.startswith(env.company.name.lower())</field>
             <field name="model">git.branch</field>
-            <field name="partner_id" ref="base.main_partner"/>
+            <field name="partner_id" ref="base.main_partner" />
         </record>
 
     </data>

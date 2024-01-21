@@ -25,7 +25,7 @@
                     string="Authors"
                     filter_domain="[('author_ids', 'ilike', self)]"
                 />
-                <field name="category"/>
+                <field name="category" />
                 <group expand="1" string="Group By">
                     <filter
                         string="Category"
@@ -58,24 +58,57 @@
                         context="{'group_by' : 'initialized'}"
                     />
                 </group>
-                <separator/>
+                <separator />
                 <!-- <filter name="my_favorites" string="My Favorites" domain="[('favorite_user_ids', 'in', uid)]"/> -->
-                <separator/>
+                <separator />
                 <!-- <filter name="applications" string="Applications" domain="[['application', '=', True]]"/> -->
-                <filter name="depends" string="Depends" domain="[['depends', '!=', False]]"/>
-                <filter name="initialized_entries" string="Initialized" domain="[['initialized', '=', True]]"/>
+                <filter
+                    name="depends"
+                    string="Depends"
+                    domain="[['depends', '!=', False]]"
+                />
+                <filter
+                    name="initialized_entries"
+                    string="Initialized"
+                    domain="[['initialized', '=', True]]"
+                />
 
                 <!-- <filter name="officials" string="Officials" domain='["|", ["author", "=", "Odoo S.A."], ["author", "=", "Odoo"]]'/> -->
-                <separator/>
-                <filter string="Archived" domain="[('active', '=', False)]" name="archived"/>
-                <separator/>
-                <filter name="created_today" string="Created Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
-                <filter name="updated_today" string="Updated Today" domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]" />
+                <separator />
+                <filter
+                    string="Archived"
+                    domain="[('active', '=', False)]"
+                    name="archived"
+                />
+                <separator />
+                <filter
+                    name="created_today"
+                    string="Created Today"
+                    domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"
+                />
+                <filter
+                    name="updated_today"
+                    string="Updated Today"
+                    domain="[('write_date', '>=', context_today().strftime('%Y-%m-%d'))]"
+                />
                 <searchpanel>
-                    <field name="version_id" string="Version" enable_counters="1"/>
-                    <field name="organization_id" string="Organization" enable_counters="1"/>
-                    <field name="repository_id" string="Repository" enable_counters="1"/>
-                    <field name="category_id" select="multi" icon="fa-tag" enable_counters="1"/>
+                    <field name="version_id" string="Version" enable_counters="1" />
+                    <field
+                        name="organization_id"
+                        string="Organization"
+                        enable_counters="1"
+                    />
+                    <field
+                        name="repository_id"
+                        string="Repository"
+                        enable_counters="1"
+                    />
+                    <field
+                        name="category_id"
+                        select="multi"
+                        icon="fa-tag"
+                        enable_counters="1"
+                    />
                     <!-- <field name="partner_id" select="multi" string="Partners" icon="fa-users" enable_counters="1"/> -->
                     <!-- <field name="tag_ids" select="multi" icon="fa-tag" enable_counters="1"/> -->
                 </searchpanel>
@@ -87,24 +120,24 @@
         <field name="name">catalog.entry.common.tree</field>
         <field name="model">catalog.entry</field>
         <field name="mode">primary</field>
-        <field name="inherit_id" ref="catalog.view_catalog_module_tree"/>
+        <field name="inherit_id" ref="catalog.view_catalog_module_tree" />
         <field name="arch" type="xml">
             <tree position="attributes">
                 <attribute name="string">Product Entry</attribute>
             </tree>
-            <xpath expr="//field[@name='version_id']" position="replace"></xpath>
-            <xpath expr="//field[@name='version_ids']" position="replace"></xpath>
-            <xpath expr="//field[@name='entry_count']" position="replace"></xpath>
-            <xpath expr="//field[@name='latest_entry_id']" position="replace"></xpath>
-            <xpath expr="//button[@name='action_view_entries']" position="replace"></xpath>
+            <xpath expr="//field[@name='version_id']" position="replace" />
+            <xpath expr="//field[@name='version_ids']" position="replace" />
+            <xpath expr="//field[@name='entry_count']" position="replace" />
+            <xpath expr="//field[@name='latest_entry_id']" position="replace" />
+            <xpath expr="//button[@name='action_view_entries']" position="replace" />
             <xpath expr="//field[@name='name']" position="after">
-                <field name="version_id"  optional="show"/>
-                <field name="version"  optional="hide"/>
-                <field name="category"  optional="show"/>
-                <field name="author_ids" widget="many2many_tags"  optional="show"/>
-                <field name="website" widget="url"  optional="show"/>
-                <field name="repository_id" widget="many2one"  optional="hide"/>
-                <field name="branch_id" widget="many2one"  optional="hide"/>
+                <field name="version_id" optional="show" />
+                <field name="version" optional="hide" />
+                <field name="category" optional="show" />
+                <field name="author_ids" widget="many2many_tags" optional="show" />
+                <field name="website" widget="url" optional="show" />
+                <field name="repository_id" widget="many2one" optional="hide" />
+                <field name="branch_id" widget="many2one" optional="hide" />
             </xpath>
         </field>
     </record>
@@ -113,7 +146,7 @@
         <field name="name">catalog.entry.common.form</field>
         <field name="model">catalog.entry</field>
         <field name="mode">primary</field>
-        <field name="inherit_id" ref="catalog.view_catalog_module_form"/>
+        <field name="inherit_id" ref="catalog.view_catalog_module_form" />
         <field name="arch" type="xml">
             <form position="attributes">
                 <attribute name="string">Product Entry</attribute>
@@ -127,53 +160,56 @@
                     icon="fa-users"
                     invisible="not depends"
                 >
-                    <field string="Depends" name="depend_count" widget="statinfo"/>
+                    <field string="Depends" name="depend_count" widget="statinfo" />
                 </button>
             </xpath>
-            <xpath expr="//button[@name='action_add_to_selection']" position="replace"></xpath>
-            <xpath expr="//button[@name='action_view_selections']" position="replace"></xpath>
+            <xpath
+                expr="//button[@name='action_add_to_selection']"
+                position="replace"
+            />
+            <xpath expr="//button[@name='action_view_selections']" position="replace" />
             <xpath expr="//field[@name='entry_id']" position="replace">
-                <field name="summary"/>
-                <field name="description"/>
-                <field name="category_id" widget="many2one"/>
-                <field name="license"/>
-                <field name="depends"/>
-                <field name="module_url" invisible="1"/>
+                <field name="summary" />
+                <field name="description" />
+                <field name="category_id" widget="many2one" />
+                <field name="license" />
+                <field name="depends" />
+                <field name="module_url" invisible="1" />
             </xpath>
             <xpath expr="//field[@name='path']" position="after">
-                <field name="version_id" widget="many2one"/>
-                <field name="version"/>
+                <field name="version_id" widget="many2one" />
+                <field name="version" />
 
-                <field name="author_ids" widget="many2many_tags"/>
-                <field name="website" widget="url"/>
+                <field name="author_ids" widget="many2many_tags" />
+                <field name="website" widget="url" />
 
             </xpath>
             <xpath expr="//page[@name='entries']" position="replace">
                 <page name="technical" string="Technical">
                     <group>
                         <group string="Data">
-                            <field name="has_data"/>
-                            <field name="has_views"/>
-                            <field name="has_security"/>
+                            <field name="has_data" />
+                            <field name="has_views" />
+                            <field name="has_security" />
                         </group>
                         <group string="Urls" groups="base.group_no_one">
-                            <field name="module_url" widget="url"/>
-                            <field name="manifest_url" widget="url"/>
-                            <field name="index_url" widget="url"/>
-                            <field name="icon_url" widget="url"/>
+                            <field name="module_url" widget="url" />
+                            <field name="manifest_url" widget="url" />
+                            <field name="index_url" widget="url" />
+                            <field name="icon_url" widget="url" />
                         </group>
                         <group string="Source">
-                            <field name="organization"/>
-                            <field name="repository"/>
-                            <field name="repository_id" widget="many2one"/>
-                            <field name="branch"/>
-                            <field name="branch_id"/>
-                            <field name="uuid"/>
+                            <field name="organization" />
+                            <field name="repository" />
+                            <field name="repository_id" widget="many2one" />
+                            <field name="branch" />
+                            <field name="branch_id" />
+                            <field name="uuid" />
                         </group>
                     </group>
                 </page>
                 <page name="data" string="Data">
-                    <field name="data" nolabel="1"/>
+                    <field name="data" nolabel="1" />
                 </page>
             </xpath>
             <xpath expr="//header" position="inside">
