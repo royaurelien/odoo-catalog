@@ -78,6 +78,7 @@
                     options="{'color_field': 'color', 'no_create_edit': True}"
                     optional="show"
                 />
+                <field name="version_id" optional="hide"/>
                 <field name="entry_count"/>
                 <button
                     name="action_view_entries"

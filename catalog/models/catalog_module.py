@@ -67,6 +67,13 @@ class CatalogTemplate(models.Model):
         compute_sudo=True,
         store=True,
     )
+    version_id = fields.Many2one(
+        comodel_name="catalog.version",
+        string="Latest Version",
+        compute="_compute_versions",
+        compute_sudo=True,
+        store=True,
+    )
     icon_image = fields.Binary(
         string="Icon",
         compute="_compute_icon",
@@ -100,10 +107,12 @@ class CatalogTemplate(models.Model):
         for record in self:
             if not record.entry_ids:
                 record.version_ids = False
+                record.version_id = False
                 continue
 
             ids = list(set(record.entry_ids.version_id.ids))
             record.version_ids = [fields.Command.set(ids)]
+            record.version_id = record.version_ids.sorted("name")[-1]
 
     @api.depends("entry_ids")
     def _compute_entry_id(self):
