@@ -232,20 +232,18 @@ class CatalogTemplate(models.Model):
         ]
 
     def _compute_is_favorite(self):
-        for record in self:
-            record.is_favorite = self.env.user in record.favorite_user_ids
+        for job in self:
+            job.is_favorite = self.env.user in job.favorite_user_ids
 
     def _inverse_is_favorite(self):
-        favorite_records = not_fav_records = self.env["catalog.module"].sudo()
-        for record in self:
-            if self.env.user in record.favorite_user_ids:
-                favorite_records |= record
+        unfavorited_jobs = favorited_jobs = self.env["catalog.module"]
+        for job in self:
+            if self.env.user in job.favorite_user_ids:
+                favorited_jobs |= job
             else:
-                not_fav_records |= record
-
-        # Project User has no write access for record.
-        not_fav_records.write({"favorite_user_ids": [(4, self.env.uid)]})
-        favorite_records.write({"favorite_user_ids": [(3, self.env.uid)]})
+                unfavorited_jobs |= job
+        favorited_jobs.write({"favorite_user_ids": [(4, self.env.uid)]})
+        unfavorited_jobs.write({"favorite_user_ids": [(3, self.env.uid)]})
 
     def _prepare_variant_values(self, combination=None):  # pylint: disable=W0613
         self.ensure_one()
@@ -373,12 +371,10 @@ class CatalogTemplate(models.Model):
         if isinstance(force, str):
             force = eval(force)
 
-        domain = []
         fields = ["branch_id", "uuid", "manifest_url"]
 
         if self._fetch_only_latest():
-            if not force:
-                domain = [("latest_entry_id.initialized", "=", False)]
+            domain = [("latest_entry_id.initialized", "=", False)] if not force else []
 
             _logger.info("Fetch only latest entries: %s (%s)", domain, kwargs)
 
@@ -392,9 +388,13 @@ class CatalogTemplate(models.Model):
             ids = [entry["latest_entry_id"] for entry in entries]
             results = self.env["catalog.entry"].browse(ids).read(fields)
         else:
-            _logger.info("Fetch all entries")
+            domain = [("initialized", "=", False)] if not force else []
+
+            _logger.info("Fetch all entries: %s (%s)", domain, kwargs)
             results = self.env["catalog.entry"].search_read(
-                [], fields=fields, limit=limit
+                domain,
+                fields=fields,
+                limit=limit,
             )
 
         _logger.info("Get manifests - results/limit: %s/%s", len(results), limit)

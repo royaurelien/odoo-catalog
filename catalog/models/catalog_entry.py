@@ -89,7 +89,7 @@ class CatalogEntry(models.Model):
     icon = fields.Char(
         string="Icon URL",
     )
-    icon_image = fields.Binary(
+    icon_image = fields.Image(
         string="Icon",
     )
     web_description = fields.Html()
@@ -357,3 +357,44 @@ class CatalogEntry(models.Model):
         action["views"] = [(False, "form")]
 
         return action
+
+    @api.model
+    def get_icons(self, **kwargs):
+        limit = kwargs.get("limit", 100)
+        force = kwargs.get("force", False)
+
+        if isinstance(force, str):
+            force = eval(force)
+
+        fields = ["icon_url"]
+
+        domain = (
+            [("icon_image", "=", ""), ("icon_url", "!=", "")]
+            if not force
+            else [("icon_url", "!=", "")]
+        )
+        # domain = []
+
+        _logger.info("Fetch all entries: %s (%s)", domain, kwargs)
+        results = self.env["catalog.entry"].search_read(
+            domain, fields=fields, limit=limit, load=""
+        )
+
+        _logger.info("Get manifests - results/limit: %s/%s", len(results), limit)
+
+        return results
+
+    @api.model_create_multi
+    def update_icons(self, vals_list):
+        records = self
+        for vals in vals_list:
+            record = self.browse(vals["id"])
+
+            if not record:
+                _logger.error("Update manifest - Record not found: %s", vals["id"])
+                continue
+
+            record.write(vals)
+            records |= record
+
+        return records
