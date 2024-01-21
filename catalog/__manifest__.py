@@ -13,6 +13,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "data/ir_config_parameter_data.xml",
         "views/menu.xml",
         "views/catalog_module.xml",
         "views/catalog_entry.xml",

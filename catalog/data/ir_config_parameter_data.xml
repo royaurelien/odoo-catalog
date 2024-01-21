@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<odoo noupdate="1">
+    <record
+        forcecreate="True"
+        id="config_fetch_latest_entry_only"
+        model="ir.config_parameter"
+    >
+        <field name="key">catalog.fetch_latest_entry_only</field>
+        <field name="value">True</field>
+    </record>
+</odoo>

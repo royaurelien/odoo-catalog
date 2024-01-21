@@ -355,30 +355,49 @@ class CatalogTemplate(models.Model):
         return self.env["catalog.selection"]._add_to_selection(self.ids)
 
     @api.model
+    def _fetch_only_latest(self):
+        key = "catalog.fetch_latest_entry_only"
+        res = self.env["ir.config_parameter"].sudo().get_param(key) or True
+        _logger.error("RES: %s", res)
+
+        if isinstance(res, str):
+            res = eval(res)
+
+        return res
+
+    @api.model
     def get_manifests(self, **kwargs):
         limit = kwargs.get("limit", 100)
         force = kwargs.get("force", False)
+
+        if isinstance(force, str):
+            force = eval(force)
+
         domain = []
+        fields = ["branch_id", "uuid", "manifest_url"]
 
-        if not force:
-            domain = [("latest_entry_id.initialized", "=", False)]
+        if self._fetch_only_latest():
+            if not force:
+                domain = [("latest_entry_id.initialized", "=", False)]
 
-        entries = self.search_read(
-            domain,
-            fields=["latest_entry_id"],
-            limit=limit,
-            load="",
-        )
+            _logger.info("Fetch only latest entries: %s (%s)", domain, kwargs)
 
-        ids = [entry["latest_entry_id"] for entry in entries]
+            entries = self.search_read(
+                domain,
+                fields=["latest_entry_id"],
+                limit=limit,
+                load="",
+            )
 
-        results = (
-            self.env["catalog.entry"]
-            .browse(ids)
-            .read(["branch_id", "uuid", "manifest_url"])
-        )
+            ids = [entry["latest_entry_id"] for entry in entries]
+            results = self.env["catalog.entry"].browse(ids).read(fields)
+        else:
+            _logger.info("Fetch all entries")
+            results = self.env["catalog.entry"].search_read(
+                [], fields=fields, limit=limit
+            )
 
-        _logger.info("Get manifests - results/limit: %s/%s", len(ids), limit)
+        _logger.info("Get manifests - results/limit: %s/%s", len(results), limit)
 
         return [
             {

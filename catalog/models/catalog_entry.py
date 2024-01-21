@@ -151,17 +151,9 @@ class CatalogEntry(models.Model):
 
         # Search or create all authors
         names = list(
-            set(
-                itertools.chain(
-                    *[vals["authors"] for vals in vals_list if "author" in vals]
-                )
-            )
+            set(itertools.chain(*[vals.get("authors", []) for vals in vals_list]))
         )
         authors = self.env["catalog.author"].search_or_create(names) if names else False
-
-        # Search or create all repositories
-        # paths = [vals["repository"] for vals in vals_list]
-        # repositories = self.env["catalog.repository"].search_or_create(paths)
 
         # Search or create all branches
         paths = get_values(vals_list, "branch")
